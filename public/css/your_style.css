@@ -1,0 +1,1129 @@
+/*
+ * It is advised not to edit the smartadmin_production.css
+ * as this will override any changes you make in the 
+ * later versions of this theme. 
+ * 
+ * We advise that you use use this CSS to override 
+ * SmartAdmin styles. 
+ * 
+ * Rename the stylesheet to whatever your liking so it will stay
+ * unique to you with each update of SmartAdmin.
+ */
+
+/*
+ * INDEX
+ * 
+ * - HTML
+ * - BODY
+ * - CUSTOM STYLES
+ */
+
+
+ /*
+ @import url("bootstrap-select.min.css") print;
+*/
+
+
+
+
+/*PARA EL ESTILO GLASS DE LA PAGINA*/
+.smart-style-5 .form-control::-webkit-input-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control:-moz-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control::-moz-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control:-ms-input-placeholder { color: #cccccc; font-style: italic; }
+
+
+.smart-style-5 .panel, .smart-style-5 .panel-default>.panel-heading { 
+    background-color: rgba(0,0,0,.23)!important;
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+/* para el boton de google translate*/
+#google_translate_div{
+	/*padding: 10px 0px;*/
+    margin: 0px;
+}
+
+@media (max-width: 767px){
+    /* para el boton de google translate*/
+    #google_translate_div{
+        padding: 10px 0px;
+    }
+    #google_translate_element a > span.hidden-xs, #google_translate_element a > span {
+        display: none!important;
+    }
+    
+    /*el encabezado del inicio */
+    #header > .logo_inicio{
+        width: 190px;
+    }
+
+}
+@media (max-width: 1150px){
+    
+    .content-center{
+        width: 100%;
+    }
+}
+@media (min-width: 1151px){
+	
+    .content-center{
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 767px){
+    .table-responsive {
+        border: none;
+    }
+}
+
+#main{
+    min-height: 100px;
+}
+
+.text-center{
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.text-left{
+    align-items: left !important;
+    text-align: left !important;
+}
+
+.text-right{
+    align-items: right !important;
+    text-align: right !important;
+}
+
+.text-black{
+    color: black;
+}
+
+.skip_style .input-group-addon, .skip_style select, .skip_style input, .skip_style .form-control{
+    color: #555;
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+.content-center{
+    margin: 0 auto;
+}
+
+.center_table{
+    width: 40%;
+    align-items: center;
+    text-align: center;
+}
+
+@media (max-width: 767px){
+    .center_table{
+        width: 80%;
+    }
+}
+
+.center_table .panel-content td, .center_table .panel-content th {
+    padding: 16px;
+}
+
+.page-footer{
+    /*position: relative !important;*/
+}
+
+.jarviswidget > div {
+    padding: 14px 14px 0;
+}
+
+.jarviswidget-editbox {
+    background-color: inherit;
+}
+
+/*las secciones de pasos de los formularios*/
+.step-pane .row{
+	margin-left: 0px;
+    margin-right: 0px;
+}
+
+/*el swhitch on/off en los formularios*/
+.onoffswitch{
+	width: 80px;
+}
+
+.onoffswitch .onoffswitch-switch{
+	right: 66px;
+}
+
+/*estilos para el menu*/
+
+b.collapse-sign {
+    right: 10px;
+    position: absolute;
+}
+
+/*las opciones del menu principal*/
+nav ul li a {
+    font-size: 15px;
+}
+
+.small, small {
+    font-size: small;
+}
+
+select[name="campusAppSelect"]{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    min-width: 200px;
+    width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    outline: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0;
+    border-color: #bfbfbf;
+    background: #fff;
+    color: #404040;
+    appearance: normal;
+    -moz-appearance: none;
+    /* -webkit-appearance: none; */
+    margin-top: 10px;
+    line-height: normal;
+}
+
+.smart-style-5 select[name="campusAppSelect"]{
+    color: #fff;
+    background: rgba(0,0,0,.1)!important;
+    border-color: transparent;
+}
+
+.smart-style-5 .dataTables_empty{
+    color:#fff;
+}
+.smart-style-5 .llv-active{
+    color:#777;
+    background-color: #f5f5f5 !important;
+}
+.smart-style-5 .list-group-item {
+    background-color: rgba(0,0,0,.13);
+}
+
+/*el segundo nivel de las opciones del menu principal*/
+.smart-style-1 nav ul ul li>a {
+    font-size: 14px;
+}
+
+
+/*la linea de tiempo */
+.bs-wizard {margin-top: 40px;}
+
+/*Form Wizard*/
+.bs-wizard {border-bottom: solid 1px #e0e0e0; padding: 0 0 10px 0;}
+.bs-wizard .bs-wizard-step {padding: 0; position: relative; width: 14%;}
+.bs-wizard .bs-wizard-step + .bs-wizard-step {} 
+.bs-wizard .bs-wizard-step .bs-wizard-stepnum {color: #595959; font-size: 16px; margin-bottom: 5px;}
+.bs-wizard .bs-wizard-step .bs-wizard-info {color: #6b6b6b; font-size: 14px;}
+.bs-wizard .bs-wizard-step > .bs-wizard-dot {position: absolute; width: 30px; height: 30px; display: block; background: #86ABBB; top: 45px; left: 50%; margin-top: -15px; margin-left: -15px; border-radius: 50%;} 
+.bs-wizard .bs-wizard-step > .bs-wizard-dot:after {content: ' '; width: 14px; height: 14px; background: #57889c; border-radius: 50px; position: absolute; top: 8px; left: 8px; } 
+.bs-wizard .bs-wizard-step > .progress {background-color: #E1E1E1; position: relative; border-radius: 0px; height: 8px; box-shadow: none; margin: 20px 0;}
+.bs-wizard .bs-wizard-step > .progress > .progress-bar {width:0px; box-shadow: none; background: #86ABBB;}
+.bs-wizard .bs-wizard-step.complete > .progress > .progress-bar {width:100%;}
+.bs-wizard .bs-wizard-step.active > .progress > .progress-bar {width:50%;}
+.bs-wizard .bs-wizard-step:first-child.active > .progress > .progress-bar {width:0%;}
+.bs-wizard .bs-wizard-step:last-child.active > .progress > .progress-bar {width: 100%;}
+.bs-wizard .bs-wizard-step.disabled > .bs-wizard-dot {background-color: #cacaca;}
+.bs-wizard .bs-wizard-step.disabled > .bs-wizard-dot:after {opacity: 0;}
+.bs-wizard .bs-wizard-step:first-child  > .progress {left: 50%; width: 50%;}
+.bs-wizard .bs-wizard-step:last-child  > .progress {width: 50%;}
+.bs-wizard .bs-wizard-step.disabled a.bs-wizard-dot{ pointer-events: none; }
+/*END Form Wizard*/
+
+/*el carrusel de la pagina home de alumnos*/
+.alumno_items .carousel-inner>.item>a>img, .alumno_items .carousel-inner>.item>img {
+    width: 100%;
+}
+
+.coordinador_items .product-content .product-image img {
+    max-width: inherit;
+    max-height: 100%;
+}
+
+/*las imagenes de la pagina home de coordinador*/
+.coordinador_items .product-content .product-image {
+    display: flex;
+    align-items: center;
+    height: 238px;
+}
+
+
+
+/*para que la letra del menu quede automatica*/
+.form-bootstrapWizard .title{
+	color:inherit !important;
+}
+
+.bootstrap-select > .dropdown-toggle.bs-placeholder{
+	color: #cccccc; 
+    font-style: italic;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover{
+	background: none;
+    color: inherit;
+    border-color: inherit;
+}
+.bootstrap-select > .btn-default{
+	background: none;
+    border-color: inherit;
+}
+.bootstrap-select.input-lg > .btn-default{
+	height: 45px;
+    padding: 10px 21px;
+    font-size: 17px;
+}
+
+/*para que el checkbox de los formularios se ajuste*/
+.checkbox.form-control.input-lg{
+	margin: 0;
+}
+
+/*estilos para el menu de los formularios*/
+/*
+.fuelux .wizard{
+    background-color: #ddd;
+    border: none;
+}
+.fuelux .wizard ul, .fuelux .wizard ul li{
+    background: inherit;
+}
+.fuelux .wizard ul li.active a{
+    color: #3a87ad !important;
+}
+.fuelux .wizard ul li a{
+    color: #999;
+}
+.fuelux .wizard ul li.complete a{
+    color: #468847;
+}
+.fuelux .wizard ul li.active a:hover{
+    color: #000000 !important;
+}
+
+.fuelux .wizard ul li .chevron:before {
+    border-left: 14px solid #ddd;
+}
+
+.fuelux .wizard ul li .chevron {
+    border-left: 14px solid rgba(0,0,0,.43);
+}
+
+.fuelux .wizard ul li.active .chevron:before {
+    border-right-color: #f1f6fc;
+}
+smartadmin-prod….min.css:11974
+.fuelux .wizard ul li.active .chevron:before {
+    border-left: 14px solid #f1f6fc;
+}
+*/
+
+.fuelux .wizard > ul.steps li .badge-success, .fuelux .wizard > .steps-container > ul.steps li .badge-success {
+    background-color: #468847;
+}
+
+.fuelux .wizard > ul.steps li.active .badge, .fuelux .wizard > .steps-container > ul.steps li.active .badge {
+    background-color: #3a87ad;
+}
+
+
+#container-loading.show {
+    display: -ms-flexbox !important;
+    display: flex !important;
+}
+
+
+#container-loading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.8) 
+                url('../img/loading.svg') 
+                50% 50% 
+                no-repeat;
+    z-index: 1100;
+    transition: all 3s;
+}
+
+/*OPCIONAL*/
+.modal_loading {
+    display:    none;
+    position:   fixed;
+    z-index:    2000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('../img/loading.svg') 
+                50% 50% 
+                no-repeat;
+}
+
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal_loading {
+    display: block;
+}
+
+.disabledContent{
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.full{
+    width: 100%;
+    height: auto;
+}
+
+.no_overflow{
+    overflow: hidden;
+}
+.no_margin{
+    margin: 0px !important;
+}
+
+.text-bold{
+    font-weight: bold;
+}
+
+.row{
+    margin-right: 0px;
+}
+
+
+.table-fixed{
+    width: 100%;
+}
+
+.table-fixed tbody{
+    height:200px;
+    overflow-y:auto;
+    width: 100%;
+}
+
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th{
+    display:block;
+}
+.table-fixed thead tr th{
+    float:left;
+}
+
+
+/*no contiene padding arriba y abajo*/
+.padding_side{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+
+
+
+
+
+/* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
+/* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
+
+
+.ver_mail , .ver_mail *:not(html):not(style):not(br):not(tr):not(code) {
+    font-family: Avenir, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+.ver_mail {
+    /*background-color: #f5f8fa;*/
+    color: #74787E !important;
+    hyphens: auto;
+    line-height: 1.4;
+    margin: 0;
+    -moz-hyphens: auto;
+    -ms-word-break: break-all;
+    width: 100% !important;
+    -webkit-hyphens: auto;
+    -webkit-text-size-adjust: none;
+    word-break: break-all;
+    word-break: break-word;
+
+    /*background-color: #FFFFFF;*/
+    /*border-bottom: 1px solid #EDEFF2;*/
+    /*border-top: 1px solid #EDEFF2;*/
+    padding: 0;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.ver_mail p,
+.ver_mail ul,
+.ver_mail ol,
+.ver_mail blockquote {
+    line-height: 1.4;
+    text-align: left;
+}
+
+.ver_mail a {
+    color: #3869D4;
+}
+
+.ver_mail a img {
+    border: none;
+}
+
+/* Typography */
+
+.ver_mail h1 {
+    color: #2F3133;
+    font-size: 19px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.ver_mail h2 {
+    color: #2F3133;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.ver_mail h3 {
+    color: #2F3133;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.ver_mail p {
+    color: #74787E;
+    font-size: 16px;
+    line-height: 1.5em;
+    margin-top: 0;
+    text-align: left;
+}
+
+.ver_mail p.sub {
+    font-size: 12px;
+}
+
+.ver_mail img {
+    max-width: 100%;
+}
+
+/* Layout */
+
+.ver_mail .wrapper {
+    /*background-color: #f5f8fa;*/
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+
+.ver_mail .wrapper table, .ver_mail .center_table{
+    background-color: #f5f8fa;
+}
+.ver_mail .content {
+    margin: 0;
+    padding: 0;
+    /*width: 100%;*/
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+/* Header */
+
+.ver_mail .header {
+    padding: 25px 0;
+    text-align: center;
+}
+
+.ver_mail .header a {
+    /*color: #bbbfc3;*/
+    font-size: 19px;
+    font-weight: bold;
+    text-decoration: none;
+    text-shadow: 0 1px 0 white;
+}
+
+/* Body */
+
+
+.ver_mail .inner-body {
+    /*background-color: #FFFFFF;*/
+    margin: 0 auto;
+    padding: 0;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+}
+
+/* Subcopy */
+
+.ver_mail .subcopy {
+    border-top: 1px solid #EDEFF2;
+    margin-top: 25px;
+    padding-top: 25px;
+}
+
+.ver_mail .subcopy p {
+    font-size: 12px;
+}
+
+/* Footer */
+
+.ver_mail .footer {
+    margin: 0 auto;
+    padding: 0;
+    /*text-align: center;*/
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+}
+
+.ver_mail .panel {
+    border: none;
+}
+
+.ver_mail .footer p {
+    /*color: #AEAEAE;*/
+    font-size: 12px;
+    /*text-align: center;*/
+}
+
+/* Tables */
+
+.ver_mail .table table {
+    /*margin: 30px auto;*/
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.ver_mail .table thead tr {
+    background: none;
+}
+
+.ver_mail .table th {
+    border-bottom: 1px solid #EDEFF2;
+    padding-bottom: 8px;
+    background: #e0e0e0;
+}
+
+.ver_mail .table th h2{
+    margin: 0px;
+}
+
+.ver_mail .table tr {
+    width: 100%;
+}
+.ver_mail .table td.header h1 {
+    color: #74787E;
+}
+.ver_mail .table td {
+    color: #74787E;
+    font-size: 15px;
+    line-height: 18px;
+    padding: 5px 10px;    
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.ver_mail .content-cell {
+    padding: 16px 16px 0px 16px;
+}
+.ver_mail .table_padding th, .ver_mail .table_padding td{
+    padding: 5px 35px;
+}
+
+/* Buttons */
+
+.ver_mail .action {
+    margin: 30px auto;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.ver_mail .button {
+    border-radius: 3px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
+    color: #FFF;
+    display: inline-block;
+    text-decoration: none;
+    -webkit-text-size-adjust: none;
+}
+
+.ver_mail .button-blue {
+    background-color: #3097D1;
+    border-top: 10px solid #3097D1;
+    border-right: 18px solid #3097D1;
+    border-bottom: 10px solid #3097D1;
+    border-left: 18px solid #3097D1;
+}
+
+.ver_mail .button-green {
+    background-color: #2ab27b;
+    border-top: 10px solid #2ab27b;
+    border-right: 18px solid #2ab27b;
+    border-bottom: 10px solid #2ab27b;
+    border-left: 18px solid #2ab27b;
+}
+
+.ver_mail .button-red {
+    background-color: #bf5329;
+    border-top: 10px solid #bf5329;
+    border-right: 18px solid #bf5329;
+    border-bottom: 10px solid #bf5329;
+    border-left: 18px solid #bf5329;
+}
+
+/* Panels */
+
+.ver_mail .panel {
+    margin: 0px;
+}
+
+.ver_mail .panel-content {
+    background-color: #EDEFF2;
+    padding: 16px;
+}
+
+.ver_mail .panel-item {
+    padding: 0;
+}
+
+.ver_mail .panel-item p:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Promotions */
+
+.ver_mail .promotion {
+    background-color: #FFFFFF;
+    border: 2px dashed #9BA2AB;
+    margin: 0;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    padding: 24px;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.ver_mail .promotion h1 {
+    text-align: center;
+}
+
+.ver_mail .promotion p {
+    font-size: 15px;
+    text-align: center;
+}
+
+/*para que las listas no se vean en blaco*/
+.list-group-item {
+    background: inherit;
+}
+
+
+/*estilo para select multiple*/
+
+.select2-container{
+    background: rgba(255,255,255,.2);
+    border-color: rgba(255,255,255,.4);
+    color: #FFF;
+}
+
+.smart-style-5 .select2-dropdown {
+    background: #000;
+    border-color: rgba(0,0,0,.4);
+    color: #FFF;
+}
+
+.select2-dropdown {
+    background: #000;
+    border-color: rgba(0,0,0,.4);
+    border: 1px solid #ccc;
+    border-radius: 0px;
+}
+/*
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #5897fb;
+    color: white;
+}
+*/
+.select2-container--default .select2-results__option[aria-selected=true] {
+    /*background-color: #7cafff;*/
+    background-color: rgba(249, 249, 249, 0.33);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #6d6d6d;
+    line-height: 22px;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #ccc;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: 1px solid #ccc;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: inherit;
+    border-radius: 0px;
+    cursor: text;
+}
+
+.select2-container, .select2-container--default .select2-selection--single {
+    min-height: 32px;
+    line-height: 12px;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li.select2-search--inline {
+    width: 100%;
+}
+.select2-container--default .select2-search__field{ 
+    width: 100% !important;
+    height: 29px;
+    padding: 0px 15px 0px 15px !important;
+    margin: 0;
+    margin-top: 0px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__clear {
+    float: none;
+    position: absolute;
+    right: 0px;
+}
+
+.smart-style-5 .select2-container--default .select2-search__field::-webkit-input-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field:-moz-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field::-moz-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field:-ms-input-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+
+select[multiple].input-lg{
+    height: 45px;
+    overflow-y: hidden;
+    line-height: 45px;
+}
+
+select[multiple].input-lg option{
+    height: 45px;
+}
+.popover{
+    max-width: 100%;
+}
+
+/*
+.select2-container--default .select2-selection--single {
+    height: 46px !important;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 0px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    top: 85% !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 26px !important;
+}
+.select2-container--default .select2-selection--single {
+    border: 1px solid #CCC !important;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+*/
+
+/* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
+/* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
+
+
+/*
+
+    color: #74787E !important;
+    color: #3869D4;
+    color: #2F3133;
+    color: #2F3133;
+    color: #2F3133;
+    color: #74787E;
+    color: #bbbfc3;
+    color: #AEAEAE;
+    color: #74787E;
+    color: #FFF;
+
+*/
+/*estilos para el modulo de localizacion*/
+.panel .panel-heading {
+    background-color: #3949ab;
+    color: #fff;
+    border: none;
+    border-top-right-radius: 1px;
+    border-top-left-radius: 1px;
+    height: 40px;
+    position: relative;
+}
+
+.panel .panel-heading #buton_help, #buton_help {
+    position: absolute;
+    right: 20px;
+    top: 8px;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.panel .panel-body .icon_add {
+    width: 100%;
+    text-align: right;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.panel .panel-body .icon_add a {
+    right: 20px;
+    top: 8px;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.panel .panel-body .field.button, .fieldbox {
+    float: left;
+    width: 33.33%; 
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.panel .panel-body .field.button .btn {
+    width: 100%;
+}
+
+.resultbox{
+    width: 100%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    overflow-x: hidden;
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.resultbox{
+    border: none;
+    border-radius: 1px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12) ;
+    height: auto;
+}
+
+.resultbox .field, .panel-body .field{
+    width: 50%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow-x: hidden;
+}
+
+.field.icon-view, .field.full {
+    width: 100%;
+    position: absolute;
+}
+
+.field.icon-view {
+    min-height: 36px;
+}
+
+.contenedor.show .field label {
+    font-weight: 300;
+    font-size: 1em;
+    display: block;
+    margin-bottom: 0;
+    color: #9e9e9e;
+    cursor: text;
+}
+
+
+/*estilos para el editor de documentos*/
+
+/* Minimal styling to center the editor in this sample */
+
+    #content_editor {
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+    #content_editor .table-hover{
+        margin: 10px;
+    }
+
+    #content_columns {
+        margin: 0 auto;
+        color: black;
+    }
+
+    .columns {
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #E7E7E7;
+    }
+    .columns:after {
+        content: "";
+        clear: both;
+        display: block;
+    }
+    .columns .editor {
+        float: left;
+        width: 65%;
+        position: relative;
+        z-index: 1;
+        border: 1px solid #d1d1d1;
+    }
+    .columns .editor embed{
+        width: 100%;
+        min-height: 400px;
+    }
+    .columns .contacts {
+        float: right;
+        width: 35%;
+        box-sizing: border-box;
+        padding: 0 0 0 20px;
+    }
+    #contactList {
+        list-style-type: none;
+        margin: 0 !important;
+        padding: 0;
+    }
+    #contactList li {
+        margin-bottom: 1px;
+        min-height: 56px;
+        /*line-height: 56px;*/
+        cursor: pointer;
+    }
+
+    #contactList > li {
+        background: #FAFAFA;
+    }
+
+    #contactList > li li {
+        background: #eaeaea;
+    }
+
+    #contactList > li {
+        line-height: 56px;
+    }
+    #contactList > li li{
+        height: 56px;
+        list-style-type: none;
+    }
+    #contactList > li ul{
+        max-height: 230px;
+        overflow-y: auto;
+    }
+
+    #contactList > li:nth-child(2n) {
+        background: #F3F3F3;
+    }
+    #contactList > li:hover {
+        background: #f7f6eb;
+        border-left: 5px solid #DCDAC1;
+        margin-left: -5px;
+    }
+
+    #contactList > li li:nth-child(2n) {
+        background: #f5f5f5;
+    }
+    #contactList > li li:hover {
+        background: #FFFDE3;
+        border-left: 5px solid #DCDAC1;
+        margin-left: -5px;
+    }
+
+    .contact {
+        padding: 0 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .contact .u-photo {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+    .editor_title_msg {
+        padding: 6px 15px;
+    }
+    #editor1 .h-card {
+        background: #FFFDE3;
+        padding: 3px 6px;
+        border-bottom: 1px dashed #ccc;
+    }
+    #editor1 {
+        border: 1px solid #E7E7E7;
+        padding: 0 20px;
+        background: #fff;
+        position: relative;
+    }
+    #editor1 .h-card .p-tel {
+        font-style: italic;
+    }
+    #editor1 .h-card .p-tel::before,
+    #editor1 .h-card .p-tel::after {
+        font-style: normal;
+    }
+    #editor1 .h-card .p-tel::before {
+        content: "(☎ ";
+    }
+    #editor1 .h-card .p-tel::after {
+        content: ")";
+    }
+    #editor1 h1 {
+        text-align: center;
+    }
+    #editor1 a {
+        color: inherit;
+    }
+    #editor1 hr {
+        border-style: dotted;
+        border-color: #DCDCDC;
+        border-width: 1px 0 0;
+    }
+    .cke_show_border td{
+        border: 0px !important;
+    }
+

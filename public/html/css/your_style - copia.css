@@ -1,0 +1,143 @@
+/*
+ * It is advised not to edit the smartadmin_production.css
+ * as this will override any changes you make in the 
+ * later versions of this theme. 
+ * 
+ * We advise that you use use this CSS to override 
+ * SmartAdmin styles. 
+ * 
+ * Rename the stylesheet to whatever your liking so it will stay
+ * unique to you with each update of SmartAdmin.
+ */
+
+/*
+ * INDEX
+ * 
+ * - HTML
+ * - BODY
+ * - CUSTOM STYLES
+ */
+
+
+ /*
+ @import url("bootstrap-select.min.css") print;
+*/
+
+
+
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+html, body {
+    /*background-color: #fff;*/
+    /*color: #636b6f;*/
+    height: 100vh;
+    margin: 0;
+}
+
+#extr-page #main {
+    z-index: 555;
+}
+
+#extr-page #header {
+	border-bottom: none !important;
+    background-color: #fbfbfb !important;
+}
+
+#extr-page .hero {
+	background: none;
+}
+
+/* para el boton de google translate*/
+#google_translate_div{
+	padding: 10px 0px;
+    margin: 0px;
+}
+
+@media (max-width: 767px){
+	#google_translate_element a > span.hidden-xs, #google_translate_element a > span {
+	    display: none!important;
+	}
+	
+	/*el encabezado del inicio */
+	#header > .logo_inicio{
+	    width: 190px;
+	}
+}
+
+
+
+/*las secciones de pasos de los formularios*/
+.step-pane .row{
+	margin-left: 0px;
+    margin-right: 0px;
+}
+
+/*el swhitch on/off en los formularios*/
+.onoffswitch{
+	width: 80px;
+}
+
+.onoffswitch .onoffswitch-switch{
+	right: 66px;
+}
+
+/*las opciones del menu principal*/
+nav ul li a {
+    font-size: 15px;
+}
+
+
+/*el segundo nivel de las opciones del menu principal*/
+.smart-style-1 nav ul ul li>a {
+    font-size: 14px;
+}
+
+
+/*la linea de tiempo */
+.bs-wizard {margin-top: 40px;}
+
+/*Form Wizard*/
+.bs-wizard {border-bottom: solid 1px #e0e0e0; padding: 0 0 10px 0;}
+.bs-wizard .bs-wizard-step {padding: 0; position: relative; width: 14%;}
+.bs-wizard .bs-wizard-step + .bs-wizard-step {} 
+.bs-wizard .bs-wizard-step .bs-wizard-stepnum {color: #595959; font-size: 16px; margin-bottom: 5px;}
+.bs-wizard .bs-wizard-step .bs-wizard-info {color: #6b6b6b; font-size: 14px;}
+.bs-wizard .bs-wizard-step > .bs-wizard-dot {position: absolute; width: 30px; height: 30px; display: block; background: #86ABBB; top: 45px; left: 50%; margin-top: -15px; margin-left: -15px; border-radius: 50%;} 
+.bs-wizard .bs-wizard-step > .bs-wizard-dot:after {content: ' '; width: 14px; height: 14px; background: #57889c; border-radius: 50px; position: absolute; top: 8px; left: 8px; } 
+.bs-wizard .bs-wizard-step > .progress {background-color: #E1E1E1; position: relative; border-radius: 0px; height: 8px; box-shadow: none; margin: 20px 0;}
+.bs-wizard .bs-wizard-step > .progress > .progress-bar {width:0px; box-shadow: none; background: #86ABBB;}
+.bs-wizard .bs-wizard-step.complete > .progress > .progress-bar {width:100%;}
+.bs-wizard .bs-wizard-step.active > .progress > .progress-bar {width:50%;}
+.bs-wizard .bs-wizard-step:first-child.active > .progress > .progress-bar {width:0%;}
+.bs-wizard .bs-wizard-step:last-child.active > .progress > .progress-bar {width: 100%;}
+.bs-wizard .bs-wizard-step.disabled > .bs-wizard-dot {background-color: #cacaca;}
+.bs-wizard .bs-wizard-step.disabled > .bs-wizard-dot:after {opacity: 0;}
+.bs-wizard .bs-wizard-step:first-child  > .progress {left: 50%; width: 50%;}
+.bs-wizard .bs-wizard-step:last-child  > .progress {width: 50%;}
+.bs-wizard .bs-wizard-step.disabled a.bs-wizard-dot{ pointer-events: none; }
+/*END Form Wizard*/
+
+/*el carrusel de la pagina home de alumnos*/
+.alumno_items .carousel-inner>.item>a>img, .alumno_items .carousel-inner>.item>img {
+    width: 100%;
+}
+
+.coordinador_items .product-content .product-image img {
+    max-width: inherit;
+    max-height: 100%;
+}
+
+/*las imagenes de la pagina home de coordinador*/
+.coordinador_items .product-content .product-image {
+    display: flex;
+    align-items: center;
+    height: 238px;
+}
+
+

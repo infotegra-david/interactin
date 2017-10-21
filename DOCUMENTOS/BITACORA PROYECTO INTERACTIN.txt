@@ -1,0 +1,891 @@
+extension 240 secretarias de ortopedia 
+septiembre 15 3:20 pm con autorizazion por comopensar
+
+ganzola@lasalle.edu.co
+
+   Ing. Jaime Solórzano
+   Ingeniería Informática Integral S.A.S
+   Of 8051052 ext 4 Cel 300 575 45 85
+
+
+interactin
+
+	Credenciales Nexus 
+
+		Usuarios: 
+
+		FRONTEND
+
+		URL: nexus.lasalle.edu.co
+		GANZOLA
+		03061999
+
+		BACKEND
+		url: nexus.lasalle.edu.co/typo3
+		ganzola
+		1230405gap
+
+		Estudiante
+		Url: nexus.lasalle.edu.co
+		juansarevalo01
+		98022558323
+
+		Coordinador MOVILIDAD ENTRANTE
+		Url: nexus.lasalle.edu.co
+		polimi
+		22deseptiembre
+
+
+credenciales servidor de la aplicacion
+	server: 52.10.3.78 demo
+	server: 52.32.255.71 prueba
+	user: interactin
+	pass: info2017tegra
+
+credenciales mysql de la aplicacion
+	server: 52.10.3.78
+	bd: interactin
+	user: interactin
+	pass: info2017tegra
+
+credenciales usuarios de interactin
+	user: interactin@usta.edu.co pass: inter2017actin
+	user: interactin@ausjal.edu.co pass: inter2017actin
+
+- configurar el servidor para correr la aplicacion
+	- utitizar workbench para administrar la bd
+
+	- formas de configurar la aplicacion:
+		- https://laravel.io/forum/03-06-2015-how-to-setup-laravel-5-in-shared-hosting
+
+
+
+- se desplego la apllicacion en heroku:
+	http://interactin.herokuapp.com
+		https://styde.net/como-hacer-deploy-de-tu-aplicacion-laravel-con-heroku/
+
+- backup de versiones estables
+
+- averiguar como funcionan las aplicaciones multidioma
+- leer el manual de nexus lasalle.ecu.co para los estudiantes
+	https://nexus.lasalle.edu.co/
+	https://nexus.lasalle.edu.co/index.php?id=5
+		http://www.lasalle.edu.co/wps/wcm/connect/75835a22-99d2-4ea7-adfa-7138226f634b/NEXUS+-+MANUAL+ESTUDIANTES++V+001.pdf?MOD=AJPERES
+
+- crear enlace simbolico a dropbox
+	mklink /D C:\Users\leodvid\Dropbox\interactin_5.4 C:\inetpub\paginas\interactin_5.4
+
+- generar todas las migraciones de la base de datos
+	https://github.com/Xethron/migrations-generator
+	
+	php artisan migrate:generate
+
+	ELIMINAR LA MIGRACION PARA LAS TABLAS Y LAS LLAVES FORANEAS PARA: 
+		migrations
+		ModelHasPermissions
+		ModelHasRoles
+		Permissions
+		RoleHasPermissions
+		Roles
+- generar la migracion para las tablas de permisos
+	php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+
+- generar los seeders de la base de datos
+	https://github.com/orangehill/iseed
+		SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='interactin';
+
+	php artisan iseed alianza,alianza_facultad,......
+
+	php artisan iseed alianza,alianza_aplicaciones,alianza_facultad,alianza_institucion,alianza_modalidades,alianza_programa,alianza_user,aplicaciones,archivo,asignatura,calificacion,campus,ciudad,clase_documento,datos_personales,departamento,documentos_alianza,documentos_iniciativa,documentos_inscripcion,documentos_institucion,documentos_oportunidad,equivalente,estado,evaluacion,facultad,financiacion,formato,fuente_financiacion,idiomas,iniciativa,iniciativa_actor,inscripcion,inscripcion_asignatura,institucion,mail,mail_archivo,matricula,migrations,modalidades,model_has_permissions,model_has_roles,multimedia,nivel,oportunidad,oportunidad_actor,oportunidad_modalidades,pagina,pais,pasos_alianza,pasos_alianza_mail,pasos_iniciativa,pasos_iniciativa_mail,pasos_inscripcion,pasos_inscripcion_mail,password_resets,periodo,permissions,persona_contacto,postulacion,programa,rol_iniciativa,role_has_permissions,roles,seccion,tipo_actor,tipo_alianza,tipo_archivo,tipo_documento,tipo_facultad,tipo_idioma,tipo_institucion,tipo_paso,tipo_tramite,user_campus,user_tipo_paso,user_tipo_paso_mail,users
+
+	ELIMINAR EL SEMBRADOR PARA LAS TABLAS 
+		migrations
+		ModelHasPermissions
+		ModelHasRoles
+		Permissions
+		RoleHasPermissions
+		Roles
+
+
+		//query para listar los permisos de cada rol
+			SELECT roles.name, permissions.name FROM role_has_permissions INNER join permissions on (role_has_permissions.permission_id = permissions.id) INNER JOIN roles on (role_has_permissions.role_id=roles.id) ORDER BY `roles`.`name` ASC, permissions.name Asc
+
+- pasos para cargar la base de datos:
+	- ejecutar las migraciones y seeders
+		php artisan migrate --seed
+	- ejecutar las migraciones de las llaves foraneas
+		php artisan migrate --path="database/migrations/foreign_keys"
+
+	- determinar el id de la institucion principal en el archivo config/options.php
+		'institucion_id' => 1,
+		'campus_id' => 1,
+
+	- borrar los datos temporales
+		sudo composer dump-autoload
+		sudo php artisan config:clear
+		sudo php artisan cache:clear
+		sudo php artisan view:clear
+
+		- si hay problemas con los roles y permisos
+			php artisan cache:forget spatie.permission.cache
+
+			- si continuan los problemas con los permisos 
+				- en el archivo 'config -> permission.php' se puede cambiar el valor de:
+					'cache_expiration_time' => 60 * 1,
+
+				- o en el archivo 'vendor -> spatie -> laravel-permission -> src -> PermissionRegistrar.php' se puede quitar el uso del cache en el metodo getPermissions:
+					public function getPermissions(): Collection
+				    {
+				        //return $this->cache->remember($this->cacheKey, config('permission.cache_expiration_time'), function () {
+				            return app(Permission::class)->with('roles')->get();
+				        //});
+				    }
+
+- cambiar los permisos y propietrios de los archivos
+
+	http://flexiblewebs.net/es/como-configurar-los-permisos-para-el-directorio-raiz-de-un-sitio-web/
+
+		sudo chown www-data public_html/ -R
+		sudo chgrp www-data public_html/ -R
+
+	- configurar los permisos para los directorios de storage y bootstrap/cache
+		sudo chgrp -R www-data storage bootstrap/cache
+		sudo chmod -R ug+rwx storage bootstrap/cache
+
+	- Asigna los permisos adecuados (lectura, escritura y ejecución para usuario y grupo y sólo lectura y ejecución para el resto)
+		
+		sudo chmod ug+w public_html/
+
+	- Asigna el “sticky bit” para el grupo (para que los archivos y directorios que se creen arrastren la propiedad del grupo www-data)
+
+ 		sudo chmod g+s public_html/
+
+ 	- Asigna los permisos por defecto (para que los directorios que se creen arrastren los mismos permisos)
+
+		sudo setfacl -d -m g::rwx public_html/
+
+	
+
+	- ATENCIÓN-WARNING-PELIGRO: esto no es lo más adecuado en entorno de producción. El usuario web sólo debería tener permisos para escribir en aquellos sitios que lo requieran (carpeta de logs, uploads, etc).
+
+	- opcion general para los permisos de la aplicacion (se aplican a /var/www/html/interactin_laravel y (opcional) /home/interactin/public_html)
+
+		find {laravel-folder}/ -type d -exec chmod 755 {} ;
+
+		find {laravel-folder}/ -type d -exec chmod ug+s {} ;
+
+		find {laravel-folder}/ -type f -exec chmod 644 {} ;
+
+		chown -R {username}:www-data {laravel-folder}
+
+		chmod -R 777 {laravel-folder}/storage
+
+		chmod -R 777 {laravel-folder}/bootstrap/cache/
+
+- instalar el resto de la apicacion
+	
+	sudo composer install
+
+- limpiar los archivos temporales
+	
+	sudo php artisan cache:clear
+	sudo php artisan config:clear
+	sudo php artisan view:clear
+
+- en caso de que el usuario ftp (nombre:interactin) no tenga permisos para subir archivos
+
+	usermod -a -G www-data interactin
+
+- configurar el archivo /etc/apache2/sites-available/interactin.com.conf (copia de 000-default.conf)
+
+	<VirtualHost *:80>
+	    ServerAdmin admin@interactin.com
+	    ServerName interactin.com
+	    ServerAlias www.interactin.com
+	    DocumentRoot /var/www/interactin.com/public
+	    ErrorLog ${APACHE_LOG_DIR}/error.log
+	    CustomLog ${APACHE_LOG_DIR}/access.log combined
+	</VirtualHost>
+
+- habiitar la configuraciom del servidor
+
+	sudo a2ensite interactin.com.conf
+
+- reiniciar el servidor
+
+	sudo systemctl restart apache2
+
+- generar pdf
+
+	https://github.com/barryvdh/laravel-dompdf
+
+- generar / remover permisos
+	## add permission
+	
+	php artisan auth:permission Comment
+
+	## remove permissions
+	
+	php artisan auth:permission Comment --remove
+
+- restablecer el auto_increment de las tablas
+	- toca crear un procedimiento almacenado
+
+		SELECT concat('alter table interactin.', TABLE_NAME, ' AUTO_INCREMENT = (select max(id)+1 from interactin.', TABLE_NAME,');')
+	     FROM INFORMATION_SCHEMA.TABLES 
+	     WHERE TABLE_SCHEMA = 'interactin' AND TABLE_ROWS > 0
+
+
+	    alter table interactin.user_campus AUTO_INCREMENT = (select max(id)+1 from interactin.user_campus);
+		
+		CREATE PROCEDURE reset_xyz_autoincrement
+		BEGIN
+		      SELECT @max := MAX(ID)+ 1 FROM ABC; 
+		      set @alter_statement = concat('ALTER TABLE temp_job_version AUTO_INCREMENT = ', @max);
+		      PREPARE stmt FROM @alter_statement;
+		      EXECUTE stmt;
+		      DEALLOCATE PREPARE stmt;
+		END
+
+
+
+
+
+		DELIMITER $$
+
+		DROP PROCEDURE IF EXISTS `restore_auto_increment` $$
+		CREATE PROCEDURE `restore_auto_increment`() -- 1 input argument; you might need more or fewer
+		BEGIN
+
+		-- declare the program variables where we'll hold the values we're sending into the procedure;
+		-- declare as many of them as there are input arguments to the second procedure,
+		-- with appropriate data types.
+
+		DECLARE valCount INT DEFAULT NULL;
+		DECLARE valNombre INT DEFAULT NULL;
+
+		-- we need a boolean variable to tell us when the cursor is out of data
+
+		DECLARE done TINYINT DEFAULT FALSE;
+
+		-- declare a cursor to select the desired columns from the desired source table1
+		-- the input argument (which you might or might not need) is used in this example for row selection
+
+		DECLARE cursor1 -- cursor1 is an arbitrary label, an identifier for the cursor
+		 CURSOR FOR
+		 SELECT t1.c1, 
+		        t1.c2
+		   FROM table1 t1
+		  WHERE c3 = arg1; 
+
+		-- this fancy spacing is of course not required; all of this could go on the same line.
+
+		-- a cursor that runs out of data throws an exception; we need to catch this.
+		-- when the NOT FOUND condition fires, "done" -- which defaults to FALSE -- will be set to true,
+		-- and since this is a CONTINUE handler, execution continues with the next statement.   
+
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+		-- open the cursor
+
+		OPEN cursor1;
+
+		my_loop: -- loops have to have an arbitrary label; it's used to leave the loop
+		LOOP
+
+		  -- read the values from the next row that is available in the cursor
+
+		  FETCH NEXT FROM cursor1 INTO val1, val2;
+
+		  IF done THEN -- this will be true when we are out of rows to read, so we go to the statement after END LOOP.
+		    LEAVE my_loop; 
+		  ELSE -- val1 and val2 will be the next values from c1 and c2 in table t1, 
+		       -- so now we call the procedure with them for this "row"
+		    CALL the_other_procedure(val1,val2);
+		    -- maybe do more stuff here
+		  END IF;
+		END LOOP;
+
+		-- execution continues here when LEAVE my_loop is encountered;
+		-- you might have more things you want to do here
+
+		END $$
+
+		DELIMITER ;
+
+
+
+
+
+- tablas de la aplicacion
+
+tablas
+
+	alianza
+	alianza_aplicaciones
+	alianza_facultad
+	alianza_institucion
+	alianza_modalidades
+	alianza_programa
+	alianza_user
+	aplicaciones
+	archivo
+	asignatura
+	calificacion
+	campus
+	ciudad
+	clase_documento
+	datos_personales
+	departamento
+	documentos_alianza
+	documentos_iniciativa
+	documentos_inscripcion
+	documentos_institucion
+	documentos_oportunidad
+	equivalente
+	estado
+	evaluacion
+	facultad
+	financiacion
+	formato
+	fuente_financiacion
+	idiomas
+	iniciativa
+	iniciativa_actor
+	inscripcion
+	inscripcion_asignatura
+	institucion
+	mail
+	mail_archivo
+	matricula
+	migrations
+	modalidades
+	model_has_permissions
+	model_has_roles
+	multimedia
+	nivel
+	oportunidad
+	oportunidad_actor
+	oportunidad_modalidades
+	pagina
+	pais
+	pasos_alianza
+	pasos_alianza_mail
+	pasos_iniciativa
+	pasos_iniciativa_mail
+	pasos_inscripcion
+	pasos_inscripcion_mail
+	password_resets
+	periodo
+	permissions
+	persona_contacto
+	postulacion
+	programa
+	rol_iniciativa
+	role_has_permissions
+	roles
+	seccion
+	tipo_actor
+	tipo_alianza
+	tipo_archivo
+	tipo_documento
+	tipo_facultad
+	tipo_idioma
+	tipo_institucion
+	tipo_paso
+	tipo_tramite
+	user_campus
+	user_tipo_paso
+	user_tipo_paso_mail
+	users
+
+
+PRIMERA PARTE
+	SETEAR LOS DATOS PARA MOSTRAR UN DEMO:
+
+	interchange -> interout
+		ajustar para llenar los mismos datos:
+			https://nexus.lasalle.edu.co/index.php?id=25&no_cache=1&mob=outgoing&profile=student
+
+		funcionamiento general y requerimientos:
+			- Los indicadores de la parte superior derecha de la aplicacion deben ser 		referentes a cada tipo de usuario o de lo contrario quitarlos
+			- Ultimo boton: Guardar y Enviar (decidir si uno o dos botones)
+			- dos formularios
+				- pre registro =  datos basicos
+				- se envia el pre registro al validador 1 que es el Director de Programa
+				- si el validador da el aval se habilita el segundo formulario =  registro y se notifica al estudiante
+				- registro = datos mas detallados o especificos
+				- se envia el registro al validador 2 que es la ORII (Oficina de 			Relaciones Internacionales)
+				- si el validador 2 da el aval se genera un pdf con todos los datos, el validador puede especificar (o ya estar en el sistema) un email para enviar el pdf a la universidad de destino 
+				- notificar al estudiante y a los validadores el estado del tramite
+			- colocar ayudas en los campos necesarios
+				http://localhost/PLANTILLA_FULL/DEVELOPER/PHP_HTML_Version/general-elements.php
+
+	interchange -> interin
+
+		ajustar para llenar los mismos datos:
+			https://nexus.lasalle.edu.co/index.php?id=25&no_cache=1&mob=incoming&profile=external
+
+	interalliance -> suscribir convenio
+		-imitar funcionalidad de interout
+		- con opcion de ayuda
+			https://nexus.lasalle.edu.co/index.php?id=31&no_cache=1&action=new
+
+			- aceptar o rechazar
+
+			- el validador 1 ve un resumen 
+				- acepta/rechaza y observacion
+
+			- mostrarle a ginavvi el avance
+				- en que punto se genera el documento
+				- que pasa cuando rechazan:  a donde va?
+
+	interalliance -> mis convenios
+		tabla:
+			projects -> convenios - institucion
+
+			est -> progreso
+			contacts -> revision
+			startus -> archivo (pdf)
+			Target -> movilidad
+			starts -> inicio
+			ends -> final
+			tracker -> estado
+
+	interActions -> oportunidades
+		(usar plantilla con filas que tengan fotos)
+		similar a:
+			https://nexus.lasalle.edu.co/index.php?id=33&no_cache=1
+
+
+	interActions -> enviar iniciativa
+		(ajustar funcionalidad asemejandose a:)
+			https://nexus.lasalle.edu.co/index.php?id=34&action=requestform
+
+	mapas
+		- en el encabezado colocar un select con los periodos 	
+		- en el campo de 'user actitity' que solo sean 6 lineas, una por mes
+
+	Graficos superior derecha
+		cambiar titulos e iconos para ajustarse a lo referente a cada formulario
+
+
+
+
+	Crear LandPages para la pagina de inicio
+	  colocar iconos a las opciones
+		- estudiante
+			- bienvenido {nombre}
+			- foto de entrada (estudiantes o algo)
+			- opciones: pre-registro, registro, contacto, evalue su experiencia
+				- con iconos y simbolizando un camino o una secuencia (camino, aviones, carros, etc)
+
+		- evaluador
+			- bienvenido {nombre}
+			- tareas pendientes
+				tabla para ingresar a cada tarea
+			- notificaciones
+		- coordinador externo
+			- bienvenido {nombre}
+			- opciones recuadros:  
+				- para postular estudiantes
+				- evaluar postulantes
+				- actualizar info institucional
+
+en la pagina de inicio colocal 3 opciones depleglables con explicacion para los modulos de interchange, interaliance e interactions
+
+
+
+- Buscar reporteadores para php (con la posibilidad de drag & drop) 
+
+
+- interalliance -> subscribir alianza
+
+	- el email del pre-registro que lleve un link e ingrese con la sesion iniciada
+		
+		- revision de informacion, esta de acuerdo o no, opcion [guardar y aprobar] o [rechazo y motivo de rechazo]
+		- llegar notificacion al coordinador interno
+			mencionar que entrara al proceso de validacion y cuando ese completo sera notificado
+
+	- quitar la tabla de unidad, pasar los datos a la tabla de facultad
+
+	- agregar una lista de las instituciones destino existentes y si no permitirle crear una nueva
+	- agregar una lista de los coordinadores existentes y si no permitirle crear uno nuevo
+	- quitar la asociacion de los datos personales a la facultad
+	- asociar el usuario a uno o varios campus de la institucion
+	- cuando se seleccione otro en facultad ocultar los programas
+	- mostrar en el inicio del sistema los campus que esta activo y en el que va a trabajar
+	- mostrar en el header el campus que esta activo y en el que esta trabajando, para permitir cambiarlo
+	- no crear facultad en el registro de la alianza
+	- lista tipo de tramite primero
+	- lista tipo de institucion primero
+	- guardar la informacion en cada paso, y guardar el paso en el que esta
+	- al iniciar en el sistema con el email destino, abrir un pseudo modulo solo con el permiso de modificar los datos
+		- aceptar o rechazar (porque lo rechaza)
+		- agregar la opcion de observacion con respecto a los datos que ya estan
+
+		- permitir modificar los datos del destino en el formulario que él abrirá
+			- al elegir la opcion 'enviar' se envia un correo al solicitante y se envia al validador1
+
+	- arreglar la accion de la lista de instituciones de destino con la lista de coordinadores 
+
+	- s3 amazon con laravel para almacenar archivos
+
+
+
+
+	- en el caso de errores con el modulo de roles y permisos
+		
+		php artisan cache:forget spatie.permission.cache
+
+	- ajustar la aplicacion para trabajar a partir de los roles 
+
+	- crear plan de trabajo (tiempo) para el LUNES
+
+	- enviar email con credenciales para ingresar a los usuarios nuevos (coordinadores)
+
+	- crear una bitacora con las solicitudes o requerimientos que se van pidiendo
+
+	- crear/buscar una plantilla para la pagina de publicidad de interactin
+
+
+- validacion
+	sr [] por favor verifique los datos de la aliaza []en curso, por valide y haga sus observaciones respectivas
+
+	- mostrar resumen de datos de origen
+	- campos editables
+	- aceptar o rechazar
+
+	cordinador interno, externo, validador
+	generar documento pdf con variables
+
+		-  se usara CKEditor
+			https://docs.ckeditor.com/#!/guide/dev_installation
+
+			- lista de plugins 
+				https://ckeditor.com/presets-all
+				https://ckeditor.com/addons/plugins/all
+			- ejemplos 
+				https://docs.ckeditor.com/#!/guide/dev_example_setups
+
+				http://mjcarrascosa.com/probando-ckeditor/
+
+- asociar formatos segun los tipos de alianzas
+- hacer documento power point con diagrama de flujo y mockups sobre interalliance e interout
+
+- interchangue -> interout
+
+	
+	'Especifique las asignaturas a cursar en su universidad y en la universidad de destino.'
+
+	comparacion en dos columnas
+	mi universidad | uni destino
+
+	check list interactivo de la lista de documentos a cargar ()
+
+	documento de hoja de vida estudiante
+
+
+
+- arreglar lo de las movilidades para la alianza y para la inscripcion
+    - por ahora se separo en aplicaciones (antigua modalidad) y modalidades
+
+- hacer que el contenido de los emails sea modificable 
+
+practica interalliance
+	- coordinador interno puede actualizar los datos de la institucion destino
+
+TAREAS PENDIENTES
+	- ralizar manual de usuario especificando la configuracion inicial del sistema
+	- ralizar manual tecnico especificando como funciona el sistema y como realizarle mantenimiento
+		- que datos, formularios y acciones hay que efectuar para que comience a funcionar el sistema
+	- realizar documento (posiblemente de analisis y diseño) describiendo el funcionamiento de los modulos principales y de como se administran
+		- interalliance
+		- interchange
+		- interaction
+	- Realizar documento describiendo cada tipo de rol que habra en el sistema y que acciones puede efectuar
+	- consultar con Andres sobre LDAP y/o las interfaces con los estudiantes
+	- definir como, que y de donde se crearan las estadisticas, reportes, indicadores y graficas
+	- configurar el test de la aplicacion (composer test) separandolo de los parametros iniciales y obligatorios de la aplicacion
+
+CORRECCIONES 
+	- (solucionado) verificar el codigo del email al coordinador externo
+	- (solucionado) quitar la validacion para la alianza activa del registro
+	- (solucionado) agregar las recomendaciones del coordinador externo a la vista de la alianza
+	- (solucionado) el numerito en el enlace de 'mis alianzas' para el caso del perfil de un validador sera las que el deje en estado de revision o nuevas
+	- el formulario de mis alianzas servira para coordinadores y validadores, se debe agregar o quitar opciones y columnas en cada caso
+		- (solucionado) el enlace del index de validacion -> interaliances lo debe dirigir a mis alianzas
+		- (solucionado) colocar en un colapse los datos de la alianza al verla en invervalidation
+		- (solucionado) en la vista de la alianza validar las diferentes alternativas para mostrar/habilitar la opcion y el funcionamiento de editar la alianza
+		- (solucionado) en en index de las alianzas 
+			- (solucionado) texto del boton 'ver validacion' por 'realizar validacion' 
+			- (solucionado) ocultar el boton de ver alianza para el validador
+		- (solucionado) al realizar la validacion enviar a la lista de las alianzas
+		- (solucionado) en la impresion del documento, guardar una copia de la plantilla en html y permitir guardar cambios sobre esa copia
+			- (solucionado) luego abrir la copia guardada al elegir la misma pre-forma y tener la opcion para cargar la pre-forma original
+		- (solucionado) quitar la columna de estado
+		- agregar filtros para: ver las mias, todas, segun el estado, 
+		- estado de las alianzas (vencidas, activas, en proceso)
+		- (solucionado) la columna de pdf permitira ver o cargar el documento final por parte del ultimo validador (sin redirigir, simplemente lo carga y por debajo se registra/actualiza la validacion)
+			- (solucionado) habra un boton con la misma funcion en la vista de impresion de las pre-formas
+				- tambien la opcion de ir a mis alianzas
+		- (solucionado) el formulario de show de las validaciones de cada alianza se debe integrar con el create y edit
+		- (solucionado) el boton de imprimir genera automaticamente el registro de validacion de documento impreso
+		- el ultimo validador puede entrar en 
+	- 
+
+	- (solucionado) con el rol de coordinadro interno que no aparezca la opcion de administrador en el menu
+	- (solucionado) en la tabla de modalidades, diferenciar si es para interout o interin
+	- mostrar el nombre de los campos en los formularios (sobre todo en los select multiples)
+	- en la base de datos cambiar todos los campos usuario_id como user_id
+	- asignar un campus a los usuarios que se crean ya sea desde el registro o desde el modulo de usuarios
+	- definir lo que va a ver el usuario para llamarlo como los modulos, ejemplo: _interalliance, _interchange, $interalliance, $interchange y por dentro del codigo llamar a lo demas como las tablas, ejemplo: $alianza, $inscripcion
+	- definir bien los tipos de archivo y de documento, y ajustar el back-end para trabajar con ellos
+
+	- interalliance -> subscribir alianza
+		
+		- preguntar acerca de las restricciones de la seleccion de las modalidades (por ejemplo de docencia-servicio comparando con nexus)
+		- preguntar: segun las modalidades que se seleccionen a que tipo de documento apuntan, ejemplo: si se selecciona mas de una cuál será el documento que se generaría?
+		
+		- (solucionado) al elegir/crear otro coordinador, no se puede actualizar de inmediato, falta el id del usuario
+		- (solucionado) crear el administrador de los archivos de la institucion local
+
+		- (solucionado) indicar en el paso 3 Guardar/Enviar Pre-registro que se tiene que oprimir el boton para ver los datos registrados y luego enviarlos
+
+		- crear el administrador del contenido de los emails
+		- (solucionado) quitar el boton de ir a interactin en la previsualizacion de email
+
+		- (solucionado) colocar un titulo de indicacion que es la previsualizacion
+		- (solucionado) en la previsualizacion que se vea el contenido como un solo conjunto, sin divisiones
+		- (solucionado) modificar el texto del boton Guardar/Enviar a Enviar solicitud
+
+		- (solucionado) en el paso 1, los campos para un nuevo coordinador no se ocultan
+
+		- arreglar el envio de emails desde interactin.com 
+
+		- (solucionado) colocar un texto descriptivo en el paso 4 para indicar al usuario que debe hacer
+			ejemplo: por favor verificar o corregir los siguientes datos de su institucion para subscribir la presente alianza
+
+
+		- (solucionado) colocar un texto descriptivo en el paso 5 para indicar al usuario que debe hacer
+
+		- (solucionado) colocar la aceptacion de la alianza en el paso 6
+
+		- (solucionado) en los campos de los formularios colocar la accion a ejecutar (Ingrese el.., Seleccione el ...)
+
+		- (solucionado) al dar click en el tipo de campo date que se abra el calendario
+
+		- buscar que tipo de documento se exige para soportar el representante legal
+
+		- (solucionado) el coordinador externo al acceder que vea un resumen de la alianza y en cada grupo esta la opcion de editar que lo lleve al formulario de destination
+
+		- (solucionado) coordinador interno puede actualizar los datos de la institucion destino
+
+		- (solucionado) modalidades: no es multiple para marco o especifico
+
+		- (solucionado) el validador (generar_documento) al imprimir el formato escoge cual formato usara para imprimir los datos
+
+		- (solucionado) objetivo: 255 caracteres
+
+		- campos definir la longitud admitida en las reglas y el los campos del formulario
+
+		- (solucionado) agregar el estado de validacion de 'generar documento' y activa (cuando carguen el documento)
+
+		- (solucionado) agregar la opcion de cargar el documento por el ultimo validador (ORII) y habilitar la opcion 'activa' 
+
+		- (solucionado) limitar la lista de pasos que se puedan escoger para validar a los que tienen validadores asignados
+
+	- roles
+		- super administrador
+		- administrador senior
+		- administrador junior
+			- crear los portafolios de los tres modulos
+		- validador (administrador junior)
+			- crear las ofertas de movilidad 
+
+	- interactin -> interout
+		- prorroga (check button): se usa por los estudiantes que estan actualmente en movilidad y quieren seguir, entonces piden una prorroga
+		- promedio academico: deberia haber una regla parametrizable par definir el minimo para admitir a los estudiantes y permitirles continuar con el proceso
+		- selects de financiacion son multiples
+		- lista de documentos a cargar son parametrizados para cada universidad
+
+	- general
+		- textos muy claros para que los usuarios no tengan que preguntar
+		- al finalizar los formularios enviar al home para cada perfil
+		- cambiar el significado de los campos de la base de datos tinyint, que 0 sea falso, negativo y 1 sea verdadero, positivo
+
+	- interactions -> enviar iniciativa
+		- sirve para crear las modalidades para interout/interin ( validador (administrador junior) ) 
+		- ver nexus -> tablas comunes
+		- referencia editor html
+			http://localhost/PLANTILLA_FULL/DEVELOPER/PHP_HTML_Version/other-editors.php
+				bootstrap editors
+				Summernote Example
+
+	- pagina principal /
+		- (solucionado) crear un enlace para ir al Home
+		- (solucionado) quitar el segundo interactin
+		- actualizar logo
+		- cambiar el menu de los tres modulos, hacerlo mas informativo y quitar el boton de ingreso de ellos
+		- registro -> solicitud de acceso, pedir campos necesarios (asignarlo al campus principal o que el que aprueba el acceso lo asigne)
+
+	- home
+
+		- administrador
+			- calendario del home -> planificador que estara vinculado a la lista de tareas
+			- chat entre los usuarios
+		- validador
+			- lista de solicitudes en lugar de tareas
+
+	- colocar ayudas en los campos necesarios
+		http://localhost/PLANTILLA_FULL/DEVELOPER/PHP_HTML_Version/general-elements.php
+
+
+	- arreglar el menu para los html para que muestre las opciones correspondientes al rol del usuario
+	- (solucionado) los popup de ayudas asignarlo a un boton de ayuda al lado del campo y no en todo el campo
+	- (solucionado) en interalliance quitar la confirmacion de si sera el coordinador de la alianza 
+		dejar seleccionado por defecto el que esta logueado
+	- deshabilitar el boton modificar al inisio del formulaario
+	- colocar un color al placeholder para que se pueda diferenciar si esta lleno o vacio, cursiva, mas pequeña, mas clara
+	- en interalliance llenar los datos o no seleccionar automaticamente al coordinador
+	- crear modulo para administrar documentos de la institucion
+	- en interalliance paso 1 colocar la lista de documentos a enviar
+	- la previsualizacion (del email y de la alianza) y el email que quede amplio y dos columnas para los datos de origen y destino 
+		- en el encabezado de cada columna colocar el enlace (boton) a la pestaña de edicion de origen o destino
+	- en el email colocar el boton arriba y abajo
+	- al terminar el pre-registro enviar al 'mis alianzas' ordenadas de forma descendente
+		- quitar la lista de 'que hacer' de 'mis alianzas'
+		- el progreso se calcula segun el numero total de validadores
+	- el formulario de destination mostrarlo en una pantalla normal 
+	- permitir modificar la informacion de la institucion para cada coordinador, habilitar el enlace a 'parametros -> isntitucion'
+	- implementar la ayuda que tiene el modulo de cities ((i))
+	- dejar mas pequeño la seleccion de la ciudad
+	- validar texto de los mensajes con giovanni: señor (validador), la universidad (ogigen) esta tramitando una alianza con (destino), por lo tanto estamos interresados en conocer su concepto a travez de este sistema
+		haga click en el boton 'Realice su validación'
+	- al registrar la aceptacion de la alianza al coordinador externo se debe redireccionar a la lista de las alianzas que hay con su institucion
+	- en la vista de la alianza el titulo sea 'Datos de la alianza - (nombre inst destino)'
+		- cambiar titulo 'datos de repre legal - (nombre inst destino)'
+	- los validadores pueden ver toda la lista de alianzas 
+	- filtrar la lista de registros de los pasos de la alianza por parte de los coordinadores (validacion)
+	- modificar el estilo de los select multiples para ajustar al tamaño de -md
+	- mostrar la observacion del coordinador externo al aceptar/rechazar la alianza
+	- ocultar la lista de validadores y pasos de validacion para las alianzas
+		- el select del estado de validacion cambiarlo por unos radio buton (aceptar/rechazar)
+		- quitar datos erroneos
+		- mostrar una alerta de confirmacion al dar click en Enviar
+		- quitar el campo de datos erroroneos
+		- en el titulo 'Datos de la alianza #id con (int destino)'
+		- (solucionado) cambiar 'Alianza 13, registro de validación' por Desición:
+	- revizar los procesos para ajusatarlos a los cambios realizados, ejemplo: ciclos en datos que ahora son unico registro
+
+OTROS APUNTES:
+		#1, http://www.codebeautifier.com te valdrá para el css, o también puedes usar esta maravilla, que tiene una configuración algo más personalizada. Para el js prueba http://jsbeautifier.org/
+
+		#2, Si quieres simplemente ofuscar, http://javascriptobfuscator.com/ te lo deja horripilante. Si también quieres minimizar el .js, prueba http://dean.edwards.name/packer/ . 
+
+	- generar los crud a partir de las tablas en la BD
+		php artisan infyom:scaffold $MODEL_NAME --fromTable --tableName=$TABLE_NAME
+
+	- eliminar los crud creados
+		php artisan infyom:rollback $MODEL_NAME --prefix=Admin $COMMAND_TYPE ( $COMMAND_TYPE = [api, scaffold, api_scaffold] )
+
+
+Crear la funcionalidad de los permisos usando los gates de laravel
+	http://www.qcode.in/easy-roles-and-permissions-in-laravel-5-4/
+
+	Roles Permissions Laravel (RPL)
+
+	ver opciones para los procesos de los controladores
+		"C:\xampp\htdocs\interactin_5.4\vendor\spatie\laravel-permission\README.md"
+
+		A stater kit with Roles and Permissions implementation on Laravel 5.4
+
+		Install
+
+		To use it just clone the repo and composer install.
+		Set the database connection
+		To test the app run php artisan db:seed, our interactive seeder will take care of everything.
+		Add a new Resource
+
+		1 Create desired resource by running
+
+			## Create Comment model with migration and resource controller
+			
+			php artisan make:model Comment -m -c --resource
+		
+		2 Register route for it.
+
+			Route::group( ['middleware' => ['auth']], function() {
+			    ...
+			    Route::resource('comments', 'CommentController');
+			});
+
+		3 Now implement your controllers methods and use the Authorizable trait
+		
+			use App\Authorizable;
+
+			class CommentController extends Controller
+			{
+			    use Authorizable;
+			    ...
+
+		4 Now add the permissions for this new Comment model.
+
+			php artisan auth:permission Comment
+
+			That's it, you have added new resource controller which have full access control by laravel permissions.
+
+		auth:permission command
+
+			This command can be user to add or remove permission for a given model
+
+			## add permission
+			
+			php artisan auth:permission Comment
+
+			## remove permissions
+			
+			php artisan auth:permission Comment --remove
+
+
+
+	- 
+
+	configurar el generador de migraciones: 
+
+		https://github.com/Xethron/migrations-generator
+	
+	configurar el generador de sembradores:
+
+		https://github.com/orangehill/iseed
+
+
+	- 
+
+
+datos credito facil codensa
+	
+	
+	fotocopia 150
+	recibo de la luz
+	2 referencias personales, nombre direccion telefono
+		- Gladys Calderón Cristancho
+			Direccion: Calle 54 f sur #94-21 bloque 6 apto 104
+			Tel: 7384501 - 3165861382
+		- Ernesto Calderon
+			Direccion: Carrera 85 # 52-05 sur Casa 89
+			Tel: 3123514438 - 7849984
+	2 referencias familiares, nombre direccion telefono
+		- Nombre: Libia Forero
+			Ocupación: Ingeniera Industrial
+			Direccion: Carrera 39A #29b-09 Sur
+			Tel: 320 2848081‬ - 2033988
+		- Nombre: Flor Amanda Ospina Callejas
+			Ocupación: Independiente
+			Direccion: Transversal 18 Bis #(Diagonal) 45F - 04 Sur 
+			Tel: 3165861380
+	
+erica valencia
+
+contraseña excel profesor: AABBBAABBABZ
+
