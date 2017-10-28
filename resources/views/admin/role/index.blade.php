@@ -14,20 +14,19 @@
 
     //include header
     //you can add your custom css in $page_css array.
+    //$your_style = 'bootstrap-select.min.css,your_style.css';
     $your_style = 'your_style.css';
-    //$your_style = 'bootstrap-select.min.css';
-    
 
     //include left panel (navigation)
     //follow the tree in inc/config.ui.php
 
     $page_nav = 1;
-    $menu="InterAdmin";
-    $submenu1="Roles";
-    //$submenu2='Crear';
+    $page_nav_route[ "InterAdmin" ]["sub"][ "Roles" ]["active"] = true;
+    //$submenu2='';
     ?>
 
 @endsection
+
 
 @section('content')
     
@@ -74,28 +73,36 @@
         </div>
     </div>
 
-
+    @php $role_id = 0; @endphp
     @forelse ($roles as $role)
-        {!! Form::model($role, ['method' => 'PUT', 'route' => ['admin.roles.update',  $role->id ], 'class' => 'm-b']) !!}
+        @if($role['id'] != $role_id)
+            {!! Form::model($role, ['method' => 'PUT', 'route' => ['admin.roles.update',  $role['id'] ], 'class' => 'm-b']) !!}
+            
+            @php 
+                $role_id_user = $role['id'];
+                $rolesUsuario = array_filter($roles, function($var) use ($role_id_user){
+                    return ($var['id'] == $role_id_user);
+                });
+            @endphp
 
-        @if($role->name === 'administrador')
-            @include('shared._permissions', [
-                          'title' => 'Permisos para el rol '. $role->name,
-                          'options' => ['disabled'] ])
-        @else
-                <?php $submit = false; ?>
-            @can('edit_roles')
-                <?php $submit = true; ?>
-            @endcan
-            @include('shared._permissions', [
-                          'title' => 'Permisos para el rol '. $role->name,
-                          'model' => $role,
-                          'submit' => $submit ])
+            @if($role['name'] === 'administrador')
+                @include('shared._permissions', [
+                              'title' => 'Permisos para el rol '. $role['name'],
+                              'options' => ['disabled'] ])
+            @else
+                    <?php $submit = false; ?>
+                @can('edit_roles')
+                    <?php $submit = true; ?>
+                @endcan
+                @include('shared._permissions', [
+                              'title' => 'Permisos para el rol '. $role['name'],
+                              'submit' => $submit ])
+            @endif
+            <br>
+            <br>
+            {!! Form::close() !!}
+            @php $role_id = $role['id']; @endphp
         @endif
-        <br>
-        <br>
-        {!! Form::close() !!}
-
     @empty
         <p>No Roles defined, please run <code>php artisan db:seed</code> to seed some dummy data.</p>
     @endforelse

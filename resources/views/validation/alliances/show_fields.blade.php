@@ -1,7 +1,7 @@
 <div class="{{ ( $peticion == 'normal' ? 'hide' : '') }}" id="datos_validacion_alianza">
     @include('InterAlliance.show_fields')
 </div>
-@if(isset($GenerarDocumento) && $GenerarDocumento == true )
+@if(isset($GenerarDocumento) && $GenerarDocumento == true && $editar == true)
 <hr>
 <div class="row col-sm-12">
     <h4>Es necesario que primero imprima alguna pre-forma para ser firmada por las personas correspondientes.</h4>
@@ -22,11 +22,13 @@
 @endif
 
 <div class="row col-sm-12">
-   {!! Form::open(['route' => ['intervalidation.interalliances.validations.store',$alianzaId], 'files' => true]) !!}
+    @if ( $editar == true )
+        {!! Form::open(['route' => ['intervalidation.interalliances.validations.store',$alianzaId], 'files' => true]) !!}
 
-        @include('validation.alliances.pasos_alianzas.fields')
+            @include('validation.alliances.pasos_alianzas.fields')
 
-   {!! Form::close() !!}
+        {!! Form::close() !!}
+    @endIF
 </div>
 <hr>
 
@@ -38,7 +40,7 @@
         <table class="table table-hover">
             <thead>
               <tr>
-                <th class="">Paso</th>
+                <!-- <th class="">Paso</th> -->
                 <th class="">Estado</th>
                 <th class="">Usuario</th>
                 <th class="">Observación</th>
@@ -50,7 +52,7 @@
             <tbody>
         @foreach($pasosAlianza as $key => $pasoAlianza)
               <tr>
-                <td class="">{!! $pasoAlianza->tipo_paso_titulo !!}</td>
+                <!-- <td class="">{ !! $pasoAlianza->tipo_paso_titulo !!}</td> -->
                 <td class="">{!! $pasoAlianza->estado_nombre !!}</td>
                 <td class="">{!! $pasoAlianza->user_email !!} - {!! str_replace("_", " ", $pasoAlianza->role_name) !!} {{ ($pasoAlianza->titulo != '' ? '('.$pasoAlianza->titulo.')' : '') }}</td>
                 <td class="">{!! $pasoAlianza->observacion !!}</td>
@@ -58,7 +60,9 @@
                 <td class="">{!! $pasoAlianza->updated_at !!}</td>
                 <td class="">
                     <a href="{!! route('intervalidation.interalliances.validations.show', [$pasoAlianza->alianza_id, $pasoAlianza->id]) !!}" title="Ver" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
+                    @if($user_actual == $pasoAlianza->user_id && $editar == true)
                     <a href="{!! route('intervalidation.interalliances.validations.edit', [$pasoAlianza->alianza_id, $pasoAlianza->id]) !!}" title="Editar" class='btn btn-success btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
+                    @endif
                 </td>
               </tr>
         @endforeach

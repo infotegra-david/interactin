@@ -21,7 +21,7 @@ include ("inc/header.php");
 
 //include left panel (navigation)
 //follow the tree in inc/config.ui.php
-$page_nav["InterChange"]["sub"]["InterIN"]["active"] = true;
+$page_nav["InterChange"]["sub"]["InterIn"]["active"] = true;
 include ("inc/nav.php");
 ?>
 <!-- ==========================CONTENT STARTS HERE ========================== -->

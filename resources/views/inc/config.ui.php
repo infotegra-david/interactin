@@ -5,7 +5,7 @@
 //ribbon breadcrumbs config
 //array("Display Name" => "URL");
 $breadcrumbs = array(
-	"Home" => url('/')
+	"Home" => url('/home')
 );
 
 /*navigation array config
@@ -30,11 +30,13 @@ $page_nav = array(
 	
 );
 
-$runTodoMisAlianzas = auth()->user()->todo('mis_alianzas');
+$runPendingMisAlianzas = auth()->user()->pending('mis_alianzas');
 
 //lista de roles del usuario actual
 $roles = auth()->user()->getRoleNames();
 $roles = $roles->toArray();
+
+
 //lista de permisos del usuario actual
 $permissions = auth()->user()->getAllPermissions();
 $permissions = $permissions->toArray();
@@ -44,40 +46,56 @@ if (count($permissions)) {
 		$listPermissions[$permissions[$key]['name']] = $permissions[$key]['id'];
 	}
 }
+
+//para que funcione el menu de la parte de las paginas en html
+@session_start();
+$_SESSION["roles"] = $roles;
+$_SESSION["permissions"] = $listPermissions;
+
+$isAdministrador = array_search('administrador', $roles);
+$isEstudiante = array_search('estudiante', $roles);
+$isValidador = array_search('validador', $roles);
+$isProfesor = array_search('profesor', $roles);
+$isCoordinador_interno = array_search('coordinador_interno', $roles);
+$isCoordinador_externo = array_search('coordinador_externo', $roles);
+
+
 // print_r($listPermissions); 
+
+$page_nav = array();
 
 //submenu Inicio
 	$InicioSub = array();
 	//comprobar los permisos para cada formulario
-	if(array_search('administrador', $roles) !== false){
+	if($isAdministrador !== false){
 		$InicioSub["Administrador"] = array(
 					"icon" => "fa-gear",
 					"title" => "Administrador",
 					"url" => route('home')
 				);
 	}
-	if(array_search('estudiante', $roles) !== false){
+	if($isEstudiante !== false){
 		$InicioSub["Estudiante"] = array(
 					"title" => "Estudiante",
 					"icon" => "fa-graduation-cap",
 					"url" => url("/html/estudiante_home.php")
 				);
 	}
-	if(array_search('validador', $roles) !== false){
+	if($isValidador !== false){
 		$InicioSub["Validador"] = array(
 					"title" => "Validador",
 					"icon" => "fa-search",
 					"url" => url("/html/validador_home.php")
 				);
 	}
-	if(array_search('coordinador_interno', $roles) !== false){
+	if($isCoordinador_interno !== false){
 		$InicioSub["Coordinador_int"] = array(
 					"title" => "Coordinador Int.",
 					"icon" => "fa-user-circle-o",
 					"url" => url("/html/coordinador_home.php")
 				);
 	}
-	if(array_search('coordinador_externo', $roles) !== false){
+	if($isCoordinador_externo !== false){
 		$InicioSub["Coordinador_ext"] = array(
 					"title" => "Coordinador Ext.",
 					"icon" => "fa-user-circle-o",
@@ -98,14 +116,14 @@ if (count($permissions)) {
 		$InterChangeSub["InterOutMap"] = array(
 			        "title" => "InterOutMap",
 			        "icon" => "fa-map",
-			        "url" => url("/html/interout-map.php")
+			        "url" => url("/interchanges/interout/map")
 				);
 	}
 	if(isset($listPermissions['add_interout'])){
 		$InterChangeSub["InterOut"] = array(
 					"title" => "InterOut",
 					"icon" => "fa-arrow-up",
-					"url" => url("/html/interin.php")
+					"url" => url("/interchanges/interout")
 					//"url" => route('interchanges.interout.create')
 				);
 	}
@@ -113,14 +131,14 @@ if (count($permissions)) {
 		$InterChangeSub["InterInMap"] = array(
 					"title" => "InterInMap",
 					"icon" => "fa-map-o",
-					"url" => url("/html/interin-map.php")
+					"url" => url("/interchanges/interin/map")
 				);
 	}
 	if(isset($listPermissions['add_interin'])){
 		$InterChangeSub["InterIn"] = array(
 			        "title" => "InterIn",
 			        "icon" => "fa-arrow-down",
-			        "url" => url("/html/interout.php")
+			        "url" => url("/interchanges/interin")
 			        //"url" => route('interchanges.interin.create')
 				);
 	}
@@ -163,7 +181,7 @@ if (count($permissions)) {
 		}
 	}
 	
-	if(isset($listPermissions['add_interalliances'])){
+	if(isset($listPermissions['add_interalliances']) && ( $isProfesor !== false || $isCoordinador_interno !== false ) ){
 		$InterAllianceSub["SubscribeAlliance"] = array(
 					"title" => "Subscribir alianza",
 					"icon" => "fa-handshake-o",
@@ -178,6 +196,7 @@ if (count($permissions)) {
 			"InterAlliance" => array(
 				"title" => "InterAlliance",
 				"icon" => "fa-handshake-o txt-color-white",
+				"raiz" => route('interalliances.index'),
 				"sub" => $InterAllianceSub
 			)
 		);
@@ -333,7 +352,7 @@ if (count($permissions)) {
 	if(isset($listPermissions['edit_campus'])){
 		$InterAdminSettingsInstitutionSub["CampusSettings"] = array(
 			            "title" => "Campus",
-			            "icon" => "fa-university",
+			            "icon" => "fa-building",
 			            "url" => route('admin.campus.index')
         );
 	}
@@ -363,7 +382,7 @@ if (count($permissions)) {
 		//submenu settings
 		$InterAdminSettingsSub["InstitutionSettings"] = array(
 				        "title" => "Institución",
-				        "icon" => "fa-cogs",
+				        "icon" => "fa-university",
 				        "sub" => $InterAdminSettingsInstitutionSub
 						);
 	}
@@ -397,7 +416,7 @@ if (count($permissions)) {
 		//submenu settings
 		$InterAdminSettingsSub["LocationSettings"] = array(
 				        "title" => "Localización",
-				        "icon" => "fa-cogs",
+				        "icon" => "fa-globe",
 				        "sub" => $InterAdminSettingsLocationSub
 						);
 	}
@@ -414,12 +433,14 @@ if (count($permissions)) {
 	if ( count($InterAdminSub) ) {
 
 		if ( count($InterAdminSettingsSub) ) {
+
+			$InterAdminSub += $InterAdminSettingsSub;
 			//submenu settings
-			$InterAdminSub["Settings"] = array(
-			        "title" => "Parametros",
-			        "icon" => "fa-cogs",
-			        "sub" => $InterAdminSettingsSub
-					);
+			// $InterAdminSub["Settings"] = array(
+			//         "title" => "Parametros",
+			//         "icon" => "fa-cogs",
+			//         "sub" => $InterAdminSettingsSub
+			// 		);
 		}
 
 		$InterAdmin = array(
@@ -433,7 +454,6 @@ if (count($permissions)) {
 		$page_nav = array_merge($page_nav, $InterAdmin);
 	}
 
-
 //configuration variables
 $page_title = "";
 $page_css = array();
@@ -441,4 +461,99 @@ $page_script = array();
 $no_main_header = false; //set true for lock.php and index.php
 $page_body_prop = array(); //optional properties for <body>
 $page_html_prop = array(); //optional properties for <html>
+
+
+
+
+
+/*
+Array
+(
+    [dashboard]
+        (
+            [sub]
+                (
+                    [Administrador]
+                    (
+						[active] = true
+                    )
+                    [Validador]
+                    [Coordinador_int]
+                )
+        )
+    [InterChange]
+        (
+            [sub]
+                (
+                    [InterOutMap]
+                    [InterOut]
+                    [InterInMap]
+                    [InterIn]
+                )
+        )
+    [InterAlliance]
+        (
+            [raiz]
+            [sub]
+                (
+                    [InterAllianceMap]
+                    [Alliances]
+                    [SubscribeAlliance]
+                )
+        )
+    [InterActions]
+        (
+            [sub]
+                (
+                    [InterActionsMap]
+                    [Opportunities]
+                    [InterIniciative]
+                )
+        )
+    [InterIndicators]
+        (
+            [sub]
+                (
+                    [Indicators]
+                )
+        )
+    [InterValidations]
+        (
+            [sub]
+                (
+                    [Assignments]
+                )
+        )
+    [InterAdmin]
+        (
+            [sub]
+                (
+                    [Users]
+                    [Roles]
+                    [Logs]
+                    [InstitutionSettings]
+                        (
+                            [sub]
+                                (
+                                    [InstitutionsSettings]
+                                    [CampusSettings]
+                                    [FacultiesSettings]
+                                    [ProgramsSettings]
+                                    [SubjectsSettings]
+                                )
+                        )
+                    [LocationSettings]
+                        (
+                            [sub]
+                                (
+                                    [CountriesSettings]
+                                    [StatesSettings]
+                                    [CitiesSettings]
+                                )
+                        )
+                    [UserSettings]
+                )
+        )
+)
+*/
 ?>

@@ -8,8 +8,8 @@
 					
 					<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
 						<img src="{{URL::asset('img/avatars/juan.png')}}" alt="me" class="online" /> 
-						<span>
-							{{{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }}}
+						<span title="{{ Auth::user()->email }}">
+							{{{ Auth::user()->name }}}
 						</span>
 						<i class="fa fa-angle-down"></i>
 					</a> 

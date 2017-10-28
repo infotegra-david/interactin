@@ -43,7 +43,7 @@ class CityRepository extends BaseRepository
      */
     public function listStates($pais_id = null)
     {
-        return State::where('pais_id', $pais_id)->pluck('nombre','id');
+        return State::join('ciudad','departamento.id','=','ciudad.departamento_id')->where('departamento.pais_id', $pais_id)->orderBy('departamento.nombre','asc')->pluck('departamento.nombre','departamento.id');
     }    
 
     /**

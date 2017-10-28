@@ -101,7 +101,7 @@
 
 					<section class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
 						<label class="input control-label"> <i class="icon-append fa fa-lock"></i>
-							<input type="password" name="password_confirmation" placeholder="Confirme el password">
+							<input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirme el password">
 							<b class="tooltip tooltip-bottom-right">No olvide su password</b> </label>
 
                             @if ($errors->has('password_confirmation'))
@@ -114,9 +114,14 @@
 
 				<fieldset>
 					<div class="row">
+                        <section class="col col-6">
+                            <label class="input control-label">
+                                <input type="text" name="firstname" placeholder="Nombres">
+                            </label>
+                        </section>
 						<section class="col col-6">
 							<label class="input control-label">
-								<input type="text" name="firstname" placeholder="Nombre completo">
+								<input type="text" name="lastname" placeholder="Apellidos">
 							</label>
 						</section>
 						<section class="col col-6">
@@ -136,11 +141,6 @@
                         <section class="col col-6">
                             <label class="input control-label">
                                 <input type="text" name="telefono" placeholder="Telefono y extensión">
-                            </label>
-                        </section>
-                        <section class="col col-6">
-                            <label class="input control-label">
-                                <input type="text" name="fax" placeholder="fax">
                             </label>
                         </section>
 					</div>
@@ -381,6 +381,10 @@
 
 
 @section('scripts')
+
+{{ Html::script('js/plugin/jquery-validate/jquery.validate.min.js') }} 
+{{ Html::script('js/plugin/jquery-form/jquery-form.min.js') }} 
+
 <script type="text/javascript">
 	// Model i agree button
 	$("#i-agree").click(function(){
@@ -416,15 +420,23 @@
 					required : true,
 					minlength : 3,
 					maxlength : 20,
-					equalTo : '#password'
+					equalTo : '#password_confirmation'
 				},
 				firstname : {
-					required : true
+					required : true,
+                    maxlength : 100
 				},
 				lastname : {
-					required : true
+					required : true,
+                    maxlength : 100
 				},
-				gender : {
+                genero : {
+                    required : true
+                },
+                cargo : {
+                    required : true
+                },
+				telefono : {
 					required : true
 				},
 				terms : {
@@ -454,8 +466,14 @@
 				lastname : {
 					required : 'Please select your last name'
 				},
-				gender : {
-					required : 'Please select your gender'
+                genero : {
+                    required : 'Please select your gender'
+                },
+                cargo : {
+                    required : 'Please select your cargo'
+                },
+				telefono : {
+					required : 'Please select your phone'
 				},
 				terms : {
 					required : 'You must agree with Terms and Conditions'
@@ -464,11 +482,12 @@
 
 			// Ajax form submition
 			submitHandler : function(form) {
-				$(form).ajaxSubmit({
-					success : function() {
-						$("#smart-form-register").addClass('submited');
-					}
-				});
+                $(form).submit();
+				// $(form).ajaxSubmit({
+				// 	success : function() {
+				// 		$("#smart-form-register").addClass('submited');
+				// 	}
+				// });
 			},
 
 			// Do not change code below

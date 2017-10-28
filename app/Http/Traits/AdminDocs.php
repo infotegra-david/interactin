@@ -398,7 +398,6 @@ trait AdminDocs{
                 }
 
 
-
                 $tipo_documento_id = $tipo_documento->id;
                 $formatoArchivo = ($datos['archivo_formato'] ? $datos['archivo_formato'] : $formatoDefault);
                 
@@ -432,6 +431,7 @@ trait AdminDocs{
                         }elseif ($tipo_documento->nombre == 'DOCUMENTOS FINALES ALIANZA') {
                             $path = 'alianza/'.$idProceso.'/documentos';
                         }
+
                     }elseif ($tipo_documento->clase_documento == 'IDENTIDAD') {
                         if ($datoProceso != 'userId') {
                             $view = $route_error;
@@ -479,6 +479,7 @@ trait AdminDocs{
                         if ($tipo_documento->nombre == 'PRE-FORMAS') {
                             $path .= '/'.$nombre_archivo;
                             Storage::disk('public')->put($path, $datos['archivo_contenido']);
+
                         }else{
                             $path = Storage::disk('public')->putFileAs(
                                 $path, $datos['archivo_input'], $nombre_archivo
@@ -499,11 +500,15 @@ trait AdminDocs{
                     if (!isset($datos['unique'])) {
                         $archivoProceso = $archivoProceso->where('archivo.id',$datos['archivo_id']);
                     }
-                        $archivoProceso = $archivoProceso->select('archivo.id','archivo.nombre','archivo.path')->get();
+                        $archivoProceso = $archivoProceso->select('archivo.id','archivo.nombre','archivo.path');
+                    // echo $archivoProceso->toSql();
+                    // print_r($archivoProceso->getBindings() );
+                        $archivoProceso = $archivoProceso->get();
                                 // ->where($nombreTablaAsociarArchivo.'.tipo_documento_id',$tipo_documento_id)
 
                 }
                 $listaArchivos = [];
+
                 if (count($archivoProceso)) {
                     foreach ($archivoProceso as $key => $archivo) {
                         //guardara el ultimo id, nombre y path
@@ -528,7 +533,6 @@ trait AdminDocs{
                 $nombre = ($nombre != 'nombre_default' ? $nombre : $nombre_orig);
                 $path = ($path != '' ? $path : $path_orig);
                 
-                $asociarArchivoCamposBusqueda = [$nombreCampoDatoProceso => $idProceso, 'archivo_id' => $archivo_id];
 
                 $tipo_archivo = \App\Models\TipoArchivo::where('nombre',$tipo_archivo_nombre)->select('id')->first();
 
@@ -565,15 +569,24 @@ trait AdminDocs{
                     if ($archivo_id == 0) {
                         $archivo_id = $archivo->id;
                     }
+                    
+                    $asociarArchivoCamposBusqueda = [$nombreCampoDatoProceso => $idProceso, 'archivo_id' => $archivo_id];
                     // asociar el archivo con la tabla correspondiente
+        
                     if (count($listaArchivos) > 1) {
                         $eliminarArchivosAsociados = $tablaAsociarArchivo->where($nombreCampoDatoProceso, $idProceso)
                             ->whereIn('archivo_id',$listaArchivos)
                             ->forceDelete();
-                    }elseif (count($listaArchivos) == 1) {
-                        $eliminarArchivosAsociados = $tablaAsociarArchivo->where([[$nombreCampoDatoProceso, $idProceso],['tipo_documento_id',$tipo_documento_id]])
-                            ->whereIn('archivo_id',$listaArchivos)
-                            ->forceDelete();
+                    //SE DESHABILITA PORQUE ELIMINA EL REGISTRO Y SE REGISTRA CON UN NUEVO ID, DESPERDICIANDO ESPACIOS
+                    // }elseif (count($listaArchivos) == 1) {
+                        // $eliminarArchivosAsociados = $tablaAsociarArchivo->where([[$nombreCampoDatoProceso, $idProceso],['tipo_documento_id',$tipo_documento_id]])
+                        //     ->whereIn('archivo_id',$listaArchivos)
+                        //     ->forceDelete();
+                    }elseif (isset($datos['unique'])) {
+                        $eliminarArchivosAsociados = $tablaAsociarArchivo->where([[$nombreCampoDatoProceso, $idProceso],['tipo_documento_id',$tipo_documento_id]])->get();
+                        if (count($eliminarArchivosAsociados) > 1) {
+                            $tablaAsociarArchivo->where([[$nombreCampoDatoProceso, $idProceso],['tipo_documento_id',$tipo_documento_id]])->forceDelete();
+                        }
                     }
 
                     $tablaAsociarArchivo = $tablaAsociarArchivo->updateOrCreate(
@@ -591,7 +604,6 @@ trait AdminDocs{
                     
                     $okMsg = 'Se registro la información del archivo correctamente.';
                     $retorno = $tablaAsociarArchivo;
-
 
         // echo count($archivoProceso)."\n";
         // echo $nombre."\n";
@@ -647,25 +659,6 @@ trait AdminDocs{
         }
     }
 
-    
-    /**
-     * @param $busqueda
-     * @return mixed
-     */
-    public function editarDocumento($tipo_documento, $datos)
-    {   
-        $retorno = false;
-        $errors = 0;
-        $returnMsg = [];
-
-
-        end:
-        if ($errors > 0) {
-            $retorno['errors'] = $errors;
-            $retorno['returnMsg'] = $returnMsg;
-        }
-        return $retorno;
-    }
 
     public function datosCrearDocumento($proceso,$request)
     {
@@ -843,7 +836,7 @@ trait AdminDocs{
         $datos['archivo_input'] = $request['archivo_input'];
         $datos['user_id'] = $request['user_id'];
         $datos['route_error'] = (isset($request['route_error']) ? $request['route_error'] : $route);
-        
+
         DB::beginTransaction();
 
         $crearDocumento = $this->crearDocumento($proceso,$datos);
@@ -907,4 +900,26 @@ trait AdminDocs{
         }
 
     }
+
+
+    
+    /**
+     * @param $busqueda
+     * @return mixed
+     */
+    public function editarDocumento($tipo_documento, $datos)
+    {   
+        $retorno = false;
+        $errors = 0;
+        $returnMsg = [];
+
+
+        end:
+        if ($errors > 0) {
+            $retorno['errors'] = $errors;
+            $retorno['returnMsg'] = $returnMsg;
+        }
+        return $retorno;
+    }
 }
+

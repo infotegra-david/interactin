@@ -241,7 +241,7 @@
                     @endif
             <!-- </div>   -->
         
-        @if( isset($archivosAdjuntos) && count($archivosAdjuntos) && !isset($omitir_adjuntos) )
+        @if( isset($archivosAdjuntos) && $archivosAdjuntos != '' && count($archivosAdjuntos)  && !isset($omitir_adjuntos) )
 
             <div class="col-sm-12">
                 <!-- <div class="col-sm-12"> -->
@@ -587,7 +587,7 @@
                     </div>
                 </div>
 
-            @if( isset($archivosDocumentoRepresentante) && count($archivosDocumentoRepresentante) && !isset($omitir_adjuntos) )
+            @if( isset($archivosDocumentoRepresentante)  && $archivosDocumentoRepresentante != '' && count($archivosDocumentoRepresentante) && !isset($omitir_adjuntos) )
 
                 <div class="col-sm-12">
                     <div class="table-responsive">

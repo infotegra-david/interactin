@@ -15,7 +15,7 @@ class CreateAlianzaTable extends Migration {
 		Schema::create('alianza', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('objetivo', 191)->nullable();
+			$table->string('objetivo', 1000)->nullable();
 			$table->integer('tipo_tramite_id')->unsigned()->index('fk_alianza_tipo_tramite1_idx');
 			$table->string('duracion', 10)->nullable();
 			$table->boolean('responsable_arl')->nullable()->default(0);

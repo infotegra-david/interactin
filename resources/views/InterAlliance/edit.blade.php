@@ -269,6 +269,7 @@
 	{{ Html::script('/js/plugin/fuelux/wizard/wizard_solo.js') }}
 		<!-- JQUERY SELECT2 INPUT -->
 	{{ Html::script('/js/plugin/select2/select2.min.js') }}
+	{{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
 
 	
 	{{-- Html::script('/js/plugin/fuelux/wizard/wizard_externo.min.js') --}}

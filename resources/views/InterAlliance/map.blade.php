@@ -263,7 +263,7 @@
 					if ( typeof data_array[code] == 'undefined') {
 						e.preventDefault();
 					} else {
-						el.html(el.html() + ': ' + data_array[code] + ' visitas');
+						el.html(el.html() + ': ' + data_array[code] + ' alianzas');
 					}
 				}
 			});

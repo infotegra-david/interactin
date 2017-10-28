@@ -92,7 +92,8 @@ Route::group(['prefix' => '/admin', 'as' => 'admin.', 'namespace' => 'Admin'], f
 
     // external 
     // los usuarios que reciban el email podran verificar el contenido sin tener que loguearse 
-    Route::get('interalliances/subscribe/destination/{token?}',['as' => 'interalliances.destination','uses' => 'InterAllianceController@destination']);
+    Route::get('interalliances/subscribe/destination/{token}',['as' => 'interalliances.destination','uses' => 'InterAllianceController@destination']);
+    Route::post('interalliances/subscribe/destination/{token}',['as' => 'interalliances.destination','uses' => 'InterAllianceController@destination']);
 
 
 
@@ -109,6 +110,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     // Subscribe 
     Route::get('interalliances/subscribe/origin',['as' => 'interalliances.origin','uses' => 'InterAllianceController@origin']);
+    Route::get('interalliances/subscribe/origin/{alianza_id}',['as' => 'interalliances.show','uses' => 'InterAllianceController@show']);
     Route::get('interalliances/subscribe/origin/{alianza_id}/edit',['as' => 'interalliances.edit','uses' => 'InterAllianceController@edit']);
     Route::get('interalliances/subscribe/destination/{token}/{paso}/edit',['as' => 'interalliances.destination.edit','uses' => 'InterAllianceController@edit']);
     //Route::get('interalliances/subscribe/destination/{token}/edit',['as' => 'interalliances.destination.edit','uses' => 'InterAllianceController@edit']);

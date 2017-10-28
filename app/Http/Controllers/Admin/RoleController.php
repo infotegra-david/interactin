@@ -7,6 +7,9 @@ use App\Models\Admin\Permission;
 use App\Models\Admin\Role;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+use DB;
+
 class RoleController extends \App\Http\Controllers\Controller
 {
     use Authorizable;
@@ -18,10 +21,29 @@ class RoleController extends \App\Http\Controllers\Controller
      */
     public function index()
     {
-        $roles = Role::all();
-        $permissions = Permission::all();
 
-        return view('admin.role.index', compact('roles', 'permissions'));
+        $user = Auth::user();
+        // $roles = Role::all();
+        //lista de todos los permisos
+        $permissions = Permission::all();
+        
+        //lista de todos los roles y sus respectivos permisos
+        $roles = Role::join('role_has_permissions','roles.id','role_has_permissions.role_id')
+            ->leftJoin('permissions','role_has_permissions.permission_id','permissions.id')
+            ->select('roles.id','roles.name','permissions.id AS permissions_id','permissions.name AS permissions_name');
+        $roles = $roles->get()->toArray();
+
+        //lista de los permisos que tenga el usario (por ahora no es necesario)
+            // $model_has_permissions = DB::table('model_has_permissions')->where('model_id',$user->id)->get()->toArray();
+
+        // print_r($roles_permisos[0]);
+        // echo "<br>";
+        // print_r($roles_permisos[1]);
+        // echo "<br>";
+        // print_r($roles_permisos[2]);
+
+
+        return view('admin.role.index', compact('roles', 'permissions', 'model_has_permissions'));
     }
 
     /**

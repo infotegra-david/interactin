@@ -22,6 +22,7 @@ class CreateDatosPersonalesTable extends Migration {
 			$table->string('email_personal', 191)->nullable();
 			$table->string('telefono', 45)->nullable();
 			$table->string('celular', 45)->nullable();
+			$table->integer('genero')->default(3)->comment('1: Hombre, 2: Mujer, 3: No responde');
 			$table->string('codigo_postal', 10)->nullable();
 			$table->integer('tipo_documento_id')->unsigned()->nullable()->index('fk_datos_personales_tipo_documento1_idx');
 			$table->string('numero_documento', 45)->nullable();

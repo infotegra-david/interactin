@@ -197,11 +197,13 @@
 							<br>
 							<h3> Coordinador interno</h3>
 						<!-- lista profesores y coordinadores-->
-							<div class="col-sm-6 col-md-6">
+							<div class="col-sm-6 col-md-6 hide">
 								<div class="form-group">
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-user-o fa-md fa-fw"></i></span>
-										{{ Form::select('coordinador_origen', $coordinador_origen->prepend('Seleccione al coordinador', ''), old('coordinador_origen'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_origen,cargo_coordinador_origen,telefono_coordinador_origen,email_coordinador_origen', 'url' => route('interalliances.list'), 'placeholder' => 'Seleccione al Coordinador']) }}
+										{{ Form::hidden('coordinador_origen', $alliance['coordinador_origen']) }}
+
+										{{-- Form::select('coordinador_origen', $coordinador_origen->prepend('Seleccione al coordinador', ''), old('coordinador_origen'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_origen,cargo_coordinador_origen,telefono_coordinador_origen,email_coordinador_origen', 'url' => route('interalliances.list'), 'placeholder' => 'Seleccione al Coordinador']) --}}
 										<span class="input-group-addon" rel="popover" data-content="Por favor incluya los datos de contacto de la persona designada en la Facultad para realizar seguimiento a la suscripción y ejecución de la alianza en la institucion." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>

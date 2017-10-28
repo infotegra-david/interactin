@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Models\DatosPersonales;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -51,6 +52,11 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'firstname' => 'required|string|max:100',
+            'lastname' => 'required|string|max:100',
+            'genero' => 'required|integer',
+            'cargo' => 'required|string|max:45',
+            'telefono' => 'required|string|max:45',
         ]);
     }
 
@@ -62,11 +68,35 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+        $user = false;
+
+        $datosPersonales = DatosPersonales::create([
+            'nombres' => $data['firstname'],
+            'apellidos' => $data['lastname'],
+            'genero' => $data['genero'],
+            'cargo' => $data['cargo'],
+            'telefono' => $data['telefono'],
         ]);
+
+        if ($datosPersonales) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'datos_personales_id' => $datosPersonales->id,
+                'password' => bcrypt($data['password']),
+                'activo' => 1,
+            ]);
+
+            if ($user) {
+                $campus = \App\Models\Admin\Campus::where('institucion_id',\Config::get('options.institucion_id'))->first();
+                $user->campus()->sync($campus->id);
+
+                $user->assignRole('particular');
+            }
+            
+        }
+
+
         return $user;
     }
 

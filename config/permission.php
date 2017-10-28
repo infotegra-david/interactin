@@ -77,7 +77,7 @@ return [
      */
 
     //'cache_expiration_time' => 60 * 24,
-    'cache_expiration_time' => 60 * 1,
+    'cache_expiration_time' => 5 * 1,
 
     /*
      * By default we'll make an entry in the application log when the permissions

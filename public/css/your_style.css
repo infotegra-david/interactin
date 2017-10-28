@@ -37,12 +37,19 @@
     background-color: rgba(0,0,0,.23)!important;
 }
 
+.smart-style-5 .list-group-item {
+    background-color: inherit;
+    background-color: transparent;
+    border: none; 
+    box-shadow: 0 1px 1px rgba(0,0,0,.43);
+}
+
 .nopadding {
    padding: 0 !important;
    margin: 0 !important;
 }
 
-/* para el boton de google translate*/
+/* para el boton de google translate
 #google_translate_div{
 	/*padding: 10px 0px;*/
     margin: 0px;
@@ -131,8 +138,16 @@
     padding: 16px;
 }
 
+tfoot.header {
+    display: table-header-group;
+}
+
 .page-footer{
     /*position: relative !important;*/
+}
+
+.hide_pass{
+    display: none!important;
 }
 
 .jarviswidget > div {
@@ -156,6 +171,14 @@
 
 .onoffswitch .onoffswitch-switch{
 	right: 66px;
+}
+
+.no_progress_val:before, .no_progress_val:after{
+    content: none;
+}
+
+.no_progress_val{
+    margin-top: 5px!important;
 }
 
 /*estilos para el menu*/

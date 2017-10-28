@@ -202,7 +202,7 @@ trait Mails{
                         goto end;
                     }
                     
-    //GUARDAR LA SELECCION DE ARCHIVOS A ENVIAR en el MAIL
+        //GUARDAR LA SELECCION DE ARCHIVOS A ENVIAR en el MAIL
 
                     if ( $datos['archivosAdjuntos'] !== '' || $datos['archivosAdjuntos'] === 0 ) {
                         $archivosAdjuntos = \App\Models\Archivo::find($datos['archivosAdjuntos']);
@@ -290,31 +290,34 @@ trait Mails{
                         
                         //llama al mail creado llamado OrderShipped
                         Mail::to($emailTo)->send( new \App\Mail\SuscribeAlliance($request['dataMail'], $request['dataUsers'], $request['paso_titulo'], $request['dataAlianza'], $request['archivosAdjuntos'], $request['CoordinadorInterno'], $request['CoordinadorExterno']) );
+                        
                         /*
                         //retrasa el envio 10 minutos
                         $when = Carbon\Carbon::now()->addMinutes(10);
                         */
 
 
-                        $existeMail = \App\Models\Mail::find($request['dataMail'][0]->id);
-                        if( count($existeMail) ){
-                            $existeMail->estado = 1;
-                            $existeMail->save();
+                        $existeMail = \App\Models\Mail::where('id',$request['dataMail'][0]->id)
+                            ->update(['estado' => 1]);
+
+                        // if( count($existeMail) ){
+                        //     $existeMail->estado = 1;
+                        //     $existeMail->save();
 
                             
-                            /*
-                            if ( !$this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId) ){
-                                $errors += 1;
-                                array_push($errorsMsg, 'No se puede registrar del paso '.$request['paso'].' para la alianza.');
-                                goto end;
-                            }
-                            */
+                            
+                                //     if ( !$this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId) ){
+                                //         $errors += 1;
+                                //         array_push($errorsMsg, 'No se puede registrar del paso '.$request['paso'].' para la alianza.');
+                                //         goto end;
+                                //     }
+                            
 
-                        }else{
-                            $errors += 1;
-                            array_push($returnMsg, 'No se encontraron los datos del e-mail para actualizar el estado.');
-                            goto end;
-                        }
+                        // }else{
+                        //     $errors += 1;
+                        //     array_push($returnMsg, 'No se encontraron los datos del e-mail para actualizar el estado.');
+                        //     goto end;
+                        // }
 
                         $successMsj = 'El e-mail a los coordinadores fue enviado correctamente.';
                         if( isset($emailTo) ){

@@ -45,7 +45,9 @@
                 <div class="row" style="padding-left: 20px">
                     @include('validation.alliances.pasos_alianzas.show_fields')
                     <a href="{!! route('intervalidation.interalliances.validations.show',[$pasoAlianza->alianza_id]) !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
-                    <a href="{!! route('intervalidation.interalliances.validations.edit',[$pasoAlianza->alianza_id, $pasoAlianza->id]) !!}" class='btn btn-success'><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                    @if($editar == true)
+                        <a href="{!! route('intervalidation.interalliances.validations.edit',[$pasoAlianza->alianza_id, $pasoAlianza->id]) !!}" class='btn btn-success'><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                    @endif
                 </div>
             </div>
         </div>

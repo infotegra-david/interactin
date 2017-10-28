@@ -99,7 +99,7 @@ credenciales usuarios de interactin
 	php artisan iseed alianza,alianza_aplicaciones,alianza_facultad,alianza_institucion,alianza_modalidades,alianza_programa,alianza_user,aplicaciones,archivo,asignatura,calificacion,campus,ciudad,clase_documento,datos_personales,departamento,documentos_alianza,documentos_iniciativa,documentos_inscripcion,documentos_institucion,documentos_oportunidad,equivalente,estado,evaluacion,facultad,financiacion,formato,fuente_financiacion,idiomas,iniciativa,iniciativa_actor,inscripcion,inscripcion_asignatura,institucion,mail,mail_archivo,matricula,migrations,modalidades,model_has_permissions,model_has_roles,multimedia,nivel,oportunidad,oportunidad_actor,oportunidad_modalidades,pagina,pais,pasos_alianza,pasos_alianza_mail,pasos_iniciativa,pasos_iniciativa_mail,pasos_inscripcion,pasos_inscripcion_mail,password_resets,periodo,permissions,persona_contacto,postulacion,programa,rol_iniciativa,role_has_permissions,roles,seccion,tipo_actor,tipo_alianza,tipo_archivo,tipo_documento,tipo_facultad,tipo_idioma,tipo_institucion,tipo_paso,tipo_tramite,user_campus,user_tipo_paso,user_tipo_paso_mail,users
 
 	ELIMINAR EL SEMBRADOR PARA LAS TABLAS 
-		migrations
+		migrationsro
 		ModelHasPermissions
 		ModelHasRoles
 		Permissions
@@ -695,6 +695,47 @@ CORRECCIONES
 
 		- (solucionado) limitar la lista de pasos que se puedan escoger para validar a los que tienen validadores asignados
 
+
+
+
+
+		- (solucionado) agregar regla que para validar que la alianza tenga completados los 6 pasos y este aceptada
+		- agregar filtro a 'Alianzas' que aparezcan ordenadas de forma descendiente e inicialmente solo las que pertenezcan a cada usuario (coordinador o validador)
+			- tener la opcion de ver todas las alianzas 
+		- agregar la opcion de marcar o no todos los documentos en el paso 1
+		- (solucionado) ampliar el numero de caracteres para el objetivo de la alianza
+		- corregir error en el paso 2 al buscar el coordinador externo en el caso de no existir, tambien guarda el pre-registro del email con el nombre de la institucion que no se encuentra
+
+		- (solucionado) ordenar los paises, departamentos y ciudades alfabeticamente y quitar los que no tengan ciudad
+		- en el email enviado 
+			- el mensaje antes del boton que sea mas diciente o resaltado y el boton este en el header y footer del mensaje
+			- crear una contraseña y enviarsela al correo al coor externo mencionando que si desea ingresar lo haga con tales credenciales
+		- configurar el funcionamiento del numero verde en 'alianzas' para el coordinador externo
+		- el progreso se calcula a partir de los pasos registrados y las intervenciones del coor externo junto a los validadores
+		- los iconos en la columna con el nombre (temporal) 'validadores' seran del coor interno, coor externo y validadores
+		- restringir el acceso a los coordinadores que no deberian poder editar las alianzas en los pasos que no les corresponde
+			- asegurar que no ingresen a la ruta incorrecta (un coor ext no deberia poder editar los 3 primeros pasos)
+				- se pueden identificar por la institucion a la que pertenecen
+			- cuando el coor ext cambia al coor ext de la alianza que le llego no deberia eliminar al anterior
+				- se debe enviar un nuevo email al nuevo coordinador 
+			- permitir ocultar las alianzas de la lista, un filtro para las rechazadas
+			- quitar la opcion de cambiar el coor externo 
+			- el proceso de creacion de la alianza en un flujo lineal, entonces no se debe permitir ver las opciones ni el acceso a la edicion de lo ya registrado segun sea el caso
+				- para los validadores si aceptan o rechazan: 
+					- no mostrar la opcion de realizar validacion en la lista de alianzas
+					- no permitir editar o actualizar la validacion 
+					- lo anterior sera efectivo hasta que el flujo regurese a él 
+				- para los coordinadores:
+					- no se puede editar si ya esta en validacion hasta que el flujo regrese a ellos
+
+				- cambiar o eliminar el registro ya sea de validacion o de el email 
+
+		- preguntar, ¿cuando le llega la alianza al coor externo, el la puede delegar o colocar a nombre de otro o no se necesita?
+
+
+	- atar el usuario al name y password, y permitir cambiar el correo sin tener problemas 
+		- ejemplo: un solo usuario y la posiblidad de que cambie el email si es otra persona de la misma institucion 
+
 	- roles
 		- super administrador
 		- administrador senior
@@ -710,9 +751,13 @@ CORRECCIONES
 		- lista de documentos a cargar son parametrizados para cada universidad
 
 	- general
+		- colocarle un comentario que describa cada fragmento de codigo que sea necesario 
+		- optimizar la aplicacion, determinar el proceso macro y hacer las consultas a las tablas de forma general e ir enviando los resultados a las funciones para no repetir consultas y saturar al SGBD
 		- textos muy claros para que los usuarios no tengan que preguntar
 		- al finalizar los formularios enviar al home para cada perfil
 		- cambiar el significado de los campos de la base de datos tinyint, que 0 sea falso, negativo y 1 sea verdadero, positivo
+		- en la miga de pan (menu de navegacion) 
+			- el enlace HOme debe llevar al home no a la raiz /
 
 	- interactions -> enviar iniciativa
 		- sirve para crear las modalidades para interout/interin ( validador (administrador junior) ) 
@@ -861,31 +906,4 @@ Crear la funcionalidad de los permisos usando los gates de laravel
 
 
 	- 
-
-
-datos credito facil codensa
-	
-	
-	fotocopia 150
-	recibo de la luz
-	2 referencias personales, nombre direccion telefono
-		- Gladys Calderón Cristancho
-			Direccion: Calle 54 f sur #94-21 bloque 6 apto 104
-			Tel: 7384501 - 3165861382
-		- Ernesto Calderon
-			Direccion: Carrera 85 # 52-05 sur Casa 89
-			Tel: 3123514438 - 7849984
-	2 referencias familiares, nombre direccion telefono
-		- Nombre: Libia Forero
-			Ocupación: Ingeniera Industrial
-			Direccion: Carrera 39A #29b-09 Sur
-			Tel: 320 2848081‬ - 2033988
-		- Nombre: Flor Amanda Ospina Callejas
-			Ocupación: Independiente
-			Direccion: Transversal 18 Bis #(Diagonal) 45F - 04 Sur 
-			Tel: 3165861380
-	
-erica valencia
-
-contraseña excel profesor: AABBBAABBABZ
 

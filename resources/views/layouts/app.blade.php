@@ -3,11 +3,7 @@
 
 
 @session_start();
-if ( !isset( $_SESSION["username"] ) ) {
-
-	$_SESSION["username"] = (isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email );
-
-}
+$_SESSION["username"] = (isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email );
 
 //initilize the page
 require_once(base_path()."/resources/views/inc/init.php");
@@ -44,7 +40,10 @@ require_once(base_path()."/resources/views/inc/config.ui.php");
 <?php
 
 	if ( $page_nav != 0 ) {
-	    if ( isset($submenu2) ) {
+	    if ( isset($page_nav_route) ) {
+	        // $page_nav += $page_nav_route;
+	        $page_nav = array_merge_recursive($page_nav, $page_nav_route);
+	    }elseif ( isset($submenu2) ) {
 	        $page_nav[ $menu ]["sub"][ $submenu1 ]["sub"][ $submenu2 ]["active"] = true;
 	    }else{
 	        $page_nav[ $menu ?? "dashboard"]["sub"][ $submenu1 ?? "Administrador"]["active"] = true;
@@ -71,7 +70,10 @@ require_once(base_path()."/resources/views/inc/config.ui.php");
 
 		//configure ribbon (breadcrumbs) array("name"=>"url"), leave url empty if no url
 		//$breadcrumbs["New Crumb"] => "http://url.com"
-		$breadcrumbs["Forms"] = "";
+		$menu = (isset($menu) ? $menu : 'vacio');
+		$urlBreadcrumbs = (isset($page_nav[$menu]["raiz"]) ? $page_nav[$menu]["raiz"] : '' );
+		$nameBreadcrumbs = (isset($page_nav[$menu]["title"]) ? $page_nav[$menu]["title"] : 'Forms' );
+		$breadcrumbs[$nameBreadcrumbs] = $urlBreadcrumbs;
 		
 	?>
 	@include("inc.ribbon")

@@ -57,13 +57,16 @@
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
         <div class="well no-padding">
 
-            <form id="login-form" class="smart-form client-form " role="form" method="POST" action="{{ url('/login') }}">
+            <form id="login-form" class="smart-form client-form " role="form" method="POST" action="{{ url( (isset($route) ? $route : '/login') ) }}">
                 {!! csrf_field() !!}
                 <header>
                     Ingreso
                 </header>
                 <fieldset>
-
+                    @if (!$errors->has('password') && !$errors->has('password'))
+                        @include('flash::message')
+                        @include('adminlte-templates::common.errors')
+                    @endif
                     <section class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                         <label class="label control-label">E-mail</label>
                         <label class="input"> <i class="icon-append fa fa-user"></i>
@@ -130,7 +133,7 @@
 
     <!-- PAGE RELATED PLUGIN(S) 
     <script src="..."></script>-->
-
+    {{ Html::script('js/plugin/jquery-validate/jquery.validate.min.js') }} 
 
     <script type="text/javascript">
         

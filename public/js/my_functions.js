@@ -354,13 +354,14 @@
 						$( '.step-pane.active form' ).append($(this));
 						
 					});
-
+					
 					if ( $( results ).find('#redirect_url').size() > 0 ) {
 						var redirect_url = $( results ).find('#redirect_url').val();
 						setTimeout(function(){
 							window.location.href = redirect_url;
 						}, 2000);
 					}
+
 				};
 				//$(this).unbind("ajaxStop");
 				//handler.off();

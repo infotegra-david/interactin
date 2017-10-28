@@ -85,7 +85,7 @@ class User extends Authenticatable
     }
     */
 
-    public function todo($expression){
+    public function pending($expression){
         switch ($expression) {
             case 'mis_alianzas':
                 if (auth()->user()->hasRole('validador')) {
@@ -127,6 +127,11 @@ class User extends Authenticatable
 
                     if (count($alianzasPendientesNuevas)) {
                         session(['mis_alianzas' => count($alianzasPendientesNuevas)]);
+
+                        //para que funcione el menu de la parte de las paginas en html
+                        @session_start();
+                        $_SESSION["mis_alianzas"] = session('mis_alianzas');
+
                         // return session('mis_alianzas');
                         return $alianzasPendientesNuevas;
                     }else{

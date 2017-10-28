@@ -22,7 +22,10 @@
 	YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
 	E.G. $page_title = "Custom Title" */
 
-	$pagetitle = "Mis Alianzas";
+	$pagetitle = "Alianzas";
+
+	$breadcrumbs["Other Pages"] = "";
+	$breadcrumbs["Forum Layout"] = "/forum.php";
 
 	/* ---------------- END PHP Custom Scripts ------------- */
 
@@ -140,16 +143,82 @@
 										<table id="example" class="display projects-table table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									        <thead>
 									            <tr>
-									                <th></th><th>Alianzas - Institución</th>
-									                <th><i class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i> Progreso</th>
-									                <th>Validadores</th>
-									                <th>Documento</th>
-									                <th>Actividad: &nbsp;<i class="fa fa-circle txt-color-darken font-xs"></i> Objetivo/ <i class="fa fa-circle text-danger font-xs"></i> Actual</th>
-									                <th><i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Inicio</th>
-									                <th><i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Final</th>
-									                <th><i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Restante</th>
+									                <th></th>
+									                <th class="hasinput">
+														<i class="fa fa-fw fa-handshake-o text-muted hidden-md hidden-sm hidden-xs"></i> Alianzas - Institución
+													</th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-percent text-muted hidden-md hidden-sm hidden-xs"></i> Progreso
+									                </th>
+									                <th class="hasinput">
+														<i class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i> Validadores
+									                </th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-file-pdf-o text-muted hidden-md hidden-sm hidden-xs"></i> Documento
+									                </th>
+									                <th class="hasinput">
+									                	Actividad: &nbsp;<i class="fa fa-circle txt-color-darken font-xs"></i> Objetivo/ <i class="fa fa-circle text-danger font-xs"></i> Actual
+									                </th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Actualización
+									                </th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Inicio
+									                </th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Final
+									                </th>
+									                <th class="hasinput">
+									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Restante
+									                </th>
 									            </tr>
 									        </thead>
+
+									        <tfoot class="header">
+									            <tr>
+									                <th class="hasinput">
+									                	Filtros <i class="fa fa-fw fa-arrow-right"></i>
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por alianza" />
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por progreso" />
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por validadores" />
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por documento" />
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por actividad" />
+													</th>
+
+													<th class="hasinput">
+														<div class="icon-addon">
+															<input id="dateselect_filter1" type="text" placeholder="Por actualización" class="form-control datepicker" data-dateformat="yy-mm-dd">
+															<label for="dateselect_filter1" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por actualización"></label>
+														</div>
+													</th>
+
+													<th class="hasinput">
+														<div class="icon-addon">
+															<input id="dateselect_filter2" type="text" placeholder="Por fecha de inicio" class="form-control datepicker" data-dateformat="yy-mm-dd">
+															<label for="dateselect_filter2" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por fecha de inicio"></label>
+														</div>
+													</th>
+													<th class="hasinput">
+														<div class="icon-addon">
+															<input id="dateselect_filter3" type="text" placeholder="Por fecha de fin" class="form-control datepicker" data-dateformat="yy-mm-dd">
+															<label for="dateselect_filter3" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por fecha de fin"></label>
+														</div>
+													</th>
+													<th class="hasinput">
+														<input type="text" class="form-control" placeholder="Por tiempo restante" />
+													</th>
+									            </tr>
+									        </tfoot>
 									    </table>
 
 									</div>
@@ -174,7 +243,7 @@
 
 						<!-- a blank row to get started -->
 						<div class="col-sm-12">
-							<!-- your contents here -->
+							<!-- your contents here -->					
 						</div>
 							
 					</div>
@@ -216,16 +285,18 @@
 				@foreach($alianzas AS $alianza)
 			        {
 			            "nombre": "Alianza #{{ $alianza['id'] }}: {{ $alianza['institucion']['institucion_nombre'] }}<br><small class='text-muted'><i>{{ $alianza['institucion']['campus']['ciudad']['pais']['pais_nombre'] }}<i></small>",
-			            "progreso": "<td><div class='progress progress-xs' data-progressbar-value='{{ $alianza['progreso'] }}'><div class='progress-bar'></div></div></td>",
+			            "progreso": "{{ $alianza['progreso'] }}% <div class='progress progress-xs no_progress_val' data-progressbar-value='{{ $alianza['progreso'] }}'><div class='progress-bar'></div></div>",
 			            "validadores": "<div class='project-members'>"+
 			            @foreach ($alianza['validaciones'] as $validacion)
 			            	"<a href='{{ route('user.show',$validacion['user_id']) }}' target='_blank'><img src='{{ URL::to('/img/avatars/male.png') }}' "+
 			            	@if ($validacion['estado_nombre'] == 'APROBADO' || $validacion['estado_nombre'] == 'ACTIVA')
 			            		"class='online'"+
-			            	@elseif($validacion['estado_nombre'] == 'RECHAZADO')
+			            	@elseif(in_array($validacion['estado_nombre'],['RECHAZADO','DECLINADO']))
 			            		"class='busy'"+
 			            	@elseif($validacion['estado_nombre'] == 'EN REVISIÓN' || $validacion['estado_nombre'] == 'GENERAR DOCUMENTO')
 			            		"class='away'"+
+			            	@else
+			            		"class='online'"+
 			            	@endif
 			            	" title='{{ $validacion['validador_titulo'].': '.$validacion['estado_nombre'] }}' alt='validator'></a>"+
 			            @endforeach
@@ -242,6 +313,7 @@
 			            "target-actual": "<span style='margin-top:5px' class='sparkline display-inline' data-sparkline-type='compositebar' data-sparkline-height='18px' data-sparkline-barcolor='#aafaaf' data-sparkline-line-width='2.5' data-sparkline-line-val='[6, 40, 14, 36, 32, 4, 7, 16, 50, 49, 24, 47, 33, 10, 45, 41, 18, 37, 38]' data-sparkline-bar-val='[9, 4, 32, 33, 18, 23, 17, 8, 30, 7, 48, 29, 10, 14, 6, 36, 28, 16, 24]'></span>",
 			            "actual": "<span class='sparkline text-align-center' data-sparkline-type='line' data-sparkline-width='100%' data-sparkline-height='25px'>20,-35,70</span>",
 			            "estado": "{{ $alianza['estado_nombre'] }}",
+			            "actualizacion": "{{ $alianza['updated_at'] }}",
 			            "inicio": "{{ $alianza['fecha_inicio'] }}",
 			            "duracion": "{{ $alianza['duracion'] }}",
 			            "final": "<strong>{{ $alianza['fecha_final'] }}</strong>",
@@ -249,14 +321,16 @@
 			            "tipo_institucion": "{{ $alianza['institucion']['tipo_institucion_nombre'] }}",
 			            "pasos_registrados": "{{ $alianza['pasos_registrados'].'/'.$alianza['total_pasos'] }}",
 			            @if(isset($alianza['validacion_coor_ext']) )
-			            "validacion_coor_ext": "<strong>Decisión del coordinador externo:</strong>: {{ $alianza['validacion_coor_ext'] }} <br/>",
+			            "validacion_coor_ext": "<strong>Decisión del coordinador externo:</strong> {{ str_replace(PHP_EOL,' ',$alianza['validacion_coor_ext']) }} <br/>",
 			            @else
 			            "validacion_coor_ext": "",
 			            @endif
 			            "estado_actual": "{{ $alianza['estado_actual'] }}",
-			            "objetivo": "{{ $alianza['objetivo'] }}",
+			            "objetivo": "{{ json_encode($alianza['objetivo']) }}",
 			            @if(isset($alianza['validador']) )
 			            	"acciones": "<span><a href='{{ route('intervalidation.interalliances.validations.show',$alianza['id']) }}' class='btn btn-sm btn-primary fa fa-check-square-o'> Realizar Validación</a></span>"
+			            @elseif(isset($alianza['coordinador_externo']) )
+			            	"acciones": "<span><a href='{{ route('interalliances.destination',$alianza['id']) }}' class='btn btn-sm btn-success fa fa-search-plus'> Ver Alianza</a></span>"
 			            @else
 			            	"acciones": "<span><a href='{{ route('interalliances.show',$alianza['id']) }}' class='btn btn-sm btn-success fa fa-search-plus'> Ver Alianza</a></span>"
 			            @endif
@@ -330,16 +404,35 @@
 					{ "data": "validadores" },
 					{ "data": "documento" },
 					{ "data": "target-actual" },
+					{ "data": "actualizacion" },
 					{ "data": "inicio" },
 					{ "data": "final" },
 					{ "data": "restante" },
 		        ],
-		        "order": [[1, 'asc']],
+		        "order": [[6, 'desc']],
 		        "fnDrawCallback": function( oSettings ) {
 			       runAllCharts()
 			    }
 		    } );
 
+		    //https://datatables.net/examples/api/multi_filter.html
+		    // Apply the search
+		    table.columns().every( function () {
+		        var that = this;
+		 
+		        $( 'input', this.footer() ).on( 'keyup change', function () {
+		            if ( that.search() !== this.value ) {
+		                that
+		                    .search( this.value )
+		                    .draw();
+		            }
+		        } );
+
+			    $( 'input', this.footer() ).on( 'click', function () {
+			        e.stopPropagation();
+			    });
+
+		    } );
 
 		     
 		    // Add event listener for opening and closing details
@@ -365,52 +458,7 @@
 		    	$(this).parents('form').find('input[type="submit"]').trigger('click');
 		    });
 
-		    /* para la lista de tareas 'ToDo'*/
 
-			/*
-			* TODO: add a way to add more todo's to list
-			*/
-
-			// initialize sortable
-			$(function() {
-				$("#sortable1, #sortable2").sortable({
-					handle : '.handle',
-					connectWith : ".todo",
-					update : countTasks
-				}).disableSelection();
-			});
-
-			// check and uncheck
-			$('.todo .checkbox > input[type="checkbox"]').click(function() {
-				var $this = $(this).parent().parent().parent();
-
-				if ($(this).prop('checked')) {
-					$this.addClass("complete");
-
-					// remove this if you want to undo a check list once checked
-					//$(this).attr("disabled", true);
-					$(this).parent().hide();
-
-					// once clicked - add class, copy to memory then remove and add to sortable3
-					$this.slideUp(500, function() {
-						$this.clone().prependTo("#sortable3").effect("highlight", {}, 800);
-						$this.remove();
-						countTasks();
-					});
-				} else {
-					// insert undo code here...
-				}
-
-			})
-			// count tasks
-			function countTasks() {
-
-				$('.todo-group-title').each(function() {
-					var $this = $(this);
-					$this.find(".num-of-tasks").text($this.next().find("li").size());
-				});
-
-			}
 
 		})
 

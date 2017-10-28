@@ -146,11 +146,13 @@
 							<br>
 							<h3> Coordinador externo</h3>
 						<!-- lista profesores y coordinadores-->
-							<div class="col-sm-6 col-md-6">
+							<div class="col-sm-6 col-md-6 hide">
 								<div class="form-group">
 									<div class="input-group" >
 										<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
-										{{ Form::select('coordinador_destino', $coordinador_destino->prepend('Seleccione al coordinador', ''), old('coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione al coordinador', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) }}
+										{{ Form::hidden('coordinador_destino', $alliance['coordinador_destino']) }}
+
+										{{-- Form::select('coordinador_destino', $coordinador_destino->prepend('Seleccione al coordinador', ''), old('coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione al coordinador', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) --}}
 										<span class="input-group-addon" rel="popover-hover" data-content="Esta información corresponde al par académico o la persona designada para realizar seguimiento a la suscripción y ejecución de la alianza en la institución contraparte." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -543,6 +545,9 @@
 			var color = '#5f895f';
 			var mensaje = 'Los datos fueron enviados a la institucion solicitante, seran validados y dará inicio la nueva alianza.';
 			var thisForm =  $(this).parents('form').attr('id');
+			alert(thisForm);
+			return 1;
+			exit;
 			/*
 			var route = $(this).attr('url');
 			var token = $('#'+ thisForm).find('input[name="_token"]').val();

@@ -27,14 +27,21 @@
 
 
 /*PARA EL ESTILO GLASS DE LA PAGINA*/
-.smart-style-5 .form-control::-webkit-input-placeholder { color: white; }
-.smart-style-5 .form-control:-moz-placeholder { color: white; }
-.smart-style-5 .form-control::-moz-placeholder { color: white; }
-.smart-style-5 .form-control:-ms-input-placeholder { color: white; }
+.smart-style-5 .form-control::-webkit-input-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control:-moz-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control::-moz-placeholder { color: #cccccc; font-style: italic; }
+.smart-style-5 .form-control:-ms-input-placeholder { color: #cccccc; font-style: italic; }
 
 
 .smart-style-5 .panel, .smart-style-5 .panel-default>.panel-heading { 
     background-color: rgba(0,0,0,.23)!important;
+}
+
+.smart-style-5 .list-group-item {
+    background-color: inherit;
+    background-color: transparent;
+    border: none; 
+    box-shadow: 0 1px 1px rgba(0,0,0,.43);
 }
 
 .nopadding {
@@ -42,7 +49,7 @@
    margin: 0 !important;
 }
 
-/* para el boton de google translate*/
+/* para el boton de google translate
 #google_translate_div{
     /*padding: 10px 0px;*/
     margin: 0px;
@@ -61,15 +68,95 @@
     #header > .logo_inicio{
         width: 190px;
     }
+
+}
+@media (max-width: 1150px){
+    
+    .content-center{
+        width: 100%;
+    }
+}
+@media (min-width: 1151px){
+    
+    .content-center{
+        width: 80%;
+    }
 }
 
+@media screen and (max-width: 767px){
+    .table-responsive {
+        border: none;
+    }
+}
 
+#main{
+    min-height: 100px;
+}
 
+.text-center{
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.text-left{
+    align-items: left !important;
+    text-align: left !important;
+}
+
+.text-right{
+    align-items: right !important;
+    text-align: right !important;
+}
+
+.text-black{
+    color: black;
+}
+
+.skip_style .input-group-addon, .skip_style select, .skip_style input, .skip_style .form-control{
+    color: #555;
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+.content-center{
+    margin: 0 auto;
+}
+
+.center_table{
+    width: 40%;
+    align-items: center;
+    text-align: center;
+}
+
+@media (max-width: 767px){
+    .center_table{
+        width: 80%;
+    }
+}
+
+.center_table .panel-content td, .center_table .panel-content th {
+    padding: 16px;
+}
+
+tfoot.header {
+    display: table-header-group;
+}
 
 .page-footer{
     /*position: relative !important;*/
 }
 
+.hide_pass{
+    display: none!important;
+}
+
+.jarviswidget > div {
+    padding: 14px 14px 0;
+}
+
+.jarviswidget-editbox {
+    background-color: inherit;
+}
 
 /*las secciones de pasos de los formularios*/
 .step-pane .row{
@@ -86,11 +173,67 @@
     right: 66px;
 }
 
+.no_progress_val:before, .no_progress_val:after{
+    content: none;
+}
+
+.no_progress_val{
+    margin-top: 5px!important;
+}
+
+/*estilos para el menu*/
+
+b.collapse-sign {
+    right: 10px;
+    position: absolute;
+}
+
 /*las opciones del menu principal*/
 nav ul li a {
     font-size: 15px;
 }
 
+.small, small {
+    font-size: small;
+}
+
+select[name="campusAppSelect"]{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    min-width: 200px;
+    width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    outline: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0;
+    border-color: #bfbfbf;
+    background: #fff;
+    color: #404040;
+    appearance: normal;
+    -moz-appearance: none;
+    /* -webkit-appearance: none; */
+    margin-top: 10px;
+    line-height: normal;
+}
+
+.smart-style-5 select[name="campusAppSelect"]{
+    color: #fff;
+    background: rgba(0,0,0,.1)!important;
+    border-color: transparent;
+}
+
+.smart-style-5 .dataTables_empty{
+    color:#fff;
+}
+.smart-style-5 .llv-active{
+    color:#777;
+    background-color: #f5f5f5 !important;
+}
+.smart-style-5 .list-group-item {
+    background-color: rgba(0,0,0,.13);
+}
 
 /*el segundo nivel de las opciones del menu principal*/
 .smart-style-1 nav ul ul li>a {
@@ -147,7 +290,8 @@ nav ul li a {
 }
 
 .bootstrap-select > .dropdown-toggle.bs-placeholder{
-    color: inherit;
+    color: #cccccc; 
+    font-style: italic;
 }
 .bootstrap-select > .dropdown-toggle.bs-placeholder:hover{
     background: none;
@@ -277,6 +421,13 @@ body.loading .modal_loading {
     height: auto;
 }
 
+.no_overflow{
+    overflow: hidden;
+}
+.no_margin{
+    margin: 0px !important;
+}
+
 .text-bold{
     font-weight: bold;
 }
@@ -304,8 +455,11 @@ body.loading .modal_loading {
 }
 
 
-
-
+/*no contiene padding arriba y abajo*/
+.padding_side{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
 
 
 
@@ -366,7 +520,6 @@ body.loading .modal_loading {
     color: #2F3133;
     font-size: 19px;
     font-weight: bold;
-    margin-top: 0;
     text-align: left;
 }
 
@@ -374,7 +527,6 @@ body.loading .modal_loading {
     color: #2F3133;
     font-size: 16px;
     font-weight: bold;
-    margin-top: 0;
     text-align: left;
 }
 
@@ -382,7 +534,6 @@ body.loading .modal_loading {
     color: #2F3133;
     font-size: 14px;
     font-weight: bold;
-    margin-top: 0;
     text-align: left;
 }
 
@@ -414,7 +565,8 @@ body.loading .modal_loading {
     -premailer-width: 100%;
 }
 
-.ver_mail .wrapper table{
+
+.ver_mail .wrapper table, .ver_mail .center_table{
     background-color: #f5f8fa;
 }
 .ver_mail .content {
@@ -448,10 +600,8 @@ body.loading .modal_loading {
     /*background-color: #FFFFFF;*/
     margin: 0 auto;
     padding: 0;
-    width: 570px;
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
-    -premailer-width: 570px;
 }
 
 /* Subcopy */
@@ -472,10 +622,12 @@ body.loading .modal_loading {
     margin: 0 auto;
     padding: 0;
     /*text-align: center;*/
-    width: 570px;
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
-    -premailer-width: 570px;
+}
+
+.ver_mail .panel {
+    border: none;
 }
 
 .ver_mail .footer p {
@@ -487,8 +639,8 @@ body.loading .modal_loading {
 /* Tables */
 
 .ver_mail .table table {
-    margin: 30px auto;
-    /*width: 100%;*/
+    /*margin: 30px auto;*/
+    width: 100%;
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
@@ -511,11 +663,13 @@ body.loading .modal_loading {
 .ver_mail .table tr {
     width: 100%;
 }
+.ver_mail .table td.header h1 {
+    color: #74787E;
+}
 .ver_mail .table td {
     color: #74787E;
     font-size: 15px;
     line-height: 18px;
-    width: 50%;
     padding: 5px 10px;    
     border-top: 1px solid #ddd;
     vertical-align: top;
@@ -524,6 +678,9 @@ body.loading .modal_loading {
 .ver_mail .content-cell {
     padding: 16px 16px 0px 16px;
 }
+.ver_mail .table_padding th, .ver_mail .table_padding td{
+    padding: 5px 35px;
+}
 
 /* Buttons */
 
@@ -531,7 +688,7 @@ body.loading .modal_loading {
     margin: 30px auto;
     padding: 0;
     text-align: center;
-    /*width: 100%;*/
+    width: 100%;
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
@@ -614,6 +771,121 @@ body.loading .modal_loading {
     text-align: center;
 }
 
+/*para que las listas no se vean en blaco*/
+.list-group-item {
+    background: inherit;
+}
+
+
+/*estilo para select multiple*/
+
+.select2-container{
+    background: rgba(255,255,255,.2);
+    border-color: rgba(255,255,255,.4);
+    color: #FFF;
+}
+
+.smart-style-5 .select2-dropdown {
+    background: #000;
+    border-color: rgba(0,0,0,.4);
+    color: #FFF;
+}
+
+.select2-dropdown {
+    background: #000;
+    border-color: rgba(0,0,0,.4);
+    border: 1px solid #ccc;
+    border-radius: 0px;
+}
+/*
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #5897fb;
+    color: white;
+}
+*/
+.select2-container--default .select2-results__option[aria-selected=true] {
+    /*background-color: #7cafff;*/
+    background-color: rgba(249, 249, 249, 0.33);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #6d6d6d;
+    line-height: 22px;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #ccc;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: 1px solid #ccc;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: inherit;
+    border-radius: 0px;
+    cursor: text;
+}
+
+.select2-container, .select2-container--default .select2-selection--single {
+    min-height: 32px;
+    line-height: 12px;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li.select2-search--inline {
+    width: 100%;
+}
+.select2-container--default .select2-search__field{ 
+    width: 100% !important;
+    height: 29px;
+    padding: 0px 15px 0px 15px !important;
+    margin: 0;
+    margin-top: 0px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__clear {
+    float: none;
+    position: absolute;
+    right: 0px;
+}
+
+.smart-style-5 .select2-container--default .select2-search__field::-webkit-input-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field:-moz-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field::-moz-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+.smart-style-5 .select2-container--default .select2-search__field:-ms-input-placeholder { color: #cccccc; font-style: italic; /*font-size: 13px;*/ }
+
+select[multiple].input-lg{
+    height: 45px;
+    overflow-y: hidden;
+    line-height: 45px;
+}
+
+select[multiple].input-lg option{
+    height: 45px;
+}
+.popover{
+    max-width: 100%;
+}
+
+/*
+.select2-container--default .select2-selection--single {
+    height: 46px !important;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 0px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    top: 85% !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 26px !important;
+}
+.select2-container--default .select2-selection--single {
+    border: 1px solid #CCC !important;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+*/
 
 /* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
 /* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
@@ -633,3 +905,248 @@ body.loading .modal_loading {
     color: #FFF;
 
 */
+/*estilos para el modulo de localizacion*/
+.panel .panel-heading {
+    background-color: #3949ab;
+    color: #fff;
+    border: none;
+    border-top-right-radius: 1px;
+    border-top-left-radius: 1px;
+    height: 40px;
+    position: relative;
+}
+
+.panel .panel-heading #buton_help, #buton_help {
+    position: absolute;
+    right: 20px;
+    top: 8px;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.panel .panel-body .icon_add {
+    width: 100%;
+    text-align: right;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.panel .panel-body .icon_add a {
+    right: 20px;
+    top: 8px;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.panel .panel-body .field.button, .fieldbox {
+    float: left;
+    width: 33.33%; 
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.panel .panel-body .field.button .btn {
+    width: 100%;
+}
+
+.resultbox{
+    width: 100%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    overflow-x: hidden;
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.resultbox{
+    border: none;
+    border-radius: 1px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12) ;
+    height: auto;
+}
+
+.resultbox .field, .panel-body .field{
+    width: 50%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow-x: hidden;
+}
+
+.field.icon-view, .field.full {
+    width: 100%;
+    position: absolute;
+}
+
+.field.icon-view {
+    min-height: 36px;
+}
+
+.contenedor.show .field label {
+    font-weight: 300;
+    font-size: 1em;
+    display: block;
+    margin-bottom: 0;
+    color: #9e9e9e;
+    cursor: text;
+}
+
+
+/*estilos para el editor de documentos*/
+
+/* Minimal styling to center the editor in this sample */
+
+    #content_editor {
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+    #content_editor .table-hover{
+        margin: 10px;
+    }
+
+    #content_columns {
+        margin: 0 auto;
+        color: black;
+    }
+
+    .columns {
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #E7E7E7;
+    }
+    .columns:after {
+        content: "";
+        clear: both;
+        display: block;
+    }
+    .columns .editor {
+        float: left;
+        width: 65%;
+        position: relative;
+        z-index: 1;
+        border: 1px solid #d1d1d1;
+    }
+    .columns .editor embed{
+        width: 100%;
+        min-height: 400px;
+    }
+    .columns .contacts {
+        float: right;
+        width: 35%;
+        box-sizing: border-box;
+        padding: 0 0 0 20px;
+    }
+    #contactList {
+        list-style-type: none;
+        margin: 0 !important;
+        padding: 0;
+    }
+    #contactList li {
+        margin-bottom: 1px;
+        min-height: 56px;
+        /*line-height: 56px;*/
+        cursor: pointer;
+    }
+
+    #contactList > li {
+        background: #FAFAFA;
+    }
+
+    #contactList > li li {
+        background: #eaeaea;
+    }
+
+    #contactList > li {
+        line-height: 56px;
+    }
+    #contactList > li li{
+        height: 56px;
+        list-style-type: none;
+    }
+    #contactList > li ul{
+        max-height: 230px;
+        overflow-y: auto;
+    }
+
+    #contactList > li:nth-child(2n) {
+        background: #F3F3F3;
+    }
+    #contactList > li:hover {
+        background: #f7f6eb;
+        border-left: 5px solid #DCDAC1;
+        margin-left: -5px;
+    }
+
+    #contactList > li li:nth-child(2n) {
+        background: #f5f5f5;
+    }
+    #contactList > li li:hover {
+        background: #FFFDE3;
+        border-left: 5px solid #DCDAC1;
+        margin-left: -5px;
+    }
+
+    .contact {
+        padding: 0 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .contact .u-photo {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+    .editor_title_msg {
+        padding: 6px 15px;
+    }
+    #editor1 .h-card {
+        background: #FFFDE3;
+        padding: 3px 6px;
+        border-bottom: 1px dashed #ccc;
+    }
+    #editor1 {
+        border: 1px solid #E7E7E7;
+        padding: 0 20px;
+        background: #fff;
+        position: relative;
+    }
+    #editor1 .h-card .p-tel {
+        font-style: italic;
+    }
+    #editor1 .h-card .p-tel::before,
+    #editor1 .h-card .p-tel::after {
+        font-style: normal;
+    }
+    #editor1 .h-card .p-tel::before {
+        content: "(☎ ";
+    }
+    #editor1 .h-card .p-tel::after {
+        content: ")";
+    }
+    #editor1 h1 {
+        text-align: center;
+    }
+    #editor1 a {
+        color: inherit;
+    }
+    #editor1 hr {
+        border-style: dotted;
+        border-color: #DCDCDC;
+        border-width: 1px 0 0;
+    }
+    .cke_show_border td{
+        border: 0px !important;
+    }
+

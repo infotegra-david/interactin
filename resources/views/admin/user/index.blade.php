@@ -14,20 +14,20 @@
 
     //include header
     //you can add your custom css in $page_css array.
+    //$your_style = 'bootstrap-select.min.css,your_style.css';
     $your_style = 'your_style.css';
-    //$your_style = 'bootstrap-select.min.css';
-    
 
+    $your_script = 'js/my_functions.js';
     //include left panel (navigation)
     //follow the tree in inc/config.ui.php
 
     $page_nav = 1;
-    $menu="InterAdmin";
-    $submenu1="Users";
+    $page_nav_route[ "InterAdmin" ]["sub"][ "Users" ]["active"] = true;
     //$submenu2='';
     ?>
 
 @endsection
+
 
 @section('content')
     <div class="clearfix"></div>

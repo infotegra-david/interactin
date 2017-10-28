@@ -52,7 +52,7 @@ class InterChangeController extends AppBaseController
     private $tipoInstitucion;
     private $pais;
     private $peticion;
-    private $tipoInterChange;
+    private $tipoRuta;
 
     public function __construct(InscripcionRepository $interChangeRepo, TipoPaso $tipoPasoModel, Institucion $institucionModel, Facultad $facultadModel, Country $countryModel, Request $request)
     {
@@ -98,7 +98,7 @@ class InterChangeController extends AppBaseController
 
         //$action = Route::currentRouteAction();
 
-        $this->tipoInterChange = $name;
+        $this->tipoRuta = $name;
     }
 
     public function crearPaso($paso,$estado,$interchangeId,$observacion = '')
@@ -144,6 +144,19 @@ class InterChangeController extends AppBaseController
      */
     public function index(Request $request)
     {
+        if ( strpos($this->tipoRuta, 'interout') !== false ) {
+            return redirect('/html/interout.php');
+        }
+        if ( strpos($this->tipoRuta, 'interin') !== false ) {
+            return redirect('/html/interin.php');
+        }
+
+
+
+
+
+
+
         $this->interChangeRepository->pushCriteria(new RequestCriteria($request));
         $interChanges = $this->interChangeRepository->all();
 
@@ -158,7 +171,13 @@ class InterChangeController extends AppBaseController
      */
     public function map(Request $request)
     {
-        return redirect('/html/interout-map.php');
+        
+        if ( strpos($this->tipoRuta, 'interout') !== false ) {
+            return redirect('/html/interout-map.php');
+        }
+        if ( strpos($this->tipoRuta, 'interin') !== false ) {
+            return redirect('/html/interin-map.php');
+        }
     }
 
     /**
@@ -316,9 +335,19 @@ class InterChangeController extends AppBaseController
      */
     public function create($interchangeId = '')
     {
+        
+        if ( strpos($this->tipoRuta, 'interout') !== false ) {
+            return redirect('/html/interout.php');
+        }
+        if ( strpos($this->tipoRuta, 'interin') !== false ) {
+            return redirect('/html/interin.php');
+        }
+
+
+
         $tipoInterChange = 'InterOut';
         $tipoModalidad = 0;
-        if ($this->tipoInterChange == 'interchanges.interin.create') {
+        if ($this->tipoRuta == 'interchanges.interin.create') {
             $tipoInterChange = 'InterIn';
             $tipoModalidad = 1;
         }
@@ -1044,7 +1073,7 @@ class InterChangeController extends AppBaseController
         return redirect(route('interChanges.index'));
         */
         $tipoInterChange = 'InterOut';
-        if($this->tipoInterChange == 'interchanges.interin.store'){
+        if($this->tipoRuta == 'interchanges.interin.store'){
             $tipoInterChange = 'InterIn';
         }
 
@@ -1062,6 +1091,14 @@ class InterChangeController extends AppBaseController
     public function show($id, $peticion = '')
     {
 
+
+        if ( strpos($this->tipoRuta, 'interout') !== false ) {
+            return redirect('/html/interout.php');
+        }
+        if ( strpos($this->tipoRuta, 'interin') !== false ) {
+            return redirect('/html/interin.php');
+        }
+
         $inscripcionId = 0;
         $dataInscripcion = '';
         $dataUsers = 0;
@@ -1071,7 +1108,7 @@ class InterChangeController extends AppBaseController
         $viewWith = [];
 
         $tipoInterChange = 'InterOut';
-        if ($this->tipoInterChange == 'interchanges.interin.create') {
+        if ($this->tipoRuta == 'interchanges.interin.create') {
             $tipoInterChange = 'InterIn';
         }
 
@@ -1119,13 +1156,25 @@ class InterChangeController extends AppBaseController
      */
     public function edit($id)
     {
+        
+        if ( strpos($this->tipoRuta, 'interout') !== false ) {
+            return redirect('/html/interout.php');
+        }
+        if ( strpos($this->tipoRuta, 'interin') !== false ) {
+            return redirect('/html/interin.php');
+        }
+
+
+
+        
+
         $tipoInterChange = 'InterOut';
         $rutaError = route('interChanges.interout.index');
         //el paso es 1 o 5 (pre registro y registro)
         $paso = '1';
 
         //verifica que ruta se esta usando, interin o interout
-        if ($this->tipoInterChange == 'interchanges.interin.edit') {
+        if ($this->tipoRuta == 'interchanges.interin.edit') {
             $tipoInterChange = 'InterIn';
             $rutaError = route('interChanges.interin.index');
         }
@@ -1188,7 +1237,7 @@ class InterChangeController extends AppBaseController
         */
 
         $tipoInterChange = 'InterOut';
-        if($this->tipoInterChange == 'interchanges.interin.store'){
+        if($this->tipoRuta == 'interchanges.interin.store'){
             $tipoInterChange = 'InterIn';
         }
 

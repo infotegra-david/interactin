@@ -40,6 +40,7 @@ trait Validador{
         end:
         return $retorno;
     }
+    
     /**
      * @param $busqueda
      * @return mixed
@@ -605,8 +606,10 @@ trait Validador{
                     // $UserPasoActual = $existeValidador->id;
                     if ($estado_recibido[$keyEstadoRecibido]['uso'] == 'USER' || $estado_recibido[$keyEstadoRecibido]['uso'] == 'EXTERNAL' ) {
                         //selecciona el primer validador para que sea notificado
+                        
                         $siguienteValidador[] = $existeValidador->user_id;
                         $UserPasoSiguiente[] = $existeValidador->id;
+
                         break; 
                     }
                     //si en la iteracion anterior se encontro al validador actual entonces este es el siguiente validador que hay que notificar
@@ -636,7 +639,7 @@ trait Validador{
 // echo '$request[paso]:'.$request['paso'].'  ';
 // echo '$existeValidador->tipo_paso_id:'.$existeValidador->tipo_paso_id.'  $paso_recibido:'.$paso_recibido;
 // echo '<br>';
-// echo '$encontroValidador:'.$encontroValidador.'  count($siguienteValidador):'.count($siguienteValidador).'  estado_recibido[$keyEstadoRecibido]['uso']:'.$estado_recibido[$keyEstadoRecibido]['uso'].'  $estado_recibido[$keyEstadoRecibido]['nombre']:'.$estado_recibido[$keyEstadoRecibido]['nombre'];
+// echo '$encontroValidador:'.$encontroValidador.'  count($siguienteValidador):'.count($siguienteValidador).'  estado_recibido[$ keyEstadoRecibido] ["uso"]:'.$estado_recibido[$keyEstadoRecibido]['uso'].'  $estado_recibido[$keyEstadoRecibido]["nombre"]:'.$estado_recibido[$keyEstadoRecibido]['nombre'];
 // echo '<br>';
 
             }
@@ -672,25 +675,27 @@ trait Validador{
                         $tipo_link_boton = 'interesados';
 
                         if ( $estado_recibido[$keyEstadoRecibido]['nombre'] != 'APROBADO' && $estado_recibido[$keyEstadoRecibido]['nombre'] != 'ACTIVA') {
+
                             //cambiar el estado de los emails de la tabla mails vinculados a travez de pasos_alianza_mail y user_tipo_paso_mail con la alianza en el caso que el estado no sea aprobado, es decir RECHAZADO
                             $pasos_alianza_mail_id = \App\Models\Validation\PasosAlianza::join('pasos_alianza_mail','pasos_alianza.id','pasos_alianza_mail.pasos_alianza_id')
-                                ->where('pasos_alianza.alianza_id',$alianzaId)->select('pasos_alianza_mail.mail_id')->pluck('mail_id')->toArray();
+                                ->where('pasos_alianza.alianza_id',$alianzaId)->select('pasos_alianza_mail.mail_id','pasos_alianza.id AS pasos_alianza_id')->get()->toArray();
+///////////////////// definir si al momento de rechazar la validacion se continua desde el paso y usuario que rechazo o se vuelve a comenzar
                             if (!count($pasos_alianza_mail_id)) {
-                                $pasos_alianza_mail_id = array();
+                                $pasos_alianza_mail_id = array( array('mail_id' => 0) );
                             }
 
                             //se debe recibir el id del usuario que creo los emails, en este caso del coordinador_externo
                             $user_tipo_paso_mail_id = \App\Models\Validation\UserPaso::join('user_tipo_paso_mail','user_tipo_paso.id','user_tipo_paso_mail.user_tipo_paso_id')
                                 ->where('user_tipo_paso_mail.user_id',$request['user_id'])->select('user_tipo_paso_mail.mail_id')->pluck('mail_id')->toArray();
+
                             if (!count($user_tipo_paso_mail_id)) {
                                 $user_tipo_paso_mail_id = array();
                             }
 
-                            $mails_id = array_merge($pasos_alianza_mail_id,$user_tipo_paso_mail_id);
+                            $mails_id = array_merge(array_column($pasos_alianza_mail_id, 'mail_id'),$user_tipo_paso_mail_id);
 
                             $cambio_estado_mails = \App\Models\Mail::whereIn('id', $mails_id)
-                                ->update(['estado_id' => 0]);
-
+                                ->update(['estado' => 0]);
 
                             $estadoModificarAlianza = $estadoAlianzaEnproceso[$keyEstadoEnproceso]['id'];
                         }

@@ -34,3 +34,14 @@
     @php $emailCoordinador = $dataUsers[$keyCoordExterno]['coordinador_email']; @endphp
     E-mail del coordinador: {{ $emailCoordinador }}
 @endsection
+
+
+@section('scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $('.hide_pass').html('');
+
+        })
+    </script>
+@endsection

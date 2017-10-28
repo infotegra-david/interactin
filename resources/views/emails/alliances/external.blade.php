@@ -13,7 +13,7 @@
 
 @component('mail::panel')
 
-{!! $content[0]['footer'] !!}
+<strong>{!! $content[0]['footer'] !!}</strong>
 
 @endcomponent
 
