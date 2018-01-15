@@ -43,8 +43,11 @@
 	//follow the tree in inc/config.ui.php
 
 	$page_nav = 1;
-	$menu="InterAlliance";
-	$submenu1="SubscribeAlliance";
+	if ($paso <= 3) {
+		$page_nav_route[ "InterAlliance" ]["sub"][ "SubscribeAlliance" ]["active"] = true;
+	}elseif($paso >= 4){
+		$page_nav_route[ "InterAlliance" ]["sub"][ "Alliances" ]["sub"][ "Create" ]["active"] = true;
+	}
 	//$submenu2='';
 	?>
 
@@ -67,7 +70,7 @@
 					<ul id="sparks">
 						<li class="sparks-info">
 							<h5> Mis alianzas <span class="txt-color-blue">171</span></h5>
-							<div class="sparkline txt-color-blue hidden-mobile">
+							<div class="sparkline txt-color-blue hide-mobile">
 								1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
 							</div>
 						</li>
@@ -262,10 +265,10 @@
 	
 	{{ Html::script('/js/smartwidgets/jarvis.widget.min.js') }}
 	{{ Html::script('/js/plugin/fuelux/wizard/wizard_solo.js') }}
-
+<!-- 
 	{{-- Html::script('/js/plugin/fuelux/wizard/wizard_externo.min.js') --}}
 	{{-- Html::script('/js/plugin/fuelux/wizard/jquery-wizard.js') --}}
-
+ -->
 		<!-- JQUERY SELECT2 INPUT -->
 	{{ Html::script('/js/plugin/select2/select2.min.js') }}
 	{{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
@@ -279,107 +282,6 @@
 	<script type="text/javascript">
 
 		$(document).ready(function() {
-			var formEnviarRetorno = false;
-
-
-			function mostrarCheckbox_show(thisId,accion){
-				if (accion == 'mostrar') {
-					if ( $('div.checkbox_show#'+ thisId ).hasClass('disabledContent') ) {
-						$('div.checkbox_show#'+ thisId ).removeClass('disabledContent').addClass('enabledContent');
-					}
-					if ( $('div.checkbox_show#'+ thisId ).hasClass('hide') ) {
-						$('div.checkbox_show#'+ thisId ).removeClass('hide');
-					}
-					$('div.checkbox_show#'+ thisId ).show('fast');
-
-				}else if(accion == 'ocultar'){
-					if ( $('div.checkbox_show#'+ thisId ).hasClass('enabledContent') ) {
-						$('div.checkbox_show#'+ thisId ).addClass('disabledContent').removeClass('enabledContent');
-					}else{
-						$('div.checkbox_show#'+ thisId ).hide('fast');
-					}
-				}
-
-			}
-			
-			$('input.checkbox_show').each(function(){
-				var thisId = $(this).attr('id');
-				var thisForm = $(this).parents('form').attr('id');
-				var accion = $(this).attr('accion');
-				
-				//console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
-				
-				//tipo radio button
-				if ( $(this).is(':radio') && $(this).val() == 'SI' && $(this).is(':checked') ) {
-					accion = accion || 'ocultar';
-					mostrarCheckbox_show(thisId,accion);
-					//especifico para la aceptacion o rechazo de la solicitud de alianza
-					if ( thisId == 'aceptar_alianza' ) {
-						$(this).parents('form').find('div#aceptar_alianza_enviar').addClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza').removeClass('hide');
-						$(this).parents('#Registro_content').find('#btnNext').removeClass('disabled');
-					}
-				}else if ( $(this).is(':radio') && $(this).val() == 'NO' && $(this).is(':checked') )  {
-					accion = accion || 'mostrar';
-					mostrarCheckbox_show(thisId,accion);
-					//especifico para la aceptacion o rechazo de la solicitud de alianza
-					if ( thisId == 'aceptar_alianza' ) {
-						$(this).parents('form').find('div#aceptar_alianza_enviar').removeClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza').addClass('hide');
-						$(this).parents('#Registro_content').find('#btnNext').addClass('disabled');
-					}
-				}
-
-				//tipo checkbox
-				if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
-					accion = accion || 'ocultar';
-					mostrarCheckbox_show(thisId,accion);
-				}	
-				
-			});
-			// para que se vea animado el progreso de los pasos
-			$('input.checkbox_show').on('change', function(){
-				var thisId = $(this).attr('id');
-				var thisForm = $(this).parents('form').attr('id');
-				var accion = $(this).attr('accion');
-				//console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
-				
-				//tipo radio button
-				if ( $(this).is(':radio') && $(this).val() == 'SI' ) {
-
-					accion = accion || 'ocultar';
-					mostrarCheckbox_show(thisId,accion);
-
-					//especifico para la aceptacion o rechazo de la solicitud de alianza
-					if ( thisId == 'aceptar_alianza' ) {
-						//$('#' + thisForm +' div#aceptar_alianza_enviar').addClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza_enviar').addClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza').removeClass('hide');
-						$(this).parents('#Registro_content').find('#btnNext').removeClass('disabled');
-					}
-				}else if ( $(this).is(':radio') && $(this).val() == 'NO' )  {
-					accion = accion || 'mostrar';
-					mostrarCheckbox_show(thisId,accion);
-
-					//especifico para la aceptacion o rechazo de la solicitud de alianza
-					if ( thisId == 'aceptar_alianza' ) {
-						//$('#' + thisForm +' div#aceptar_alianza_enviar').addClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza_enviar').removeClass('hide');
-						$(this).parents('form').find('div#aceptar_alianza').addClass('hide');
-						$(this).parents('#Registro_content').find('#btnNext').addClass('disabled');
-					}
-				}
-
-				//tipo checkbox
-				if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
-					accion = accion || 'ocultar';
-					mostrarCheckbox_show(thisId,accion);
-				}else if ( $(this).is(':checkbox') && !$(this).is(':checked') )  {
-					accion = accion || 'mostrar';
-					mostrarCheckbox_show(thisId,accion);
-				}	
-				
-			});
 
 			/*el formulario (form) es el que se valida*/
 			//var $validator = $("#wizard-1").validate({
@@ -518,29 +420,6 @@
 
 			//FIN ENVIAR AJAX POST
 			//FIN ENVIAR AJAX POST
-
-			/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
-
-			$('.wizard_content #btnNext').on('click', function() {
-				/*var $valid = $(".PreRegistro_form").valid();
-				if (!$valid) {
-					$validator_PreRegistro.focusInvalid();
-					return false;
-				} else {
-					//$('.PreRegistro_form').wizard('next');
-			    	$('#menuPreRegistro .actions .btn-next').click();
-				}*/
-				var FormContent = $(this).parents('.step-content').attr('id');
-				$( "#" + FormContent + " .step-pane.active form" ).submit();
-			});
-
-			$('.wizard_content #btnBack').on('click', function() {
-				var menu = '#' + $(this).parents('.wizard_content').attr('id');
-				var botones = '#' + $(this).parents('.wizard_content').find('.button-content').attr('id');
-				
-			    $(menu + ' .actions .btn-prev').click();
-			    $(botones + ' #btnNext').removeClass('disabled');
-			});
 
 			/*
 			$('.Registro_form #btnBack').on('click', function() {

@@ -73,6 +73,14 @@ class ClaseDocumentoTableSeeder extends Seeder
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
             ),
+            7 => 
+            array (
+                'id' => 8,
+                'nombre' => 'USUARIO',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ),
         ));
         
         

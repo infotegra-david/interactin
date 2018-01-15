@@ -281,6 +281,17 @@ img {
     font-size: 15px;
     text-align: center;
 }
+
+.right{
+    right: 2%;
+    position: absolute;
+}
+
+.left{
+    left: 2%;
+    position: absolute;
+}
+
 .row {
     width: 100%;
     padding-bottom: 5px;
@@ -303,6 +314,11 @@ img {
 
 .col-sm-6 {
     width: 50%;
+}
+
+.full ul, .full li {
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 h2 {

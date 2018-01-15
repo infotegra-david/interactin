@@ -25,6 +25,7 @@ class TipoDocumento extends Model
 
     public $fillable = [
         'nombre',
+        'descripcion',
         'clase_documento_id'
     ];
 
@@ -36,6 +37,7 @@ class TipoDocumento extends Model
     protected $casts = [
         'id' => 'integer',
         'nombre' => 'string',
+        'descripcion' => 'string',
         'clase_documento_id' => 'integer'
     ];
 
@@ -75,7 +77,7 @@ class TipoDocumento extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosInscripcions()
+    public function documentosInscripcion()
     {
         return $this->hasMany(\App\Models\DocumentosInscripcion::class);
     }
@@ -83,7 +85,7 @@ class TipoDocumento extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosInstitucions()
+    public function documentosInstitucion()
     {
         return $this->hasMany(\App\Models\DocumentosInstitucion::class);
     }
@@ -91,7 +93,7 @@ class TipoDocumento extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosOportunidads()
+    public function documentosOportunidad()
     {
         return $this->hasMany(\App\Models\DocumentosOportunidad::class);
     }

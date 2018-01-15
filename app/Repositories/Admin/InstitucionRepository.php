@@ -41,11 +41,23 @@ class InstitucionRepository extends BaseRepository
      *
      * @return list states
      */
-    public function listInstitutions($institucion_id, $pais_id) 
+    public function listInstitutions($institucion_id, $pais_id, $modalidad_id) 
     {
         $ciudades = \App\Models\Admin\State::join('ciudad', 'departamento.id', '=', 'ciudad.departamento_id')->where('departamento.pais_id', $pais_id)->pluck('ciudad.id');
 
-        $instituciones = Institucion::join('campus', 'institucion.id', '=', 'campus.institucion_id')->where('institucion.id','<>', $institucion_id)->whereIn('campus.ciudad_id', $ciudades)->pluck('institucion.nombre','institucion.id');
+        $institucionesId = \App\Models\Alianza::join('alianza_modalidades', 'alianza.id', '=', 'alianza_modalidades.alianza_id')
+            ->join('alianza_institucion', 'alianza.id', '=', 'alianza_institucion.alianza_id')
+            ->where('alianza_modalidades.modalidades_id', $modalidad_id)
+            ->where('alianza_institucion.institucion_id','<>', $institucion_id)
+            ->pluck('alianza_institucion.institucion_id');
+
+        $instituciones = Institucion::join('campus', 'institucion.id', '=', 'campus.institucion_id')
+            ->whereIn('institucion.id', $institucionesId)
+            ->where('campus.principal',1)
+            ->whereIn('campus.ciudad_id', $ciudades)
+            ->pluck('institucion.nombre','institucion.id');
+
+
 
         return $instituciones;
     } 

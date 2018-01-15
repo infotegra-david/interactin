@@ -28,6 +28,10 @@
 		<!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->
 		<script src="{{URL::asset('js/plugin/jquery-touch/jquery.ui.touch-punch.min.js')}}"></script> 
 
+		<!-- TETHER JS IS REQUIRED BY BOOTSTRAP 4-->
+		<!-- <script src="{{URL::asset('js/bootstrap/tether/tether.min.js')}}"></script> -->
+		<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script> -->
+
 		<!-- BOOTSTRAP JS -->
 		<script src="{{URL::asset('js/bootstrap/bootstrap.min.js')}}"></script>
 

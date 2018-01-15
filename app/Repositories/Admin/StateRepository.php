@@ -31,7 +31,7 @@ class StateRepository extends BaseRepository
      */
     public function listCountries()
     {
-        return Country::pluck('nombre','id');
+        return Country::orderBy('nombre','asc')->pluck('nombre','id');
     }
 
     /**

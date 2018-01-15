@@ -30,8 +30,8 @@
 
 
 
-<li class="{{ Request::is('inscripcions*') ? 'active' : '' }}">
-    <a href="{!! route('inscripcions.index') !!}"><i class="fa fa-edit"></i><span>Inscripcions</span></a>
+<li class="{{ Request::is('inscripcion*') ? 'active' : '' }}">
+    <a href="{!! route('inscripcion.index') !!}"><i class="fa fa-edit"></i><span>Inscripcion</span></a>
 </li>
 
 <li class="{{ Request::is('tipoAlianzas*') ? 'active' : '' }}">
@@ -52,8 +52,8 @@
     <a href="{!! route('tipoFacultads.index') !!}"><i class="fa fa-edit"></i><span>TipoFacultads</span></a>
 </li>
 
-<li class="{{ Request::is('mails*') ? 'active' : '' }}">
-    <a href="{!! route('mails.index') !!}"><i class="fa fa-edit"></i><span>Mails</span></a>
+<li class="{{ Request::is('emails*') ? 'active' : '' }}">
+    <a href="{!! route('emails.index') !!}"><i class="fa fa-edit"></i><span>Emails</span></a>
 </li>
 
 <li class="{{ Request::is('tipoPasos*') ? 'active' : '' }}">
@@ -85,8 +85,8 @@
     <a href="{!! route('intervalidation.assignments.index') !!}"><i class="fa fa-edit"></i><span>UserPasos</span></a>
 </li>
 
-<li class="{{ Request::is('userPasoMails*') ? 'active' : '' }}">
-    <a href="{!! route('userPasoMails.index') !!}"><i class="fa fa-edit"></i><span>UserPasoMails</span></a>
+<li class="{{ Request::is('userPasoEmails*') ? 'active' : '' }}">
+    <a href="{!! route('userPasoEmails.index') !!}"><i class="fa fa-edit"></i><span>UserPasoEmails</span></a>
 </li>
 
 <li class="{{ Request::is('interChanges*') ? 'active' : '' }}">
@@ -149,5 +149,55 @@
 
 <li class="{{ Request::is('users*') ? 'active' : '' }}">
     <a href="{!! route('users.index') !!}"><i class="fa fa-edit"></i><span>Users</span></a>
+</li>
+
+<li class="{{ Request::is('iniciativas*') ? 'active' : '' }}">
+    <a href="{!! route('iniciativas.index') !!}"><i class="fa fa-edit"></i><span>Iniciativas</span></a>
+</li>
+
+<li class="{{ Request::is('documentosInscripcion*') ? 'active' : '' }}">
+    <a href="{!! route('documentosInscripcion.index') !!}"><i class="fa fa-edit"></i><span>DocumentosInscripcion</span></a>
+</li>
+
+<li class="{{ Request::is('plantillas*') ? 'active' : '' }}">
+    <a href="{!! route('plantillas.index') !!}"><i class="fa fa-edit"></i><span>Plantillas</span></a>
+</li>
+
+<li class="{{ Request::is('plantillas*') ? 'active' : '' }}">
+    <a href="{!! route('plantillas.index') !!}"><i class="fa fa-edit"></i><span>Plantillas</span></a>
+</li>
+
+
+<li class="{{ Request::is('tipoIdiomas*') ? 'active' : '' }}">
+    <a href="{!! route('admin.tipoIdiomas.index') !!}"><i class="fa fa-edit"></i><span>TipoIdiomas</span></a>
+</li>
+
+<li class="{{ Request::is('nivels*') ? 'active' : '' }}">
+    <a href="{!! route('admin.nivels.index') !!}"><i class="fa fa-edit"></i><span>Nivels</span></a>
+</li>
+
+
+<li class="{{ Request::is('UserIdiomas*') ? 'active' : '' }}">
+    <a href="{!! route('admin.UserIdiomas.index') !!}"><i class="fa fa-edit"></i><span>UserIdiomas</span></a>
+</li>
+
+<li class="{{ Request::is('financiacions*') ? 'active' : '' }}">
+    <a href="{!! route('financiacions.index') !!}"><i class="fa fa-edit"></i><span>Financiacions</span></a>
+</li>
+
+<li class="{{ Request::is('fuenteFinanciacions*') ? 'active' : '' }}">
+    <a href="{!! route('fuenteFinanciacions.index') !!}"><i class="fa fa-edit"></i><span>FuenteFinanciacions</span></a>
+</li>
+
+<li class="{{ Request::is('financiacions*') ? 'active' : '' }}">
+    <a href="{!! route('financiacions.index') !!}"><i class="fa fa-edit"></i><span>Financiacions</span></a>
+</li>
+
+<li class="{{ Request::is('financiacions*') ? 'active' : '' }}">
+    <a href="{!! route('financiacions.index') !!}"><i class="fa fa-edit"></i><span>Financiacions</span></a>
+</li>
+
+<li class="{{ Request::is('tipoPasos*') ? 'active' : '' }}">
+    <a href="{!! route('tipoPasos.index') !!}"><i class="fa fa-edit"></i><span>TipoPasos</span></a>
 </li>
 

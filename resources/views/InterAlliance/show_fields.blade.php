@@ -9,17 +9,17 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row col-sm-12">
     <div class="col-sm-12">
         <hr>
     </div>
     <div class="col-sm-12"> 
 
         <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group full">
+            <div class="">
+                <div class=" full">
                     <!-- Created At Field -->
-                    <div class="form-control full">
+                    <div class=" full">
                         {!! Form::label('created_at', 'Fecha de creación:', ['class' => 'text-bold']) !!}
                         <span> {!! $dataAlianza['created_at'] !!}</span>
                     </div>
@@ -28,10 +28,10 @@
         </div>  
 
         <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group full">
+            <div class="">
+                <div class=" full">
                     <!-- Updated At Field -->
-                    <div class="form-control full">
+                    <div class=" full">
                         {!! Form::label('updated_at', 'Fecha de actualización:', ['class' => 'text-bold']) !!}
                         <span> {!! $dataAlianza['updated_at'] !!}</span>
                     </div>
@@ -40,10 +40,10 @@
         </div>  
 
         <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group full">
+            <div class="">
+                <div class=" full">
                     <!-- Estado Field -->
-                    <div class="form-control full">
+                    <div class=" full">
                         {!! Form::label('estado', 'Estado:', ['class' => 'text-bold']) !!}
                         <span> {!! $dataAlianza['estado_nombre'] !!}</span>
                     </div>
@@ -52,11 +52,11 @@
         </div>
         @if( !isset($omitir_collapse) )
         <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group full">
+            <div class="">
+                <div class=" full">
                     <!-- Estado Field -->
-                    <div class="form-control full">
-                        {!! Form::button('<i class="fa fa-info-circle"></i> Mas información', ['type' => 'button', 'class' => 'btn btn-md btn-info collapseAlianza hide', 'name' => 'collapseAlianza', 'id' => 'collapseAlianza', 'data-toggle' => 'collapse', 'data-target' => '#collapseDataAlianza', 'url' => '' ]) !!}
+                    <div class=" full">
+                        {!! Form::button('<i class="fa fa-info-circle"></i> Mas información', ['type' => 'button', 'class' => 'btn btn-md btn-info collapseAlianza collapseProceso hide', 'name' => 'collapseAlianza', 'id' => 'collapseAlianza', 'data-toggle' => 'collapse', 'data-target' => '#collapseDataAlianza', 'url' => '' ]) !!}
                     </div>
                 </div>
             </div>
@@ -64,222 +64,229 @@
         @endif
     </div>
 </div>
-<div class="row" id="collapseDataAlianza">
-        <div class="col-sm-6">
-            <div class="col-sm-12">
-                <hr>
+<div class="row col-sm-12" id="collapseDataAlianza">
+    <div class="{{ (!isset($enviar_email) ? 'col-md-12' : '') }} col-lg-6">
+        <div class="col-sm-12">
+            <hr>
+        </div>
+        <!-- <div class="col-sm-12"> -->
+        <div class="col-sm-12">
+            <h2>{{ $paso_titulo[1] }}</h2>
+        </div>
+        <br>
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Tipo Tramite Id Field -->
+                    <div class=" full">
+                        {!! Form::label('tipo_tramite_id', 'Tipo Tramite:', ['class' => 'text-bold']) !!}
+                        <span> {!! $dataAlianza['tipo_tramite_nombre'] !!}</span>
+                    </div>
+                </div>
             </div>
-            <!-- <div class="col-sm-12"> -->
-                <div class="col-sm-12">
-                    <h2>{{ $paso_titulo[1] }}</h2>
-                </div>
-                <br>
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
-                                {!! Form::label('tipo_tramite_id', 'Tipo Tramite:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataAlianza['tipo_tramite_nombre'] !!}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Objetivo Field -->
-                            <div class="form-control full">
-                                {!! Form::label('facultades', 'Facultades:', ['class' => 'text-bold']) !!} <br>
-
+        </div>  
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Objetivo Field -->
+                    <div class=" full">
+                        {!! Form::label('facultades', 'Facultades:', ['class' => 'text-bold']) !!} <br>
+                        <ul>
                             @foreach($dataAlianza['facultades'] as $key => $facultad)
-                                <span> {!! $facultad['facultad_nombre'] !!}</span> <br>
+                                <li> {!! $facultad['facultad_nombre'] !!}</li>
                             @endforeach
-                            </div>
-                        </div>
+                        </ul>
                     </div>
-                </div>  
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Objetivo Field -->
-                            <div class="form-control full">
-                                {!! Form::label('programas', 'Programas:', ['class' => 'text-bold']) !!} <br>
-
-                            @foreach($dataAlianza['programas'] as $key => $programa)
-                                <span> {!! $programa['programa_nombre'] !!}</span> <br>
-                            @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-
-                @if(count($dataAlianza['aplicaciones']))
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <div class="input-group full">
-                                <!-- Objetivo Field -->
-                                <div class="form-control full">
-                                    {!! Form::label('tipo_alianza', 'Tipo de alianza:', ['class' => 'text-bold']) !!} <br>
-                                    <span> {!! $dataAlianza['aplicaciones'][0]['tipo_alianza_nombre'] !!}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                @endif
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Objetivo Field -->
-                            <div class="form-control full">
-                                {!! Form::label('aplicaciones', 'Aplicaciones:', ['class' => 'text-bold']) !!} <br>
-                            <?php $mostrarARL = false; ?>
-                            @foreach($dataAlianza['aplicaciones'] as $key => $aplicaciones)
-                                <?php if ($aplicaciones['aplicaciones_id'] == 3) {
-                                    $mostrarARL = true;
-                                } ?>
-                                <span> {!! $aplicaciones['aplicaciones_nombre'] !!}</span> <br>
-                            @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-                <?php 
-                if ($mostrarARL == true) {
-                ?>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Responsable Arl Field -->
-                            <div class="form-control full">
-                                {!! Form::label('responsable_arl', 'Responsable Arl:', ['class' => 'text-bold']) !!}
-                                <span> {!! ($dataAlianza['responsable_arl'] == 0 ? 'ORIGEN' : 'DESTINO') !!}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-                <?php 
-                }
-                ?>
-
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Duracion Field -->
-                            <div class="form-control full">
-                                {!! Form::label('duracion', 'Duracion:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataAlianza['duracion'] !!}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
-                            <!-- Objetivo Field -->
-                            <div class="form-control full">
-                                {!! Form::label('objetivo', 'Objetivo:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataAlianza['objetivo'] !!}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-            <!-- </div>   -->
-            <!-- <div class="col-sm-12"> -->
-                <div class="col-sm-12">
-                    <h2>Coordinador interno</h2>
                 </div>
-                <br>
-                
-                    @if ( isset($dataUsers[$keyCoordInterno]) )
-                        
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-group full">
-                                    <!-- Objetivo Field -->
-                                    <div class="form-control full">
-                                        {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
-                                        <span> {!! $dataUsers[$keyCoordInterno]['coordinador_nombres'] !!} {!! $dataUsers[$keyCoordInterno]['coordinador_apellidos'] !!}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-group full">
-                                    <!-- Objetivo Field -->
-                                    <div class="form-control full">
-                                        {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
-                                        <span> {!! $dataUsers[$keyCoordInterno]['coordinador_cargo'] !!}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-group full">
-                                    <!-- Objetivo Field -->
-                                    <div class="form-control full">
-                                        {!! Form::label('telefono', 'Telefono:', ['class' => 'text-bold']) !!}
-                                        <span> {!! $dataUsers[$keyCoordInterno]['coordinador_telefono'] !!}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-group full">
-                                    <!-- Objetivo Field -->
-                                    <div class="form-control full">
-                                        {!! Form::label('email', 'E-mail:', ['class' => 'text-bold']) !!}
-                                        <span> {!! $dataUsers[$keyCoordInterno]['coordinador_email'] !!}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  
-                    @endif
-            <!-- </div>   -->
+            </div>
+        </div>  
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Objetivo Field -->
+                    <div class=" full">
+                        {!! Form::label('programas', 'Programas:', ['class' => 'text-bold']) !!} <br>
+                        <ul>
+                            @foreach($dataAlianza['programas'] as $key => $programa)
+                                <li> {!! $programa['programa_nombre'] !!}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>  
+
+        @if(count($dataAlianza['aplicaciones']))
+            <div class="col-sm-12">
+                <div class="">
+                    <div class=" full">
+                        <!-- Objetivo Field -->
+                        <div class=" full">
+                            {!! Form::label('tipo_alianza', 'Tipo de alianza:', ['class' => 'text-bold']) !!} 
+                            <span> {!! $dataAlianza['aplicaciones'][0]['tipo_alianza_nombre'] !!}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        @endif
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Objetivo Field -->
+                    <div class=" full">
+                        {!! Form::label('aplicaciones', 'Aplicacion:', ['class' => 'text-bold']) !!} 
+                        <?php $mostrarARL = false; ?>
+                        @foreach($dataAlianza['aplicaciones'] as $key => $aplicaciones)
+                            <?php if ($aplicaciones['aplicaciones_id'] == 3) {
+                                $mostrarARL = true;
+                            } ?>
+                            <span> {!! $aplicaciones['aplicaciones_nombre'] !!}</span> <br>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <?php 
+        if ($mostrarARL == true) {
+        ?>
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Responsable Arl Field -->
+                    <div class=" full">
+                        {!! Form::label('responsable_arl', 'Responsable Arl:', ['class' => 'text-bold']) !!}
+                        <span> {!! ($dataAlianza['responsable_arl'] == 0 ? 'ORIGEN' : 'DESTINO') !!}</span>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <?php 
+        }
+        ?>
+
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Duracion Field -->
+                    <div class=" full">
+                        {!! Form::label('duracion', 'Duracion:', ['class' => 'text-bold']) !!}
+                        <span> {!! $dataAlianza['duracion'] !!}</span>
+                    </div>
+                </div>
+            </div>
+        </div>  
+
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Objetivo Field -->
+                    <div class=" full">
+                        {!! Form::label('objetivo', 'Objetivo:', ['class' => 'text-bold']) !!}
+                        <span> {!! $dataAlianza['objetivo'] !!}</span>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <!-- </div>   -->
+        <!-- <div class="col-sm-12"> -->
+        <div class="col-sm-12">
+            <h2>Coordinador solicitante</h2>
+        </div>
+        <br>
         
+        @if ( isset($dataUsers[$keyCoordInterno]) )
+            
+            <div class="col-sm-12">
+                <div class="">
+                    <div class=" full">
+                        <!-- Objetivo Field -->
+                        <div class=" full">
+                            {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
+                            <span> {!! $dataUsers[$keyCoordInterno]['coordinador_nombres'] !!} {!! $dataUsers[$keyCoordInterno]['coordinador_apellidos'] !!}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            <div class="col-sm-12">
+                <div class="">
+                    <div class=" full">
+                        <!-- Objetivo Field -->
+                        <div class=" full">
+                            {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
+                            <span> {!! $dataUsers[$keyCoordInterno]['coordinador_cargo'] !!}</span>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-sm-12">
+                <div class="">
+                    <div class=" full">
+                        <!-- Objetivo Field -->
+                        <div class=" full">
+                            {!! Form::label('telefono', 'Telefono:', ['class' => 'text-bold']) !!}
+                            <span> {!! $dataUsers[$keyCoordInterno]['coordinador_telefono'] !!}</span>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-sm-12">
+                <div class="">
+                    <div class=" full">
+                        <!-- Objetivo Field -->
+                        <div class=" full">
+                            {!! Form::label('email', 'E-mail:', ['class' => 'text-bold']) !!}
+                            <span> {!! $dataUsers[$keyCoordInterno]['coordinador_email'] !!}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        @endif
+        <!-- </div>   -->
+
         @if( isset($archivosAdjuntos) && $archivosAdjuntos != '' && count($archivosAdjuntos)  && !isset($omitir_adjuntos) )
 
             <div class="col-sm-12">
-                <!-- <div class="col-sm-12"> -->
-                    <div class="table-responsive">
-                        <table class="table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="content-cell" >
-                                        <h2>Archivos adjuntos en el e-mail:</h2>
-                                    </th>
-                                    <th class="" >
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach( $archivosAdjuntos as $archivoAdjunto )
-                                <tr  class="" >
-                                    <td class="" >
-                                        {{ $archivoAdjunto->nombre }}
-                                    </td>       
-                                    <td class="" >
-                                        <a class="btn btn-xs btn-default pull-right" target="_blank"href="{{ Storage::url($archivoAdjunto->path) }}">Ver</a>
-                                    </td>
-                                </tr>
-                                @endforeach
+                <h2>Archivos adjuntos en el e-mail:</h2>
+            </div>
+            <br>
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table-hover col-sm-12">
+                        <tbody>
+                            @foreach( $archivosAdjuntos as $archivoAdjunto )
+                            <tr  class="" >
+                                <td class="" >
+                                    {{ $archivoAdjunto->nombre }}
+                                </td>       
+                                <td class="" >
+                                    <a class="btn btn-xs btn-default pull-right" target="_blank"href="{{ Storage::url($archivoAdjunto->path) }}">Ver</a>
+                                </td>
+                            </tr>
+                            @endforeach
 
-                            </tbody>
-                        </table>
-                    </div> 
-                <!-- </div>  -->
+                        </tbody>
+                    </table>
+                </div> 
             </div> 
         @endif
-        </div>
+
+        @if( isset($editar_origin) && $editar_origin == true )
+            <div class="col-sm-12">
+                <div class="">
+                    <a href="{!! route('interalliances.origin.edit',[$alianzaId,1]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                </div>
+            </div>
+            <!-- <div class="col-sm-12">
+                <hr>
+            </div> -->
+        @endif
+    </div>
+    <!--    --------------------------------------  -->
     <!--    --------------------------------------  -->
 
     @foreach($dataUsers as $key => $dataUser)
         @if ($dataUser['usuario_id'] == $CoordinadorExterno)
-        <div class="col-sm-6">
+        <div class="col-md-12 col-lg-6">
             <div class="col-sm-12">
                 <hr>
             </div>
@@ -288,88 +295,88 @@
                     <h2>{{ $paso_titulo[2] }}</h2>
                 </div>
                 <br>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('tipo_institucion_nombre', 'Tipo de institución:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['tipo_institucion_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('campus_direccion', 'Dirección campus principal:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['campus_direccion'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('campus_telefono', 'Teléfono campus principal:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['campus_telefono'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('campus_codigo_postal', 'Código postal campus principal:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['campus_codigo_postal'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('pais_nombre', 'País:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['ciudad']['pais_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('departamento_nombre', 'Departamento/Estado:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['ciudad']['departamento_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('ciudad_nombre', 'Ciudad:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['ciudad']['ciudad_nombre'] !!}</span>
                             </div>
@@ -383,66 +390,96 @@
                 </div>
                 <br>
                         
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Objetivo Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['coordinador_nombres'] !!} {!! $dataUser['coordinador_apellidos'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div>  
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Objetivo Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['coordinador_cargo'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Objetivo Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('telefono', 'Telefono:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['coordinador_telefono'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Objetivo Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('email', 'E-mail:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['coordinador_email'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-            @if( isset($ruta) && $ruta == "destination" )
+            @if( (isset($editar_destination) && $editar_destination == true) || (isset($editar_origin) && $editar_origin == true) )
                 <div class="col-sm-12">
-                    <div class="form-group">
-                        <a href="{!! route('interalliances.destination.edit',[$alianzaId,4]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                    <div class="">
+                        @php $route_edit = (isset($editar_destination) ? 'interalliances.destination.edit' : 'interalliances.origin.edit'); @endphp
+                        <a href="{!! route($route_edit,[$alianzaId,(isset($editar_destination) ? 4 : 2)]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
                     </div>
-                </div>
-                <div class="col-sm-12">
-                    <hr>
                 </div>
             @endif
             <!-- </div> -->
 
+            @if( !isset($omitir_collapse) )
+                <div class="col-sm-12">
+                    <hr>
+                </div>
+                <div class="col-sm-12">
+                    <h2>{{ $paso_titulo[3] }}</h2>
+                </div>
+                <br>
+                    
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
+                            <!-- Updated At Field -->
+                            <div class=" full">
+                                {!! Form::label('enviar_solicitud', 'Envío de la solicitud:', ['class' => 'text-bold']) !!}
+                                <span> {{ ($dataAlianza['enviar_solicitud'][3] ?? 'No ha sido enviada') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+
+                @if( isset($editar_origin) && $editar_origin == true )
+                    <div class="col-sm-12">
+                        <div class="">
+                            <a href="{!! route('interalliances.origin.edit',[$alianzaId,3]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                        </div>
+                    </div>
+                    <!-- <div class="col-sm-12">
+                        <hr>
+                    </div> -->
+                @endif
+            @endif
+
             @php 
             //si no existen datos del representante entonces dejarlos vacios pero aun asi mostrarlos
-            if( isset($dataUser['institucion']['representante']) ){
-            }else{
+            if( !isset($dataUser['institucion']['representante']) ){
                 $dataUser['institucion']['representante']['usuario_activo'] = false;
                 $dataUser['institucion']['representante']['repre_nombre'] = '';
                 $dataUser['institucion']['representante']['cargo'] = '';
@@ -460,126 +497,129 @@
 
           @if( isset($dataUser['institucion']['representante']) )
             
+                <div class="col-sm-12">
+                    <hr>
+                </div>
             <!-- <div class="col-sm-12"> -->
                 <div class="col-sm-12">
                     <h2>{{ $paso_titulo[5] }}</h2>
                 </div>
                 <br>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('repre_nombre', 'Nombre del representante:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['repre_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['cargo'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('telefono', 'Teléfono:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['telefono'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('repre_email', 'E-mail:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['repre_email'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('pais_nombre', 'País de nacimiento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['pais_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('tipo_documento_nombre', 'Tipo de documento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['tipo_documento_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('numero_documento', 'Número de documento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['numero_documento'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('fecha_expedicion', 'Fecha de expedición:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['fecha_expedicion'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div>  
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('pais_nombre', 'País de expedición del documento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['pais_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('departamento_nombre', 'Departamento/Estado de expedición del documento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['departamento_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
                 </div> 
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <div class="input-group full">
+                <div class="col-sm-12">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 {!! Form::label('ciudad_nombre', 'Ciudad de expedición del documento:', ['class' => 'text-bold']) !!}
                                 <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['ciudad_nombre'] !!}</span>
                             </div>
@@ -590,18 +630,14 @@
             @if( isset($archivosDocumentoRepresentante)  && $archivosDocumentoRepresentante != '' && count($archivosDocumentoRepresentante) && !isset($omitir_adjuntos) )
 
                 <div class="col-sm-12">
+                    <h2>Archivo de soporte de representación legal externo:</h2>
+                </div>
+                <br>
+                <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="content-cell" >
-                                        <h2>Archivo de soporte de representación legal externo:</h2>
-                                    </th>
-                                    <th class="" >
-                                    </th>
-                                </tr>
-                            </thead>
+                        <table class="table-hover col-sm-12">
                             <tbody>
+                                
                                 @foreach( $archivosDocumentoRepresentante as $archivoAdjunto )
                                 <tr  class="" >
                                     <td class="" >
@@ -616,16 +652,16 @@
                             </tbody>
                         </table>
                     </div> 
-                </div> 
+                </div>
 
                 <div class="col-sm-12">
                     <br>
                 </div>
             @endif
     
-            @if( isset($ruta) && $ruta == "destination" )
+            @if( isset($editar_destination) && $editar_destination == true )
                 <div class="col-sm-12">
-                    <div class="form-group">
+                    <div class="">
                         <a href="{!! route('interalliances.destination.edit',[$alianzaId,5]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
                     </div>
                 </div>
@@ -640,10 +676,10 @@
                 </div>
                 <br>
                 <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="input-group full">
+                    <div class="">
+                        <div class=" full">
                             <!-- Tipo Tramite Id Field -->
-                            <div class="form-control full">
+                            <div class=" full">
                                 <span> {!! $dataUser['observacion']['nombre'].': '.$dataUser['observacion']['observacion'] !!}</span>
                             </div>
                         </div>
@@ -652,7 +688,7 @@
             <!-- </div> -->
           @endif 
         </div>
-          @if( isset($ruta) && $ruta == "destination" )
+          @if( isset($editar_destination) && $editar_destination == true )
             <div class="col-sm-12">
                 <br>
                 {!! Form::open(['route' => ['interalliances.store'], 'method' => 'post', 'id' => 'Registro_paso6','files' => true, 'novalidate', 'class' => 'Registro_form', 'results' => 'Registro_results' ]) !!}
@@ -690,7 +726,7 @@
                 <!--observaciones-->
                     <div class="col-sm-12">
                         <div class="form-group no_tocar">
-                            <div class="input-group no_tocar">
+                            <div class="input-group no_tocar {{ ($errors->has('observacion_aceptar_alianza') ? 'has-error' : '') }}">
                                 <span class="input-group-addon"><i class="fa fa-paragraph fa-lg fa-fw"></i></span>
                                 {{ Form::textarea('observacion_aceptar_alianza', old('observacion_aceptar_alianza'), ['class' => 'form-control input-lg no_tocar', 'rows' => '3', 'placeholder' => 'Observaciones']) }}
                             </div>
@@ -700,7 +736,7 @@
                     <div class="col-sm-12 " id="aceptar_alianza_enviar">
                         <div class="form-group no_tocar">
                             <div class="input-group no_tocar">
-                                {!! Form::button('<i class="fa fa-external-link"></i> Enviar respuesta', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'enviar_aceptar', 'id' => 'enviar_aceptar', 'url' => route('interalliances.mail') ]) !!}
+                                {!! Form::button('<i class="fa fa-external-link"></i> Enviar respuesta', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'enviar_aceptar', 'id' => 'enviar_aceptar', 'url' => route('interalliances.email') ]) !!}
                             </div>
                         </div>
                     </div>
@@ -749,7 +785,7 @@
                 //envia los datos del rechazo por e-mail
                     
                     nInterval = setInterval(function(){
-                        if ( $('#'+ thisForm ).find('input[name="tokenmail"]').size() > 0 ) {
+                        if ( $('#'+ thisForm ).find('input[name="tokenemail"]').size() > 0 ) {
                             //enviar_aceptar(route,thisForm);
                             stopInterval();
                         }

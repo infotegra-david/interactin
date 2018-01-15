@@ -31,7 +31,7 @@ class CityRepository extends BaseRepository
      */
     public function listCountries()
     {
-        return Country::pluck('nombre','id');
+        return Country::orderBy('nombre','asc')->pluck('nombre','id');
     }
 
     /**
@@ -55,7 +55,7 @@ class CityRepository extends BaseRepository
      */
     public function listCities($departamento_id = null)
     {
-        return City::where('departamento_id', $departamento_id)->pluck('nombre','id');
+        return City::where('departamento_id', $departamento_id)->orderBy('nombre','asc')->pluck('nombre','id');
     }
 
     /**

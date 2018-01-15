@@ -37,14 +37,15 @@
     //you can add your custom css in $page_css array.
     $your_style = 'bootstrap-select.min.css,your_style.css';
     //$your_style = 'bootstrap-select.min.css';
-    
+    $your_script = 'js/my_functions.js';
 
     //include left panel (navigation)
     //follow the tree in inc/config.ui.php
 
     $page_nav = 1;
-    $menu="InterChange";
-    $submenu1=$tipoInterChange;
+    $page_nav_route[ "InterChange" ]["sub"][ $tipoInterChange ]["sub"][ 'Register'.$tipoInterChange ]["active"] = true;
+    // $menu="InterChange";
+    // $submenu1=$tipoInterChange;
     //$submenu2='';
     ?>
 
@@ -60,19 +61,6 @@
                   <h1 class="page-title txt-color-blueDark"><em class="fa fa-pencil-square-o fa-fw "></em> InterChange <span>&gt; {{ $tipoInterChange }} </span></h1>
                 </div>
 
-                <!-- right side of the page with the sparkline graphs -->
-                <!-- col -->
-                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
-                    <ul id="sparks" class="">
-                        <li class="sparks-info">
-                            <h5> Mi Presupuesto <span class="txt-color-blue">USD$2.500</span></h5>
-                            <div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
-                                1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- end col -->
             </div>
             @endif
             <!-- widget grid -->
@@ -82,70 +70,7 @@
                 <div class="row">
                     
 
-                @if( $peticion == "normal" )
-
-                    <!-- AYUDA -->
-                    <!-- NEW WIDGET START -->
-                    <article class="col-sm-12 col-md-12 col-lg-12">
-
-                        <!-- Widget ID (each widget will need unique ID)-->
-                        <div class="jarviswidget" id="wid-id-2" data-widget-collapsed="true" data-widget-editbutton="false" data-widget-deletebutton="false">
-                            <!-- widget options:
-                            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-            
-                            data-widget-colorbutton="false"
-                            data-widget-editbutton="false"
-                            data-widget-togglebutton="false"
-                            data-widget-deletebutton="false"
-                            data-widget-fullscreenbutton="false"
-                            data-widget-custombutton="false"
-                            data-widget-collapsed="true"
-                            data-widget-sortable="false"
-            
-                            -->
-                            <header>
-                                <h2>Ayuda </h2>
-            
-                            </header>
-            
-                            <!-- widget div-->
-                            <div>
-            
-                                <!-- widget edit box -->
-                                <div class="jarviswidget-editbox">
-                                    <!-- This area used as dropdown edit box -->
-            
-                                </div>
-                                <!-- end widget edit box -->
-            
-                                <!-- widget content -->
-                                <div class="widget-body fuelux">
-                                    <div class="step-content">
-                                        <div class="form-horizontal" id="fuelux-wizard">
-            
-                                            <div class="step-pane active col-lg-11" > 
-                                                Este formulario permite que los estudiantes registren sus datos para evaluar sus competencias y otorgar la autorización de movilidad
-                                                <!-- wizard form starts here -->
-                                          </div>            
-                            
-                                      </div>
-                                  </div>
-            
-                              </div>
-                                <!-- end widget content -->
-            
-                            </div>
-                            <!-- end widget div -->
-            
-                        </div>
-                        <!-- end widget -->
-
-
-                    </article>
-                    <!-- WIDGET END -->
-
-                @endif
-                @if( $paso == 1)
+                @if( $paso <= 4)
                     <!-- pre-Registro de una nueva alianza -->
                     <!-- NEW WIDGET START -->
                     <article class="col-sm-12 col-md-12 col-lg-12">
@@ -201,18 +126,16 @@
                                             <?php 
                                                 $interchange = [''];
                                                 $method = 'post';
-                                             ?>
-                                             @if(Route::current()->getName() == 'interchanges.interout.create')
-                                            <?php 
-                                                $route = ['interchanges.interout.store'];
-                                             ?>
-                                             @elseif(Route::current()->getName() == 'interchanges.interin.create')
-                                            <?php 
-                                                $route = ['interchanges.interin.store'];
-                                             ?>                                             
-                                             @endif
-                                             
-                                            @include('InterChange.fields_preregistro')
+                                                if( !isset($editar_paso) ){ $editar_paso = false; }
+
+                                                $route = [$route_split.'.store'];
+                                            ?>
+
+                                            @if( $editar_paso == false || $editar_paso >= $paso )
+                                                @include('InterChange.fields_preregistro')
+                                            @else
+                                                @include('errors.404')
+                                            @endif
 
                                     </div>
 
@@ -228,7 +151,7 @@
                     </article>
                     <!-- WIDGET END -->
                 @endif
-                @if( $paso == 5)
+                @if( $paso >= 5)
                     <!-- Registro de una nueva alianza -->
                     <!-- NEW WIDGET START -->
                     <article class="col-sm-12 col-md-12 col-lg-12">
@@ -279,8 +202,17 @@
                                                 @include( 'layouts.alerts' )
                                             </div>
                                         </div>
+                                        <?php 
+                                            //para editar cada paso por separado
+                                            if( !isset($editar_paso) ){ $editar_paso = false; }
+                                        ?>
 
-                                        @include('InterChange.fields_registro')
+                                        @if( $editar_paso == false || $editar_paso >= $paso )
+                                            @include('InterChange.fields_registro')
+                                        @else
+                                            @include('errors.404')
+                                        @endif
+
 
                                     </div>
 
@@ -313,9 +245,11 @@
 
     
     {{ Html::script('/js/smartwidgets/jarvis.widget.min.js') }}
-    {{ Html::script('/js/plugin/fuelux/wizard/wizard_externo.min.js') }}
+    {{ Html::script('/js/plugin/fuelux/wizard/wizard_solo.js') }}
     <!-- { { Html::script('/js/bootstrap/bootstrap-multiselect.js') }} -->
     <!-- { { Html::script('/js/bootstrap/bootstrap-select.min.js') }} -->
+
+    {{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
 
     <!-- PAGE RELATED PLUGIN(S) -->
     <script type="text/javascript">
@@ -323,79 +257,6 @@
         $(document).ready(function() {
             var formEnviarRetorno = false;
 
-
-            function mostrarCheckbox_show(thisId,accion){
-                if (accion == 'mostrar') {
-                    if ( $('div.checkbox_show#'+ thisId ).hasClass('disabledContent') ) {
-                        $('div.checkbox_show#'+ thisId ).removeClass('disabledContent').addClass('enabledContent');
-                    }
-                    if ( $('div.checkbox_show#'+ thisId ).hasClass('hide') ) {
-                        $('div.checkbox_show#'+ thisId ).removeClass('hide');
-                    }
-                    $('div.checkbox_show#'+ thisId ).show('fast');
-
-                }else if(accion == 'ocultar'){
-                    if ( $('div.checkbox_show#'+ thisId ).hasClass('enabledContent') ) {
-                        $('div.checkbox_show#'+ thisId ).addClass('disabledContent').removeClass('enabledContent');
-                    }else{
-                        $('div.checkbox_show#'+ thisId ).hide('fast');
-                    }
-                }
-
-            }
-            
-            $('input.checkbox_show').each(function(){
-                var thisId = $(this).attr('id');
-                var thisForm = $(this).parents('form').attr('id');
-                var accion = $(this).attr('accion');
-                
-                //console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
-                
-                //tipo radio button
-                if ( $(this).is(':radio') && $(this).val() == 'SI' && $(this).is(':checked') ) {
-                    accion = accion || 'ocultar';
-                    mostrarCheckbox_show(thisId,accion);
-                }else if ( $(this).is(':radio') && $(this).val() == 'NO' && $(this).is(':checked') )  {
-                    accion = accion || 'mostrar';
-                    mostrarCheckbox_show(thisId,accion);
-                }
-
-                //tipo checkbox
-                if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
-                    accion = accion || 'ocultar';
-                    mostrarCheckbox_show(thisId,accion);
-                }   
-                
-            });
-            // para que se vea animado el progreso de los pasos
-            $('input.checkbox_show').on('change', function(){
-                var thisId = $(this).attr('id');
-                var thisForm = $(this).parents('form').attr('id');
-                var accion = $(this).attr('accion');
-                //console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
-                
-                //tipo radio button
-                if ( $(this).is(':radio') && $(this).val() == 'SI' ) {
-
-                    accion = accion || 'ocultar';
-                    mostrarCheckbox_show(thisId,accion);
-
-                }else if ( $(this).is(':radio') && $(this).val() == 'NO' )  {
-                    accion = accion || 'mostrar';
-                    mostrarCheckbox_show(thisId,accion);
-
-                }
-
-                //tipo checkbox
-                if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
-                    accion = accion || 'ocultar';
-                    mostrarCheckbox_show(thisId,accion);
-                }else if ( $(this).is(':checkbox') && !$(this).is(':checked') )  {
-                    accion = accion || 'mostrar';
-                    mostrarCheckbox_show(thisId,accion);
-                }   
-                
-            });
 
             /*el formulario (form) es el que se valida*/
             //var $validator = $("#wizard-1").validate({
@@ -529,185 +390,185 @@
 
             //INICIO ENVIAR AJAX POST
             //INICIO ENVIAR AJAX POST
-
+            
             // Attach a submit handler to the form
-            $( ".PreRegistro_form, .Registro_form" ).submit(function( event ) {
-                // Stop form from submitting normally
-                event.preventDefault();
-                var form = '#' + $(this).attr('id');
-                var results = '#' + $(this).attr('results') + ' #show-msg';
-                var menu = '#' + $(form).parents('#wizard_content').find('.wizard.menu').attr('id');
-                var sinArchivos = true;
-                var divData = $(form).serialize();
+            // $( ".PreRegistro_form, .Registro_form" ).submit(function( event ) {
+            //     // Stop form from submitting normally
+            //     event.preventDefault();
+            //     var form = '#' + $(this).attr('id');
+            //     var results = '#' + $(this).attr('results') + ' #show-msg';
+            //     var menu = '#' + $(form).parents('#wizard_content').find('.wizard.menu').attr('id');
+            //     var sinArchivos = true;
+            //     var divData = $(form).serialize();
 
-                if ( $(form + ' input[type="file"]').size() > 0 ) {
-                    sinArchivos = false;
-                    divData = new FormData($(form)[0]);
-                    //console.log(divData);
-                    //divData = divData.append('prueba', $('input[name="paso"]').val() );
-                    //console.log(divData);
-                }
+            //     if ( $(form + ' input[type="file"]').size() > 0 ) {
+            //         sinArchivos = false;
+            //         divData = new FormData($(form)[0]);
+            //         //console.log(divData);
+            //         //divData = divData.append('prueba', $('input[name="paso"]').val() );
+            //         //console.log(divData);
+            //     }
 
-                if( formEnviar(form,divData,results,'creación','no',sinArchivos) ){
-                    $( document ).one('ajaxStop', function() {
-                        if( $(results).attr('return') == 'correcto' ){
-                            if ( $( results ).find('.dato_adicional#noNext').size() == 0 ) {
-                                $(menu + ' .actions .btn-next').click();
-                            }
-                            $( results ).find('.dato_adicional').each(function(){
-                                var thisName = $(this).attr('name');
-                                $( '.step-pane.active form .dato_adicional[name="'+ thisName +'"]' ).remove();
-                                $( '.step-pane.active form' ).append($(this));
+            //     if( formEnviar(form,divData,results,'creación','no',sinArchivos) ){
+            //         $( document ).one('ajaxStop', function() {
+            //             if( $(results).attr('return') == 'correcto' ){
+            //                 if ( $( results ).find('.dato_adicional#noNext').size() == 0 ) {
+            //                     $(menu + ' .actions .btn-next').click();
+            //                 }
+            //                 $( results ).find('.dato_adicional').each(function(){
+            //                     var thisName = $(this).attr('name');
+            //                     $( '.step-pane.active form .dato_adicional[name="'+ thisName +'"]' ).remove();
+            //                     $( '.step-pane.active form' ).append($(this));
                                 
-                            });
-                        };
-                        //$(this).unbind("ajaxStop");
-                        //handler.off();
-                    });
-                };
-            });
+            //                 });
+            //             };
+            //             //$(this).unbind("ajaxStop");
+            //             //handler.off();
+            //         });
+            //     };
+            // });
 
-            $( "#files" ).submit(function( event ) {
-                // Stop form from submitting normally
-                event.preventDefault();
-                var route = $(this).attr('action');
-                var results = '#files #show-msg';
-                var token = $(this).find('input[name="_token"]').val();
-                $.ajax({
-                      url:route,
-                      data: new FormData($(this)[0]),
-                      dataType:'json',
-                      async:false,
-                      type:'post',
-                      headers: {'X-CSRF-TOKEN': token},
-                      processData: false,
-                      contentType: false,
-                      success:function(response){
-                        $( results ).attr('return','correcto');
-                      },
-                      error:function(msj){
-                        $( results ).attr('return','error');
-                      }
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        $( results ).attr('return','error');
-                        //de este modo se redirecciona a la pagina correspondiente
-                        if (jqXHR.getResponseHeader('Location') != null){ 
-                            window.Location= jqXHR.getResponseHeader('Location');
-                        };
-                    });
-            });
+            // $( "#files" ).submit(function( event ) {
+            //     // Stop form from submitting normally
+            //     event.preventDefault();
+            //     var route = $(this).attr('action');
+            //     var results = '#files #show-msg';
+            //     var token = $(this).find('input[name="_token"]').val();
+            //     $.ajax({
+            //           url:route,
+            //           data: new FormData($(this)[0]),
+            //           dataType:'json',
+            //           async:false,
+            //           type:'post',
+            //           headers: {'X-CSRF-TOKEN': token},
+            //           processData: false,
+            //           contentType: false,
+            //           success:function(response){
+            //             $( results ).attr('return','correcto');
+            //           },
+            //           error:function(msj){
+            //             $( results ).attr('return','error');
+            //           }
+            //         }).fail(function(jqXHR, textStatus, errorThrown) {
+            //             $( results ).attr('return','error');
+            //             //de este modo se redirecciona a la pagina correspondiente
+            //             if (jqXHR.getResponseHeader('Location') != null){ 
+            //                 window.Location= jqXHR.getResponseHeader('Location');
+            //             };
+            //         });
+            // });
 
         
 
-            // envia la informacion del formulario 
-            // es usado por varios formularios: para cargar formularios de ver, editar o crear 
-            function formEnviar(form,divData,results,accion,mostrarMsg,sinArchivos){
-                var retorno = true;
-                mostrarMsg = mostrarMsg || 'no';
-                var dataType = false;
-                var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
-                //sinArchivos = sinArchivos || true;
-                if ( sinArchivos == false ) {
-                    contentType = sinArchivos;
-                    dataType = 'json';
-                }
-                //console.log('|'+sinArchivos+'|');
-                //var token = $('.form_delete input[name="_token"]').val();
-                var route = $(form).attr('action');
-                var inputData = divData || $(form).serialize();
-                var token = $(form).find('input[name="_token"]').val();
-                //se envia la peticion mediante el metodo DELETE con el id del genero
-                $.ajax({
-                    url: route,
-                    type: 'POST',
-                    headers: {'X-CSRF-TOKEN': token},
-                    data: inputData,
-                    dataType: dataType,
-                    //async:sinArchivos,
-                    contentType: contentType,
-                    processData: sinArchivos,
-                    success: function(msj){
+            // // envia la informacion del formulario 
+            // // es usado por varios formularios: para cargar formularios de ver, editar o crear 
+            // function formEnviar(form,divData,results,accion,mostrarMsg,sinArchivos){
+            //     var retorno = true;
+            //     mostrarMsg = mostrarMsg || 'no';
+            //     var dataType = false;
+            //     var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+            //     //sinArchivos = sinArchivos || true;
+            //     if ( sinArchivos == false ) {
+            //         contentType = sinArchivos;
+            //         dataType = 'json';
+            //     }
+            //     //console.log('|'+sinArchivos+'|');
+            //     //var token = $('.form_delete input[name="_token"]').val();
+            //     var route = $(form).attr('action');
+            //     var inputData = divData || $(form).serialize();
+            //     var token = $(form).find('input[name="_token"]').val();
+            //     //se envia la peticion mediante el metodo DELETE con el id del genero
+            //     $.ajax({
+            //         url: route,
+            //         type: 'POST',
+            //         headers: {'X-CSRF-TOKEN': token},
+            //         data: inputData,
+            //         dataType: dataType,
+            //         //async:sinArchivos,
+            //         contentType: contentType,
+            //         processData: sinArchivos,
+            //         success: function(msj){
                         
-                        $(results + " #msj").html('');
-                        $(results + " #msj-success, " + results + " #msj-success #tipo, " + results + " #msj-error").fadeOut();
-                        row = msj;
-                        if( msj.responseJSON != undefined ){
-                            row = '';
-                            $.each(msj.responseJSON, function( index, value ) {
-                                row = row + value + "<br>";
-                            });
-                        }
-                        $( results + " #msj-success #msj").html(row);
-                        $( form ).find("#results.hide").html(row);
-                        $( results + " #msj-success").fadeIn();
+            //             $(results + " #msj").html('');
+            //             $(results + " #msj-success, " + results + " #msj-success #tipo, " + results + " #msj-error").fadeOut();
+            //             row = msj;
+            //             if( msj.responseJSON != undefined ){
+            //                 row = '';
+            //                 $.each(msj.responseJSON, function( index, value ) {
+            //                     row = row + value + "<br>";
+            //                 });
+            //             }
+            //             $( results + " #msj-success #msj").html(row);
+            //             $( form ).find("#results.hide").html(row);
+            //             $( results + " #msj-success").fadeIn();
                             
-                        $( results ).attr('return','correcto');
+            //             $( results ).attr('return','correcto');
                         
-                        var scrollPos =  $(results + " #msj-success").offset().top;
-                        $(window).scrollTop(scrollPos);
-                    },
-                    error: function(msj){
-                        var row = '';
-                        $(results + " #msj").html('');
-                        $(results + " #msj-success, " + results + " #msj-success #tipo, " + results + " #msj-error").fadeOut();
-                        /*if ( msj.status === 422 ) {
-                            row = 'No se logro la '+ accion +' del registro. <br>';
-                        }else */
-                        if( msj.status === 500 ) {
-                            row = msj.responseText;
-                        }else{
-                            row = msj.responseText;
-                        }
-                        //console.log(msj.responseJSON);
-                        if( msj.responseJSON != undefined ){
-                            row = '';
-                            $.each(msj.responseJSON, function( index, value ) {
-                                row = row + value + "<br>";
-                            });
-                        }
+            //             var scrollPos =  $(results + " #msj-success").offset().top;
+            //             $(window).scrollTop(scrollPos);
+            //         },
+            //         error: function(msj){
+            //             var row = '';
+            //             $(results + " #msj").html('');
+            //             $(results + " #msj-success, " + results + " #msj-success #tipo, " + results + " #msj-error").fadeOut();
+            //             /*if ( msj.status === 422 ) {
+            //                 row = 'No se logro la '+ accion +' del registro. <br>';
+            //             }else */
+            //             if( msj.status === 500 ) {
+            //                 row = msj.responseText;
+            //             }else{
+            //                 row = msj.responseText;
+            //             }
+            //             //console.log(msj.responseJSON);
+            //             if( msj.responseJSON != undefined ){
+            //                 row = '';
+            //                 $.each(msj.responseJSON, function( index, value ) {
+            //                     row = row + value + "<br>";
+            //                 });
+            //             }
 
-                        $(results + " #msj").html(row);
-                        $(results + " #msj-error").fadeIn();
-                        //console.log(msj);
-                        var scrollPos =  $(results + " #msj-error").offset().top;
-                        $(window).scrollTop(scrollPos);
+            //             $(results + " #msj").html(row);
+            //             $(results + " #msj-error").fadeIn();
+            //             //console.log(msj);
+            //             var scrollPos =  $(results + " #msj-error").offset().top;
+            //             $(window).scrollTop(scrollPos);
                         
-                        $( results ).attr('return','error');
-                    }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    $( results ).attr('return','error');
-                    //de este modo se redirecciona a la pagina correspondiente
-                    if (jqXHR.getResponseHeader('Location') != null){ 
-                        window.Location= jqXHR.getResponseHeader('Location');
-                    };
-                });
+            //             $( results ).attr('return','error');
+            //         }
+            //     }).fail(function(jqXHR, textStatus, errorThrown) {
+            //         $( results ).attr('return','error');
+            //         //de este modo se redirecciona a la pagina correspondiente
+            //         if (jqXHR.getResponseHeader('Location') != null){ 
+            //             window.Location= jqXHR.getResponseHeader('Location');
+            //         };
+            //     });
 
-                return retorno;
-            }
+            //     return retorno;
+            // }
 
             //FIN ENVIAR AJAX POST
             //FIN ENVIAR AJAX POST
 
             /*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
 
-            $('#PreRegistro_content #btnNext, #Registro_content #btnNext').on('click', function() {
-                /*var $valid = $(".PreRegistro_form").valid();
-                if (!$valid) {
-                    $validator_PreRegistro.focusInvalid();
-                    return false;
-                } else {
-                    //$('.PreRegistro_form').wizard('next');
-                    $('#menuPreRegistro .actions .btn-next').click();
-                }*/
-                var FormContent = $(this).parents('.step-content').attr('id');
-                $( "#" + FormContent + " .step-pane.active form" ).submit();
-            });
+            // $('#PreRegistro_content #btnNext, #Registro_content #btnNext').on('click', function() {
+            //     /*var $valid = $(".PreRegistro_form").valid();
+            //     if (!$valid) {
+            //         $validator_PreRegistro.focusInvalid();
+            //         return false;
+            //     } else {
+            //         //$('.PreRegistro_form').wizard('next');
+            //         $('#menuPreRegistro .actions .btn-next').click();
+            //     }*/
+            //     var FormContent = $(this).parents('.step-content').attr('id');
+            //     $( "#" + FormContent + " .step-pane.active form" ).submit();
+            // });
 
-            $('#PreRegistro_content #btnBack, #Registro_content #btnBack').on('click', function() {
-                var menu = '#' + $(this).parents('#wizard_content').find('.wizard.menu').attr('id');
+            // $('#PreRegistro_content #btnBack, #Registro_content #btnBack').on('click', function() {
+            //     var menu = '#' + $(this).parents('#wizard_content').find('.wizard.menu').attr('id');
                 
-                $(menu + ' .actions .btn-prev').click();
-            });
+            //     $(menu + ' .actions .btn-prev').click();
+            // });
 
             /* ------------------------------------------------- */
             /* ------------------------------------------------- */
@@ -817,9 +678,9 @@
 
 
 
-                $('.Registro_form #btnBack').on('click', function() {
-                    $('#menuRegistro .actions .btn-prev').click();
-                });
+                // $('.Registro_form #btnBack').on('click', function() {
+                //     $('#menuRegistro .actions .btn-prev').click();
+                // });
         });
 
     </script>

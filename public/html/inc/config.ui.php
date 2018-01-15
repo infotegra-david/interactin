@@ -86,36 +86,74 @@ $page_nav = array();
 
 //submenu InterChange
 	$InterChangeSub = array();
+	$InterOutSub = array();
+	$InterInSub = array();
 	//comprobar los permisos para cada formulario
-
 	if(isset($listPermissions['view_interout'])){
-		$InterChangeSub["InterOutMap"] = array(
+		$InterOutSub["InterOutMap"] = array(
 			        "title" => "InterOutMap",
 			        "icon" => "fa-map",
-			        "url" => "../interchanges/interout/map"
+			        "url" => "/interchanges/interout/map"
+				);
+		$InterOutSub["InterOutList"] = array(
+					"title" => "InterOutList",
+					"icon" => "fa-list-ul",
+					"url" => "/interchanges/interout"
+					
 				);
 	}
 	if(isset($listPermissions['add_interout'])){
+		$InterOutSub["RegisterInterOut"] = array(
+					"title" => "Registrar Movilidad",
+					"icon" => "fa-address-book-o",
+					"url" => "/interchanges/interout/create"
+				);
+	}
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterOutSub) ) {
 		$InterChangeSub["InterOut"] = array(
 					"title" => "InterOut",
 					"icon" => "fa-arrow-up",
-					"url" => "../interchanges/interout"
-					//"url" => "../interchanges/interout/create"
+					"sub" => $InterOutSub
 				);
 	}
+
+	//comprobar los permisos para cada formulario
 	if(isset($listPermissions['view_interin'])){
-		$InterChangeSub["InterInMap"] = array(
-					"title" => "InterInMap",
-					"icon" => "fa-map-o",
-					"url" => "../interchanges/interin/map"
+		$InterInSub["InterInMap"] = array(
+			        "title" => "InterInMap",
+			        "icon" => "fa-map-o",
+			        "url" => "/interchanges/interin/map"
+				);
+		$InterInSub["InterInList"] = array(
+					"title" => "InterInList",
+					"icon" => "fa-list-ul",
+					"url" => "/interchanges/interin"
+					
 				);
 	}
 	if(isset($listPermissions['add_interin'])){
+		$InterInSub["RegisterInterIn"] = array(
+					"title" => "Registrar Movilidad",
+					"icon" => "fa-address-book-o",
+					"url" => "/interchanges/interin/create"
+				);
+	}
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterInSub) ) {
 		$InterChangeSub["InterIn"] = array(
-			        "title" => "InterIn",
-			        "icon" => "fa-arrow-down",
-			        "url" => "../interchanges/interin"
-			        //"url" => "../interchanges/interin/create"
+					"title" => "InterIn",
+					"icon" => "fa-arrow-down",
+					"sub" => $InterInSub
+				);
+	}
+
+	if(isset($listPermissions['view_assignments_interchanges'])){
+		//los formularios comparten el mismo permiso
+		$InterChangeSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => "/interchanges/assignments"
 				);
 	}
 
@@ -165,6 +203,16 @@ $page_nav = array();
 				);
 	}
 
+	if(isset($listPermissions['view_assignments_interalliances'])){
+		//los formularios comparten el mismo permiso
+
+		$InterAllianceSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => "/interalliances/assignments"
+				);
+	}
+
 	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
 	if ( count($InterAllianceSub) ) {
 
@@ -201,6 +249,15 @@ $page_nav = array();
 			        "title" => "Enviar inicativa",
 			        "icon" => "fa-lightbulb-o",
 			        "url" => "../html/initiative.php"
+				);
+	}
+	if(isset($listPermissions['view_assignments_interactions'])){
+		//los formularios comparten el mismo permiso
+
+		$InterActionsSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => "/interactions/assignments"
 				);
 	}
 
@@ -262,14 +319,6 @@ $page_nav = array();
 			        "title" => "InterActions",
 			        "icon" => "fa-globe	",
 			        "url" => "../intervalidation/interactions"
-				);
-	}
-	if(isset($listPermissions['view_assignments'])){
-		//los formularios comparten el mismo permiso
-		$InterValidationsSub["Assignments"] = array(
-			        "title" => "Assignments",
-			        "icon" => "fa-user-plus",
-			        "url" => "../intervalidation/assignments"
 				);
 	}
 

@@ -959,31 +959,28 @@ include("inc/nav.php");
 											<span class="badge badge-info">5</span>Datos Personales<span class="chevron"></span>
 										</li>
 										<li data-target="#step2">
-											<span class="badge">6</span>Datos de Contacto<span class="chevron"></span>
+											<span class="badge">6</span>Información Académica<span class="chevron"></span>
 										</li>
 										<li data-target="#step3">
-											<span class="badge">7</span>Información Académica<span class="chevron"></span>
+											<span class="badge">7</span>Información de la movilidad<span class="chevron"></span>
 										</li>
 										<li data-target="#step4">
-											<span class="badge">8</span>Información de la movilidad<span class="chevron"></span>
+											<span class="badge">8</span>Contacto en caso de emergencia<span class="chevron"></span>
 										</li>
 										<li data-target="#step5">
-											<span class="badge">9</span>Contacto en caso de emergencia<span class="chevron"></span>
+											<span class="badge">9</span>Fuentes de financiación<span class="chevron"></span>
 										</li>
 										<li data-target="#step6">
-											<span class="badge">10</span>Fuentes de financiación<span class="chevron"></span>
+											<span class="badge">10</span>Presupuesto<span class="chevron"></span>
 										</li>
 										<li data-target="#step7">
-											<span class="badge">11</span>Presupuesto<span class="chevron"></span>
+											<span class="badge">11</span>Documentos de Soporte<span class="chevron"></span>
 										</li>
 										<li data-target="#step8">
-											<span class="badge">12</span>Documentos de Soporte<span class="chevron"></span>
+											<span class="badge">12</span>Foto<span class="chevron"></span>
 										</li>
 										<li data-target="#step9">
-											<span class="badge">13</span>Foto<span class="chevron"></span>
-										</li>
-										<li data-target="#step10">
-											<span class="badge">14</span>Guardar y Enviar<span class="chevron"></span>
+											<span class="badge">13</span>Guardar y Enviar<span class="chevron"></span>
 										</li>
 									</ul>
 									<div class="actions">
@@ -1198,46 +1195,111 @@ include("inc/nav.php");
 
 												</div>
 
-											</div>
-		
-										</div>
-		
-										<div class="step-pane" id="step2">
-											<h3><strong>Paso 6 </strong> - Datos de Contacto</h3>
-		
-											<!--correo personal y universitario-->
-											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<div class="input-group">
+															<span class="input-group-addon"><i class="fa fa-barcode fa-lg fa-fw"></i></span>
+															<input class="form-control input-lg" data-mask="(999) 999-9999" data-mask-placeholder= "X" placeholder="Teléfono fijo" type="text" name="telefono" id="telefono">
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<div class="input-group">
+															<span class="input-group-addon"><i class="fa fa-barcode fa-lg fa-fw"></i></span>
+															<input class="form-control input-lg" data-mask="+9 999-9999" data-mask-placeholder= "X" placeholder="Celular" type="text" name="celular" id="celular">
+														</div>
+													</div>
+												</div>
 												
-												<div class="col-sm-6">
-													<div class="form-group">
-														<div class="input-group">
-															<span class="input-group-addon"><i class="fa fa-envelope fa-lg fa-fw"></i></span>
-															<input class="form-control input-lg" placeholder="email@correo_personal.com" type="text" name="emailp" id="emailp">
-
-														</div>
-													</div>
-												</div>
-
-												<div class="col-sm-6">
-													<div class="form-group">
-														<div class="input-group">
-															<span class="input-group-addon"><i class="fa fa-envelope-o fa-lg fa-fw"></i></span>
-															<input class="form-control input-lg" placeholder="email@correo_universidad.com" type="text" name="emailu" id="emailu">
-
-														</div>
-													</div>
-												</div>
-											</div>
 											<!--ciudad y direccion residencia-->
-											<div class="row">
 
 												
 												<div class="col-sm-6">
 													<div class="form-group">
 														<div class="input-group">
 															<span class="input-group-addon"><i class="fa fa-id-card fa-lg fa-fw"></i></span>
+															<select class="form-control input-lg" name="departamento">
+																<option value="" selected="selected">Seleccione el departamento/estado de residencia</option>
+																<option>Bogotá</option>
+																<option value="461">AGUA DE DIOS</option>
+																<option value="462">ALBAN</option>
+																<option value="463">ANAPOIMA</option>
+																<option value="464">ANOLAIMA</option>
+																<option value="465">ARBELAEZ</option>
+																<option value="466">BELTRAN</option>
+																<option value="467">BITUIMA</option>
+																<option value="468">BOJACA</option>
+																<option value="469">CABRERA</option>
+																<option value="470">CACHIPAY</option>
+																<option value="471">CAJICA</option>
+																<option value="472">CAPARRAPI</option>
+																<option value="473">CAQUEZA</option>
+																<option value="474">CARMEN DE CARUPA</option>
+																<option value="475">CHAGUANI</option>
+																<option value="476">CHIA</option>
+																<option value="477">CHIPAQUE</option>
+																<option value="478">CHOACHI</option>
+																<option value="479">CHOCONTA</option>
+																<option value="480">COGUA</option>
+																<option value="481">COTA</option>
+																<option value="482">CUCUNUBA</option>
+																<option value="483">EL COLEGIO</option>
+																<option value="484">EL PEÑON</option>
+																<option value="485">EL ROSAL</option>
+																<option value="486">FACATATIVA</option>
+																<option value="487">FOMEQUE</option>
+																<option value="488">FOSCA</option>
+																<option value="489">FUNZA</option>
+																<option value="490">FUQUENE</option>
+																<option value="491">FUSAGASUGA</option>
+																<option value="492">GACHALA</option>
+																<option value="493">GACHANCIPA</option>
+																<option value="494">GACHETA</option>
+																<option value="495">GAMA</option>
+																<option value="496">GIRARDOT</option>
+																<option value="497">GRANADA</option>
+																<option value="498">GUACHETA</option>
+																<option value="499">GUADUAS</option>
+																<option value="500">GUASCA</option>
+																<option value="501">GUATAQUI</option>
+																<option value="502">GUATAVITA</option>
+																<option value="503">GUAYABAL DE SIQUIMA</option>
+																<option value="504">GUAYABETAL</option>
+																<option value="505">GUTIERREZ</option>
+																<option value="506">JERUSALEN</option>
+																<option value="507">JUNIN</option>
+																<option value="508">LA CALERA</option>
+																<option value="509">LA MESA</option>
+																<option value="510">LA PALMA</option>
+																<option value="511">LA PEÑA</option>
+																<option value="512">LA VEGA</option>
+																<option value="513">LENGUAZAQUE</option>
+																<option value="514">MACHETA</option>
+																<option value="515">MADRID</option>
+																<option value="516">MANTA</option>
+																<option value="517">MEDINA</option>
+																<option value="518">MOSQUERA</option>
+																<option value="519">NARIÑO</option>
+																<option value="520">NEMOCON</option>
+																<option value="521">NILO</option>
+																<option value="522">NIMAIMA</option>
+																<option value="523">NOCAIMA</option>
+																<option value="524">VENECIA</option>
+																<option value="525">PACHO</option>
+																<option value="526">PAIME</option>
+																<option value="527">PANDI</option>
+																<option value="528">PARATEBUENO</option><option value="529">PASCA</option><option value="530">PUERTO SALGAR</option><option value="531">PULI</option><option value="532">QUEBRADANEGRA</option><option value="533">QUETAME</option><option value="534">QUIPILE</option><option value="535">APULO</option><option value="536">RICAURTE</option><option value="537">SAN ANTONIO DEL TEQUENDAMA</option><option value="538">SAN BERNARDO</option><option value="539">SAN CAYETANO</option><option value="540">SAN FRANCISCO</option><option value="541">SAN JUAN DE RIO SECO</option><option value="542">SASAIMA</option><option value="543">SESQUILE</option><option value="544">SIBATE</option><option value="545">SILVANIA</option><option value="546">SIMIJACA</option><option value="547">SOACHA</option><option value="548">SOPO</option><option value="549">SUBACHOQUE</option><option value="550">SUESCA</option><option value="551">SUPATA</option><option value="552">SUSA</option><option value="553">SUTATAUSA</option><option value="554">TABIO</option><option value="555">TAUSA</option><option value="556">TENA</option><option value="557">TENJO</option><option value="558">TIBACUY</option><option value="559">TIBIRITA</option><option value="560">TOCAIMA</option><option value="561">TOCANCIPA</option><option value="562">TOPAIPI</option><option value="563">UBALA</option><option value="564">UBAQUE</option><option value="565">VILLA DE SAN DIEGO DE UBATE</option><option value="566">UNE</option><option value="567">UTICA</option><option value="568">VERGARA</option><option value="569">VIANI</option><option value="570">VILLAGOMEZ</option><option value="571">VILLAPINZON</option><option value="572">VILLETA</option><option value="573">VIOTA</option><option value="574">YACOPI</option><option value="575">ZIPACON</option><option value="576">ZIPAQUIRA</option>
+															</select>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<div class="input-group">
+															<span class="input-group-addon"><i class="fa fa-id-card fa-lg fa-fw"></i></span>
 															<select class="form-control input-lg" name="ciudad">
-																<option value="" selected="selected">Seleccione la ciudad</option>
+																<option value="" selected="selected">Seleccione la ciudad de residencia</option>
 																<option>Bogotá</option>
 																<option value="461">AGUA DE DIOS</option>
 																<option value="462">ALBAN</option>
@@ -1320,9 +1382,7 @@ include("inc/nav.php");
 														</div>
 													</div>
 												</div>
-											</div>
 											<!--codigo postal, telefono fijo y celular -->
-											<div class="row">
 												<div class="col-sm-6">
 													<div class="form-group">
 														<div class="input-group">
@@ -1332,28 +1392,12 @@ include("inc/nav.php");
 													</div>
 												</div>
 
-												<div class="col-sm-6">
-													<div class="form-group">
-														<div class="input-group">
-															<span class="input-group-addon"><i class="fa fa-barcode fa-lg fa-fw"></i></span>
-															<input class="form-control input-lg" data-mask="(999) 999-9999" data-mask-placeholder= "X" placeholder="Teléfono fijo" type="text" name="telefono" id="telefono">
-														</div>
-													</div>
-												</div>
-												<div class="col-sm-6">
-													<div class="form-group">
-														<div class="input-group">
-															<span class="input-group-addon"><i class="fa fa-barcode fa-lg fa-fw"></i></span>
-															<input class="form-control input-lg" data-mask="+9 999-9999" data-mask-placeholder= "X" placeholder="Celular" type="text" name="celular" id="celular">
-														</div>
-													</div>
-												</div>
 											</div>
 		
 										</div>
 		
-										<div class="step-pane" id="step3">
-											<h3><strong>Paso 7 </strong> - Información Académica</h3>
+										<div class="step-pane" id="step2">
+											<h3><strong>Paso 6 </strong> - Información Académica</h3>
 		
 											<!--facultad y programa-->
 											<div class="row">
@@ -1682,8 +1726,8 @@ include("inc/nav.php");
 											</fieldset>
 										</div>
 		
-										<div class="step-pane" id="step4">
-											<h3><strong>Paso 8 </strong> - Información de movilidad</h3>
+										<div class="step-pane" id="step3">
+											<h3><strong>Paso 7 </strong> - Información de movilidad</h3>
 		
 											<!--periodo y modalidad-->
 											
@@ -2004,8 +2048,8 @@ include("inc/nav.php");
 											</fieldset>
 										</div>
 		
-										<div class="step-pane" id="step5">
-											<h3><strong>Paso 9 </strong> - Contacto en caso de emergencia</h3>
+										<div class="step-pane" id="step4">
+											<h3><strong>Paso 8 </strong> - Contacto en caso de emergencia</h3>
 		
 											
 											<!--NOMBRES APELLIDOS y parentesco-->
@@ -2077,8 +2121,8 @@ include("inc/nav.php");
 											</div>
 										</div>
 		
-										<div class="step-pane" id="step6">
-											<h3><strong>Paso 10 </strong> - Fuentes de financiación</h3>
+										<div class="step-pane" id="step5">
+											<h3><strong>Paso 9 </strong> - Fuentes de financiación</h3>
 											<h4>Financiación Nacional</h4>
 		
 											
@@ -2166,8 +2210,8 @@ include("inc/nav.php");
 											</div>
 										</div>
 		
-										<div class="step-pane" id="step7">
-											<h3><strong>Paso 11 </strong> - Presupuesto</h3>
+										<div class="step-pane" id="step6">
+											<h3><strong>Paso 10 </strong> - Presupuesto</h3>
 											<div>
 												<p>
 													Elaborar un presupuesto se constituye en una acción muy importante para considerar su movilidad. Por ello, puede consultar los siguiente enlaces en los cuales podrá calcular el costo de vida del país y/o región deonde realizará su estancia académica:
@@ -2220,8 +2264,8 @@ include("inc/nav.php");
 											</div>
 										</div>
 		
-										<div class="step-pane" id="step8">
-											<h3><strong>Paso 12 </strong> - Documentos de Soporte</h3>
+										<div class="step-pane" id="step7">
+											<h3><strong>Paso 11 </strong> - Documentos de Soporte</h3>
 											<div>
 												<p>
 													Por favor cargar todos los documentos aqui mencionados:
@@ -2277,8 +2321,8 @@ include("inc/nav.php");
 											</div>
 										</div>
 		
-										<div class="step-pane" id="step9">
-											<h3><strong>Paso 13 </strong> - Foto</h3>
+										<div class="step-pane" id="step8">
+											<h3><strong>Paso 12 </strong> - Foto</h3>
 											
 											<div class="row">
 												<div class="col-sm-6">
@@ -2303,8 +2347,8 @@ include("inc/nav.php");
 											</div>
 										</div>
 		
-										<div class="step-pane" id="step10">
-											<h3><strong>Paso 14 </strong> - Guardar y Enviar!</h3>
+										<div class="step-pane" id="step9">
+											<h3><strong>Paso 13 </strong> - Guardar y Enviar!</h3>
 											<br>
 											<br>
 											<h1 class="text-center text-success"><i class="fa fa-check"></i> Perfecto!

@@ -10,31 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @package App\Models
  * @version September 11, 2017, 11:59 am COT
  *
- * @property \Illuminate\Database\Eloquent\Collection alianzaAplicaciones
- * @property \Illuminate\Database\Eloquent\Collection alianzaFacultad
- * @property \Illuminate\Database\Eloquent\Collection alianzaInstitucion
- * @property \Illuminate\Database\Eloquent\Collection alianzaModalidades
- * @property \Illuminate\Database\Eloquent\Collection alianzaPrograma
- * @property \Illuminate\Database\Eloquent\Collection alianzaUser
- * @property \Illuminate\Database\Eloquent\Collection campus
- * @property \Illuminate\Database\Eloquent\Collection equivalente
- * @property \Illuminate\Database\Eloquent\Collection facultad
- * @property \Illuminate\Database\Eloquent\Collection financiacion
- * @property \Illuminate\Database\Eloquent\Collection Inscripcion
- * @property \Illuminate\Database\Eloquent\Collection inscripcionAsignatura
- * @property \Illuminate\Database\Eloquent\Collection mailArchivo
- * @property \Illuminate\Database\Eloquent\Collection matricula
- * @property \Illuminate\Database\Eloquent\Collection multimedia
- * @property \Illuminate\Database\Eloquent\Collection oportunidadActor
- * @property \Illuminate\Database\Eloquent\Collection oportunidadModalidades
- * @property \Illuminate\Database\Eloquent\Collection pasosAlianzaMail
- * @property \Illuminate\Database\Eloquent\Collection pasosIniciativaMail
- * @property \Illuminate\Database\Eloquent\Collection pasosInscripcionMail
- * @property \Illuminate\Database\Eloquent\Collection personaContacto
- * @property \Illuminate\Database\Eloquent\Collection postulacion
- * @property \Illuminate\Database\Eloquent\Collection roleHasPermissions
- * @property \Illuminate\Database\Eloquent\Collection userTipoPaso
- * @property \Illuminate\Database\Eloquent\Collection userTipoPasoMail
  * @property string nombre
  * @property string|\Carbon\Carbon fecha_desde
  * @property string|\Carbon\Carbon fecha_hasta

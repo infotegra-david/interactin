@@ -1,9 +1,37 @@
-@include('InterChange.show_fields')
+<div class="{{ ( $peticion == 'normal' ? 'hide' : '') }}" id="datos_validacion_inscripcion">
+    @include('InterChange.show_fields')
+</div>
+@if(isset($GenerarDocumento) && $GenerarDocumento == true && $editar == true)
 <hr>
-<a class="btn btn-primary pull-right" href="{!! route('intervalidation.interchanges.validations.create',$inscripcionId) !!}">Agregar validación</a>
-@if(isset($GenerarDocumento) && $GenerarDocumento == true )
-    <a class="btn btn-success pull-right" href="{!! route('intervalidation.interchanges.validations.pdf',$inscripcionId) !!}">Generar Documento</a>
+<div class="row col-sm-12">
+    <h4>Es necesario que primero imprima alguna pre-forma para ser firmada por las personas correspondientes.</h4>
+    <br>
+    <div class="btn-group ">
+        <button class="btn dropdown-toggle btn-success " data-toggle="dropdown">
+            Imprimir pre-forma <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach( $pre_formas as $pre_forma )
+                <li>
+                    <a href="{!! route('interchanges.validations_interchanges.print',$inscripcionId) !!}?pre_forma={{ $pre_forma['id'] }}">{{ $pre_forma['nombre'] }}</a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</div>
 @endif
+
+<div class="row col-sm-12">
+    @if ( $editar == true )
+        {!! Form::open(['route' => ['interchanges.validations_interchanges.store',$inscripcionId], 'files' => true]) !!}
+
+            @include('validation.interchanges.pasos_inscripcions.fields')
+
+        {!! Form::close() !!}
+    @endIF
+</div>
+<hr>
+
 @if(isset($pasosInscripcion))
 <div class="row col-sm-12">
     <h3>Registros/Validación de los pasos</h3>
@@ -16,8 +44,8 @@
                 <th class="">Estado</th>
                 <th class="">Usuario</th>
                 <th class="">Observación</th>
-                <th class="">Creación</th>
-                <th class="">Actualización</th>
+                <th class="">Fecha de creación</th>
+                <th class="">Fecha de actualización</th>
                 <th class="">Acciones</th>
               </tr>
             </thead>
@@ -31,18 +59,18 @@
                 <td class="">{!! $pasoInscripcion->created_at !!}</td>
                 <td class="">{!! $pasoInscripcion->updated_at !!}</td>
                 <td class="">
-                    <a href="{!! route('intervalidation.interchanges.validations.show', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Ver" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
-                    <a href="{!! route('intervalidation.interchanges.validations.edit', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Editar" class='btn btn-success btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
+                    <a href="{!! route('interchanges.validations_interchanges.show', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Ver" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
+                    @if($user_actual == $pasoInscripcion->user_id && $editar == true)
+                    <a href="{!! route('interchanges.validations_interchanges.edit', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Editar" class='btn btn-success btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
+                    @endif
                 </td>
               </tr>
         @endforeach
             </tbody>
         </table>
     </div>
-    <div class="text-center">
-        {!! $pasosInscripcion->links() !!}
-    </div>  
+    <div class="table-responsive">
+        {{-- $pasosInscripcion->links() --}}
+    </div>
 </div>  
-
-
 @endif

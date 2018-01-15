@@ -49,6 +49,7 @@ class Country extends Model
 
     public $fillable = [
         'nombre',
+        'nacionalidad',
         'codigo_ref',
         'nativo'/*,
         'deleted_at'*/
@@ -62,6 +63,7 @@ class Country extends Model
     protected $casts = [
         'id' => 'integer',
         'nombre' => 'string',
+        'nacionalidad' => 'string',
         'codigo_ref' => 'string',
         'nativo' => 'boolean',
         'deleted_at' => 'datetime'

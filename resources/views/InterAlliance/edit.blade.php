@@ -43,8 +43,13 @@
 	//follow the tree in inc/config.ui.php
 
 	$page_nav = 1;
-	$menu="InterAlliance";
-	$submenu1="SubscribeAlliance";
+
+	if ($paso <= 3) {
+		$page_nav_route[ "InterAlliance" ]["sub"][ "SubscribeAlliance" ]["active"] = true;
+	}elseif($paso >= 4){
+		$page_nav_route[ "InterAlliance" ]["sub"][ "Alliances" ]["sub"][ "Edit" ]["active"] = true;
+	}
+
 	//$submenu2='';
 	?>
 
@@ -67,7 +72,7 @@
 					<ul id="sparks">
 						<li class="sparks-info">
 							<h5> Mis alianzas <span class="txt-color-blue">171</span></h5>
-							<div class="sparkline txt-color-blue hidden-mobile">
+							<div class="sparkline txt-color-blue hide-mobile">
 								1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
 							</div>
 						</li>
@@ -281,9 +286,8 @@
 	<script type="text/javascript">
 
 		$(document).ready(function() {
-			var formEnviarRetorno = false;
 
-
+/*
 			function mostrarCheckbox_show(thisId,accion){
 				if (accion == 'mostrar') {
 					if ( $('div.checkbox_show#'+ thisId ).hasClass('disabledContent') ) {
@@ -382,7 +386,7 @@
 				}	
 				
 			});
-
+*/
 			/*el formulario (form) es el que se valida*/
 			//var $validator = $("#wizard-1").validate({
 
@@ -521,28 +525,6 @@
 			//FIN ENVIAR AJAX POST
 			//FIN ENVIAR AJAX POST
 
-			/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
-
-			$('#PreRegistro_content #btnNext, #Registro_content #btnNext').on('click', function() {
-				/*var $valid = $(".PreRegistro_form").valid();
-				if (!$valid) {
-					$validator_PreRegistro.focusInvalid();
-					return false;
-				} else {
-					//$('.PreRegistro_form').wizard('next');
-			    	$('#menuPreRegistro .actions .btn-next').click();
-				}*/
-				var FormContent = $(this).parents('.step-content').attr('id');
-				$( "#" + FormContent + " .step-pane.active form" ).submit();
-			});
-
-			$('#PreRegistro_content #btnBack, #Registro_content #btnBack').on('click', function() {
-				var menu = '#' + $(this).parents('.wizard_content').find('.wizard.menu').attr('id');
-				var botones = '#' + $(this).parents('.wizard_content').find('.button-content').attr('id');
-				
-			    $(menu + ' .actions .btn-prev').click();
-			    $(botones + ' #btnNext').removeClass('disabled');
-			});
 
 			/*			
 				$('.Registro_form #btnBack').on('click', function() {
@@ -653,10 +635,6 @@
 			    }
 			  });
 			*/
-
-				/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
-
-
 
 		});
 

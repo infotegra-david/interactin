@@ -39,8 +39,7 @@
 	//follow the tree in inc/config.ui.php
 
 	$page_nav = 1;
-	$menu="InterAlliance";
-	$submenu1="Alliances";
+	$page_nav_route[ "InterAlliance" ]["sub"][ "Alliances" ]["active"] = true;
 	//$submenu2='';
 	?>
 
@@ -64,7 +63,7 @@
 					<ul id="sparks">
 						<li class="sparks-info">
 							<h5> Mis alianzas <span class="txt-color-blue">171</span></h5>
-							<div class="sparkline txt-color-blue hidden-mobile">
+							<div class="sparkline txt-color-blue hide-mobile">
 								1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
 							</div>
 						</li>
@@ -140,36 +139,36 @@
 									<!-- widget content -->
 									<div class="widget-body no-padding">
 										
-										<table id="example" class="display projects-table table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+										<table id="lista_alianzas" class="display projects-table table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									        <thead>
 									            <tr>
 									                <th></th>
 									                <th class="hasinput">
-														<i class="fa fa-fw fa-handshake-o text-muted hidden-md hidden-sm hidden-xs"></i> Alianzas - Institución
+														<i class="fa fa-fw fa-handshake-o text-muted hide-md-down"></i> Alianzas - Institución
 													</th>
 									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-percent text-muted hidden-md hidden-sm hidden-xs"></i> Progreso
+									                	<i class="fa fa-fw fa-percent text-muted hide-md-down"></i> Progreso
 									                </th>
 									                <th class="hasinput">
-														<i class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i> Validadores
+														<i class="fa fa-fw fa-user text-muted hide-md-down"></i> Involucrados
 									                </th>
 									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-file-pdf-o text-muted hidden-md hidden-sm hidden-xs"></i> Documento
+									                	<i class="fa fa-fw fa-file-pdf-o text-muted hide-md-down"></i> Documento
 									                </th>
-									                <th class="hasinput">
+									                <th class="hasinput hide-sm-down">
 									                	Actividad: &nbsp;<i class="fa fa-circle txt-color-darken font-xs"></i> Objetivo/ <i class="fa fa-circle text-danger font-xs"></i> Actual
 									                </th>
-									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Actualización
+									                <th class="hasinput hide-sm-down">
+									                	<i class="fa fa-fw fa-calendar text-muted hide-md-down"></i> Actualización
 									                </th>
-									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Inicio
+									                <th class="hasinput hide-sm-down">
+									                	<i class="fa fa-fw fa-calendar text-muted hide-md-down"></i> Inicio
 									                </th>
-									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Final
+									                <th class="hasinput hide-sm-down">
+									                	<i class="fa fa-fw fa-calendar text-muted hide-md-down"></i> Final
 									                </th>
-									                <th class="hasinput">
-									                	<i class="fa fa-fw fa-calendar text-muted hidden-md hidden-sm hidden-xs"></i> Restante
+									                <th class="hasinput hide-sm-down">
+									                	<i class="fa fa-fw fa-calendar text-muted hide-md-down"></i> Restante
 									                </th>
 									            </tr>
 									        </thead>
@@ -177,7 +176,12 @@
 									        <tfoot class="header">
 									            <tr>
 									                <th class="hasinput">
-									                	Filtros <i class="fa fa-fw fa-arrow-right"></i>
+									                	<button id="remove_filter" class="btn btn-xs btn-success" title="Quitar filtros de columnas">
+										                	<span class="fa-stack fa-md">
+															  <i class="fa fa-ban fa-stack-2x text-danger"></i>
+															  <i class="fa fa-filter fa-stack-1x"></i>
+															</span>
+									                	</button>
 													</th>
 													<th class="hasinput">
 														<input type="text" class="form-control" placeholder="Por alianza" />
@@ -186,35 +190,35 @@
 														<input type="text" class="form-control" placeholder="Por progreso" />
 													</th>
 													<th class="hasinput">
-														<input type="text" class="form-control" placeholder="Por validadores" />
+														<input type="text" class="form-control" placeholder="Por involucrados" />
 													</th>
 													<th class="hasinput">
 														<input type="text" class="form-control" placeholder="Por documento" />
 													</th>
-													<th class="hasinput">
+													<th class="hasinput hide-sm-down">
 														<input type="text" class="form-control" placeholder="Por actividad" />
 													</th>
 
-													<th class="hasinput">
+													<th class="hasinput hide-sm-down">
 														<div class="icon-addon">
 															<input id="dateselect_filter1" type="text" placeholder="Por actualización" class="form-control datepicker" data-dateformat="yy-mm-dd">
 															<label for="dateselect_filter1" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por actualización"></label>
 														</div>
 													</th>
 
-													<th class="hasinput">
+													<th class="hasinput hide-sm-down">
 														<div class="icon-addon">
 															<input id="dateselect_filter2" type="text" placeholder="Por fecha de inicio" class="form-control datepicker" data-dateformat="yy-mm-dd">
 															<label for="dateselect_filter2" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por fecha de inicio"></label>
 														</div>
 													</th>
-													<th class="hasinput">
+													<th class="hasinput hide-sm-down">
 														<div class="icon-addon">
 															<input id="dateselect_filter3" type="text" placeholder="Por fecha de fin" class="form-control datepicker" data-dateformat="yy-mm-dd">
 															<label for="dateselect_filter3" class="glyphicon glyphicon-calendar no-margin padding-top-10" rel="tooltip" title="" data-original-title="Por fecha de fin"></label>
 														</div>
 													</th>
-													<th class="hasinput">
+													<th class="hasinput hide-sm-down">
 														<input type="text" class="form-control" placeholder="Por tiempo restante" />
 													</th>
 									            </tr>
@@ -286,7 +290,8 @@
 			        {
 			            "nombre": "Alianza #{{ $alianza['id'] }}: {{ $alianza['institucion']['institucion_nombre'] }}<br><small class='text-muted'><i>{{ $alianza['institucion']['campus']['ciudad']['pais']['pais_nombre'] }}<i></small>",
 			            "progreso": "{{ $alianza['progreso'] }}% <div class='progress progress-xs no_progress_val' data-progressbar-value='{{ $alianza['progreso'] }}'><div class='progress-bar'></div></div>",
-			            "validadores": "<div class='project-members'>"+
+			            "task_pending": "{{ $alianza['task_pending'] }}",
+			            "involucrados": "<div class='project-members {{ $alianza['task_pending'] }}'>"+
 			            @foreach ($alianza['validaciones'] as $validacion)
 			            	"<a href='{{ route('user.show',$validacion['user_id']) }}' target='_blank'><img src='{{ URL::to('/img/avatars/male.png') }}' "+
 			            	@if ($validacion['estado_nombre'] == 'APROBADO' || $validacion['estado_nombre'] == 'ACTIVA')
@@ -305,7 +310,7 @@
 			            "documento": "<a href='{{ \Storage::url($alianza['archivo']['path']) }}' title='{{ $alianza['archivo']['nombre'] }}' target='_blank' class='btn btn-danger fa fa-file-pdf-o'> PDF</a>",
 		        		@else
 		        			@if(isset($alianza['tipo_paso_id']) )
-			            		"documento": '{!! Form::open(["route" => ["intervalidation.interalliances.validations.store","alianza=".$alianza["id"]], "files" => true]) !!}{{ Form::hidden("tipo_paso_id", $alianza["tipo_paso_id"]) }}{{ Form::hidden("user_id", $alianza["user_id"]) }}{{ Form::hidden("estado_id", $alianza["estado_id"]) }}{!! Form::label("archivo_input".$alianza["id"], " Cargar documento", ["class" => "btn btn-md btn-success fa fa-file-pdf-o", "title" => "Cargue el archivo del documento final diligenciado.", "rel"=> "tooltip", "data-content"=> "Cargue el archivo del documento final diligenciado.", "data-placement"=> "top" ]) !!}{{ Form::file("archivo_input", ["id" => "archivo_input".$alianza["id"], "class" => "btn btn-danger fa fa-file-pdf-o hide", "placeholder" => "", "accept" => ".pdf, .jpg, .jpeg, .png" ]) }}{!! Form::submit(" Enviar", ["type" => "button", "class" => "btn btn-md btn-success hide", "name" => "cargar_documento", "id" => "cargar_documento", "onclick" => "return confirm(\'¿Desea cargar el documento?\')", "title" => "Envíe el archivo escogido del documento final diligenciado.", "rel"=> "tooltip", "data-content"=> "Envíe el archivo escogido del documento final diligenciado.", "data-placement"=> "top" ]) !!}{!! Form::close() !!}',
+			            		"documento": '{!! Form::open(["route" => ["interalliances.validations_interalliances.store","alianza=".$alianza["id"]], "files" => true]) !!}{{ Form::hidden("tipo_paso_id", $alianza["tipo_paso_id"]) }}{{ Form::hidden("user_id", $alianza["user_id"]) }}{{ Form::hidden("estado_id", $alianza["estado_id"]) }}{!! Form::label("archivo_input".$alianza["id"], " Cargar documento", ["class" => "btn btn-md btn-success fa fa-file-pdf-o", "title" => "Cargue el archivo del documento final diligenciado.", "rel"=> "tooltip", "data-content"=> "Cargue el archivo del documento final diligenciado.", "data-placement"=> "top" ]) !!}{{ Form::file("archivo_input", ["id" => "archivo_input".$alianza["id"], "class" => "btn btn-danger fa fa-file-pdf-o hide", "placeholder" => "", "accept" => ".pdf, .jpg, .jpeg, .png" ]) }}{!! Form::submit(" Enviar", ["type" => "button", "class" => "btn btn-md btn-success hide", "name" => "cargar_documento", "id" => "cargar_documento", "onclick" => "return confirm(\'¿Desea cargar el documento?\')", "title" => "Envíe el archivo escogido del documento final diligenciado.", "rel"=> "tooltip", "data-content"=> "Envíe el archivo escogido del documento final diligenciado.", "data-placement"=> "top" ]) !!}{!! Form::close() !!}',
 		        			@else
 			            		"documento": "<span class='btn btn-default'>SIN ARCHIVO</span>",
 		        			@endif
@@ -327,8 +332,8 @@
 			            @endif
 			            "estado_actual": "{{ $alianza['estado_actual'] }}",
 			            "objetivo": "{{ json_encode($alianza['objetivo']) }}",
-			            @if(isset($alianza['validador']) )
-			            	"acciones": "<span><a href='{{ route('intervalidation.interalliances.validations.show',$alianza['id']) }}' class='btn btn-sm btn-primary fa fa-check-square-o'> Realizar Validación</a></span>"
+			            @if(isset($alianza['validador']) && $alianza['task_pending'] != '' )
+			            	"acciones": "<span><a href='{{ route('interalliances.validations_interalliances.show',$alianza['id']) }}' class='btn btn-sm btn-primary fa fa-check-square-o'> Realizar Validación</a></span>"
 			            @elseif(isset($alianza['coordinador_externo']) )
 			            	"acciones": "<span><a href='{{ route('interalliances.destination',$alianza['id']) }}' class='btn btn-sm btn-success fa fa-search-plus'> Ver Alianza</a></span>"
 			            @else
@@ -341,7 +346,7 @@
 			/* Formatting function for row details - modify as you need */
 			function format ( d ) {
 			    // `d` is the original data object for the row
-			    return '<table cellpadding="5" cellspacing="0" border="0" class="table table-hover table-condensed">'+
+			    return '<table cellpadding="5" cellspacing="0" border="0" class="table table-hover table-condensed" >'+
 			        '<tr>'+
 			            '<td style="width:100px">Estado de la alianza:</td>'+
 			            '<td>'+d.estado+'</td>'+
@@ -370,26 +375,17 @@
 			    '</table>';
 			}
 
-			// clears the variable if left blank
-		    var table = $('#exampled').DataTable( {
-		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>"+
-					"t"+
-					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-		        "bDestroy": true,
-		        "iDisplayLength": 15,
-		        "oLanguage": {
-				    "sSearch": '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>'
-				}
-			});
 		        //"ajax": "{{ URL::to('/data/dataList2.json') }}",
-		    var table = $('#example').DataTable( {
-		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>"+
+		    var table = $('#lista_alianzas').DataTable( {
+		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hide-xs-down'l>r>"+
 					"t"+
-					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hide-xs-down'i><'col-xs-12 col-sm-6'p>>",
 		        "bDestroy": true,
 		        "iDisplayLength": 15,
+		        "sLoadingRecords": "Please wait - loading...",
+		        "sProcessing": "Table is currently busy",
 		        "oLanguage": {
-				    "sSearch": '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>'
+				    "sSearch": '<span class="hide"> _INPUT_ </span>Filtrar por: {{ Form::select('select_filter', $select_filter, old('select_filter') ?? $filter, ['id' => 'select_filter', 'class' => 'form-control input-sm', 'target' => '', 'url' => route('interalliances.index')]) }}'
 				},
 				"data": data,
 		        "columns": [
@@ -401,7 +397,7 @@
 		            },
 					{ "data": "nombre" },
 					{ "data": "progreso" },
-					{ "data": "validadores" },
+					{ "data": "involucrados" },
 					{ "data": "documento" },
 					{ "data": "target-actual" },
 					{ "data": "actualizacion" },
@@ -428,15 +424,27 @@
 		            }
 		        } );
 
-			    $( 'input', this.footer() ).on( 'click', function () {
+			    $( 'input', this.footer() ).on( 'click', function (e) {
 			        e.stopPropagation();
 			    });
 
 		    } );
 
+		    // var columns = this.s.dt.columns().eq(0).map( function (i) {
+	     //        return {
+	     //            className: this.column(i).header().className,
+	     //            includeIn: [],
+	     //            auto:      false,
+	     //            control: false,
+	     //            hide: false //new property to always hide column
+	     //        };
+	     //    } );
+
 		     
 		    // Add event listener for opening and closing details
-		    $('#example tbody').on('click', 'td.details-control', function () {
+
+
+		    $('#lista_alianzas tbody').on('click', 'td.details-control', function () {
 		        var tr = $(this).closest('tr');
 		        var row = table.row( tr );
 		 
@@ -457,6 +465,21 @@
 		    $('input[name="archivo_input"]').on('change',function(){
 		    	$(this).parents('form').find('input[type="submit"]').trigger('click');
 		    });
+
+		    $('#lista_alianzas .task_pending').each(function () {
+			    $(this).parents('tr').addClass('task_pending');
+		    });
+
+
+			$('#remove_filter').click(function(){
+				$(this).parents('tr').find('input').val('').keyup(); 
+			});
+
+			$('select#select_filter').change(function(){
+				$urlRoute = $(this).attr('url');
+				$urlRoute = $urlRoute + '?filter=' + $(this).val();
+				window.location.href = $urlRoute;
+			});
 
 
 

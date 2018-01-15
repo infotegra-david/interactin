@@ -43,6 +43,8 @@ return [
     |
     */
 
+    // 587,465,
+
     'port' => env('MAIL_PORT', 587),
 
     /*
@@ -72,6 +74,7 @@ return [
     |
     */
 
+    // 'encryption' => env('MAIL_ENCRYPTION', 'tls'),
     'encryption' => env('MAIL_ENCRYPTION', 'tls'),
 
     /*

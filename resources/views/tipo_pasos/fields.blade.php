@@ -4,10 +4,22 @@
     {!! Form::text('nombre', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Validador Id Field -->
+<!-- Titulo Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('validador_id', 'Validador Id:') !!}
-    {!! Form::number('validador_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('titulo', 'Titulo:') !!}
+    {!! Form::text('titulo', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Seccion Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('seccion', 'Seccion:') !!}
+    {!! Form::text('seccion', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Reglas Field -->
+<div class="form-group col-sm-12 col-lg-12">
+    {!! Form::label('reglas', 'Reglas:') !!}
+    {!! Form::textarea('reglas', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Submit Field -->

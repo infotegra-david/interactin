@@ -21,6 +21,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 1,
                 'nombre' => 'Australia',
+                'nacionalidad' => 'Australiano',
                 'codigo_ref' => 'AU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -31,6 +32,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 2,
                 'nombre' => 'Austria',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -41,6 +43,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 3,
                 'nombre' => 'Azerbaiyán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -51,6 +54,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 4,
                 'nombre' => 'Anguilla',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -61,6 +65,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 5,
                 'nombre' => 'Argentina',
+                'nacionalidad' => 'Argentino',
                 'codigo_ref' => 'AR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -71,6 +76,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 6,
                 'nombre' => 'Armenia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -81,6 +87,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 7,
                 'nombre' => 'Bielorrusia',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -91,6 +98,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 8,
                 'nombre' => 'Belice',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -101,6 +109,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 9,
                 'nombre' => 'Bélgica',
+                'nacionalidad' => 'Belga',
                 'codigo_ref' => 'BE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -111,6 +120,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 10,
                 'nombre' => 'Bermudas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -121,6 +131,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 11,
                 'nombre' => 'Bulgaria',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -131,6 +142,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 12,
                 'nombre' => 'Brasil',
+                'nacionalidad' => 'Brasileño',
                 'codigo_ref' => 'BR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -141,6 +153,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 13,
                 'nombre' => 'Reino Unido',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GB',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -151,6 +164,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 14,
                 'nombre' => 'Hungría',
+                'nacionalidad' => '',
                 'codigo_ref' => 'HU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -161,6 +175,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 15,
                 'nombre' => 'Vietnam',
+                'nacionalidad' => 'Vietnamita',
                 'codigo_ref' => 'VN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -171,6 +186,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 16,
                 'nombre' => 'Haiti',
+                'nacionalidad' => 'Haitiano',
                 'codigo_ref' => 'HT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -181,6 +197,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 17,
                 'nombre' => 'Guadalupe',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -191,6 +208,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 18,
                 'nombre' => 'Alemania',
+                'nacionalidad' => 'Alemán',
                 'codigo_ref' => 'DE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -201,6 +219,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 19,
                 'nombre' => 'Países Bajos, Holanda',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -211,6 +230,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 20,
                 'nombre' => 'Grecia',
+                'nacionalidad' => 'Griego',
                 'codigo_ref' => 'GR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -221,6 +241,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 21,
                 'nombre' => 'Georgia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -231,6 +252,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 22,
                 'nombre' => 'Dinamarca',
+                'nacionalidad' => 'Danés',
                 'codigo_ref' => 'DK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -241,6 +263,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 23,
                 'nombre' => 'Egipto',
+                'nacionalidad' => 'Egipcio',
                 'codigo_ref' => 'EG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -251,6 +274,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 24,
                 'nombre' => 'Israel',
+                'nacionalidad' => 'Israelí',
                 'codigo_ref' => 'IL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -261,6 +285,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 25,
                 'nombre' => 'India',
+                'nacionalidad' => '',
                 'codigo_ref' => 'IN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -271,6 +296,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 26,
                 'nombre' => 'Irán',
+                'nacionalidad' => 'Iraní',
                 'codigo_ref' => 'IR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -281,6 +307,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 27,
                 'nombre' => 'Irlanda',
+                'nacionalidad' => 'Irlandés',
                 'codigo_ref' => 'IE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -291,6 +318,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 28,
                 'nombre' => 'España',
+                'nacionalidad' => 'Español',
                 'codigo_ref' => 'ES',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -301,6 +329,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 29,
                 'nombre' => 'Italia',
+                'nacionalidad' => 'Italiano',
                 'codigo_ref' => 'IT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -311,6 +340,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 30,
                 'nombre' => 'Kazajstán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -321,6 +351,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 31,
                 'nombre' => 'Camerún',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -331,6 +362,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 32,
                 'nombre' => 'Canadá',
+                'nacionalidad' => 'Canadiense',
                 'codigo_ref' => 'CA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -341,6 +373,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 33,
                 'nombre' => 'Chipre',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -351,6 +384,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 34,
                 'nombre' => 'Kirguistán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -361,6 +395,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 35,
                 'nombre' => 'China',
+                'nacionalidad' => 'Chino',
                 'codigo_ref' => 'CN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -371,6 +406,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 36,
                 'nombre' => 'Costa Rica',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -381,6 +417,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 37,
                 'nombre' => 'Kuwait',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -391,6 +428,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 38,
                 'nombre' => 'Letonia',
+                'nacionalidad' => 'Letón',
                 'codigo_ref' => 'LV',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -401,6 +439,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 39,
                 'nombre' => 'Libia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -411,6 +450,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 40,
                 'nombre' => 'Lituania',
+                'nacionalidad' => 'Letonés',
                 'codigo_ref' => 'LT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -421,6 +461,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 41,
                 'nombre' => 'Luxemburgo',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -431,6 +472,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 42,
                 'nombre' => 'México',
+                'nacionalidad' => 'Mexicano',
                 'codigo_ref' => 'MX',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -441,6 +483,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 43,
                 'nombre' => 'Moldavia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MD',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -451,6 +494,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 44,
                 'nombre' => 'Mónaco',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -461,6 +505,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 45,
                 'nombre' => 'Nueva Zelanda',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -471,6 +516,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 46,
                 'nombre' => 'Noruega',
+                'nacionalidad' => 'Noruego',
                 'codigo_ref' => 'NO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -481,6 +527,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 47,
                 'nombre' => 'Polonia',
+                'nacionalidad' => 'Polaco',
                 'codigo_ref' => 'PL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -491,6 +538,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 48,
                 'nombre' => 'Portugal',
+                'nacionalidad' => 'Portugués',
                 'codigo_ref' => 'PT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -501,6 +549,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 49,
                 'nombre' => 'Reunión',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -511,6 +560,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 50,
                 'nombre' => 'Rusia',
+                'nacionalidad' => 'Ruso',
                 'codigo_ref' => 'RU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -521,6 +571,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 51,
                 'nombre' => 'El Salvador',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SV',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -531,6 +582,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 52,
                 'nombre' => 'Eslovaquia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -541,6 +593,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 53,
                 'nombre' => 'Eslovenia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SI',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -551,6 +604,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 54,
                 'nombre' => 'Surinam',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -561,6 +615,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 55,
                 'nombre' => 'Estados Unidos',
+                'nacionalidad' => '',
                 'codigo_ref' => 'US',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -571,6 +626,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 56,
                 'nombre' => 'Tadjikistan',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TJ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -581,6 +637,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 57,
                 'nombre' => 'Turkmenistan',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -591,6 +648,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 58,
                 'nombre' => 'Islas Turcas y Caicos',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -601,6 +659,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 59,
                 'nombre' => 'Turquía',
+                'nacionalidad' => 'Turco',
                 'codigo_ref' => 'TR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -611,6 +670,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 60,
                 'nombre' => 'Uganda',
+                'nacionalidad' => '',
                 'codigo_ref' => 'UG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -621,6 +681,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 61,
                 'nombre' => 'Uzbekistán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'UZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -631,6 +692,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 62,
                 'nombre' => 'Ucrania',
+                'nacionalidad' => 'Ucraniano',
                 'codigo_ref' => 'UA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -641,6 +703,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 63,
                 'nombre' => 'Finlandia',
+                'nacionalidad' => 'Finlandés',
                 'codigo_ref' => 'FI',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -651,6 +714,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 64,
                 'nombre' => 'Francia',
+                'nacionalidad' => 'Francés',
                 'codigo_ref' => 'FR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -661,6 +725,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 65,
                 'nombre' => 'República Checa',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -671,6 +736,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 66,
                 'nombre' => 'Suiza',
+                'nacionalidad' => 'Suizo',
                 'codigo_ref' => 'CH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -681,6 +747,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 67,
                 'nombre' => 'Suecia',
+                'nacionalidad' => 'Sueco',
                 'codigo_ref' => 'SE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -691,6 +758,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 68,
                 'nombre' => 'Estonia',
+                'nacionalidad' => 'Estonio',
                 'codigo_ref' => 'EE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -701,6 +769,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 69,
                 'nombre' => 'Corea del Sur',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -711,6 +780,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 70,
                 'nombre' => 'Japón',
+                'nacionalidad' => 'Japonés',
                 'codigo_ref' => 'JP',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -721,6 +791,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 71,
                 'nombre' => 'Croacia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'HR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -731,6 +802,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 72,
                 'nombre' => 'Rumanía',
+                'nacionalidad' => 'Rumano',
                 'codigo_ref' => 'RO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -741,6 +813,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 73,
                 'nombre' => 'Hong Kong',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -751,6 +824,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 74,
                 'nombre' => 'Indonesia',
+                'nacionalidad' => 'Indonés',
                 'codigo_ref' => 'ID',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -761,6 +835,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 75,
                 'nombre' => 'Jordania',
+                'nacionalidad' => 'Jordano',
                 'codigo_ref' => 'JO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -771,6 +846,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 76,
                 'nombre' => 'Malasia',
+                'nacionalidad' => 'Malayo',
                 'codigo_ref' => 'MY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -781,6 +857,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 77,
                 'nombre' => 'Singapur',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -791,6 +868,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 78,
                 'nombre' => 'Taiwan',
+                'nacionalidad' => 'Taiwanes',
                 'codigo_ref' => 'TW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -801,6 +879,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 79,
                 'nombre' => 'Bosnia y Herzegovina',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -811,6 +890,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 80,
                 'nombre' => 'Bahamas',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BS',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -821,6 +901,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 81,
                 'nombre' => 'Chile',
+                'nacionalidad' => 'Chileno',
                 'codigo_ref' => 'CL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -831,6 +912,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 82,
                 'nombre' => 'Colombia',
+                'nacionalidad' => 'Colombiano',
                 'codigo_ref' => 'CO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -841,6 +923,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 83,
                 'nombre' => 'Islandia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'IS',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -851,6 +934,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 84,
                 'nombre' => 'Corea del Norte',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KP',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -861,6 +945,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 85,
                 'nombre' => 'Macedonia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -871,6 +956,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 86,
                 'nombre' => 'Malta',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -881,6 +967,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 87,
                 'nombre' => 'Pakistán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'PK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -891,6 +978,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 88,
                 'nombre' => 'Papúa-Nueva Guinea',
+                'nacionalidad' => '',
                 'codigo_ref' => 'PG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -901,6 +989,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 89,
                 'nombre' => 'Perú',
+                'nacionalidad' => 'Peruano',
                 'codigo_ref' => 'PE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -911,6 +1000,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 90,
                 'nombre' => 'Filipinas',
+                'nacionalidad' => 'Filipino',
                 'codigo_ref' => 'PH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -921,6 +1011,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 91,
                 'nombre' => 'Arabia Saudita',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -931,6 +1022,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 92,
                 'nombre' => 'Tailandia',
+                'nacionalidad' => 'Tailandés',
                 'codigo_ref' => 'TH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -941,6 +1033,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 93,
                 'nombre' => 'Emiratos árabes Unidos',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -951,6 +1044,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 94,
                 'nombre' => 'Groenlandia',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -961,6 +1055,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 95,
                 'nombre' => 'Venezuela',
+                'nacionalidad' => 'Venezolano',
                 'codigo_ref' => 'VE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -971,6 +1066,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 96,
                 'nombre' => 'Zimbabwe',
+                'nacionalidad' => '',
                 'codigo_ref' => 'ZW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -981,6 +1077,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 97,
                 'nombre' => 'Kenia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'KE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -991,6 +1088,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 98,
                 'nombre' => 'Argelia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'DZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1001,6 +1099,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 99,
                 'nombre' => 'Líbano',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LB',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1011,6 +1110,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 100,
                 'nombre' => 'Botsuana',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1021,6 +1121,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 101,
                 'nombre' => 'Tanzania',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1031,6 +1132,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 102,
                 'nombre' => 'Namibia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1041,6 +1143,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 103,
                 'nombre' => 'Ecuador',
+                'nacionalidad' => 'Ecuatoriano',
                 'codigo_ref' => 'EC',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1051,6 +1154,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 104,
                 'nombre' => 'Marruecos',
+                'nacionalidad' => 'Marroquí',
                 'codigo_ref' => 'MA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1061,6 +1165,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 105,
                 'nombre' => 'Ghana',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1071,6 +1176,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 106,
                 'nombre' => 'Siria',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1081,6 +1187,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 107,
                 'nombre' => 'Nepal',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NP',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1091,6 +1198,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 108,
                 'nombre' => 'Mauritania',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1101,6 +1209,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 109,
                 'nombre' => 'Seychelles',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1111,6 +1220,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 110,
                 'nombre' => 'Paraguay',
+                'nacionalidad' => 'Paraguayo',
                 'codigo_ref' => 'PY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1121,6 +1231,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 111,
                 'nombre' => 'Uruguay',
+                'nacionalidad' => 'Uruguayo',
                 'codigo_ref' => 'UY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1131,6 +1242,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 112,
             'nombre' => 'Congo (Brazzaville)',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1141,6 +1253,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 113,
                 'nombre' => 'Cuba',
+                'nacionalidad' => 'Cubano',
                 'codigo_ref' => 'CU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1151,6 +1264,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 114,
                 'nombre' => 'Albania',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1161,6 +1275,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 115,
                 'nombre' => 'Nigeria',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1171,6 +1286,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 116,
                 'nombre' => 'Zambia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'ZM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1181,6 +1297,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 117,
                 'nombre' => 'Mozambique',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1191,6 +1308,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 119,
                 'nombre' => 'Angola',
+                'nacionalidad' => '',
                 'codigo_ref' => 'AO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1201,6 +1319,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 120,
                 'nombre' => 'Sri Lanka',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1211,6 +1330,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 121,
                 'nombre' => 'Etiopía',
+                'nacionalidad' => 'Etiope',
                 'codigo_ref' => 'ET',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1221,6 +1341,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 122,
                 'nombre' => 'Túnez',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1231,6 +1352,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 123,
                 'nombre' => 'Bolivia',
+                'nacionalidad' => 'Boliviano',
                 'codigo_ref' => 'BO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1241,6 +1363,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 124,
                 'nombre' => 'Panamá',
+                'nacionalidad' => 'Panameño',
                 'codigo_ref' => 'PA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1251,6 +1374,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 125,
                 'nombre' => 'Malawi',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1261,6 +1385,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 126,
                 'nombre' => 'Liechtenstein',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1271,6 +1396,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 127,
                 'nombre' => 'Bahrein',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1281,6 +1407,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 128,
                 'nombre' => 'Barbados',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1291,6 +1418,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 130,
                 'nombre' => 'Chad',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TD',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1301,6 +1429,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 131,
                 'nombre' => 'Man, Isla de',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1311,6 +1440,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 132,
                 'nombre' => 'Jamaica',
+                'nacionalidad' => '',
                 'codigo_ref' => 'JM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1321,6 +1451,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 133,
                 'nombre' => 'Malí',
+                'nacionalidad' => '',
                 'codigo_ref' => 'ML',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1331,6 +1462,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 134,
                 'nombre' => 'Madagascar',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1341,6 +1473,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 135,
                 'nombre' => 'Senegal',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1351,6 +1484,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 136,
                 'nombre' => 'Togo',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TG',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1361,6 +1495,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 137,
                 'nombre' => 'Honduras',
+                'nacionalidad' => 'Hondureño',
                 'codigo_ref' => 'HN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1371,6 +1506,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 138,
                 'nombre' => 'República Dominicana',
+                'nacionalidad' => '',
                 'codigo_ref' => 'DO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1381,6 +1517,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 139,
                 'nombre' => 'Mongolia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1391,6 +1528,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 140,
                 'nombre' => 'Irak',
+                'nacionalidad' => 'Iraquí',
                 'codigo_ref' => 'IQ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1401,6 +1539,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 141,
                 'nombre' => 'Sudáfrica',
+                'nacionalidad' => '',
                 'codigo_ref' => 'ZA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1411,6 +1550,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 142,
                 'nombre' => 'Aruba',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1421,6 +1561,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 143,
                 'nombre' => 'Gibraltar',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1431,6 +1572,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 144,
                 'nombre' => 'Afganistán',
+                'nacionalidad' => 'Afgano',
                 'codigo_ref' => 'AF',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1441,6 +1583,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 145,
                 'nombre' => 'Andorra',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1451,6 +1594,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 147,
                 'nombre' => 'Antigua y Barbuda',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1461,6 +1605,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 149,
                 'nombre' => 'Bangladesh',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BD',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1471,6 +1616,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 151,
                 'nombre' => 'Benín',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BJ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1481,6 +1627,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 152,
                 'nombre' => 'Bután',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1491,6 +1638,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 154,
                 'nombre' => 'Islas Virgenes Británicas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1501,6 +1649,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 155,
                 'nombre' => 'Brunéi',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1511,6 +1660,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 156,
                 'nombre' => 'Burkina Faso',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BF',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1521,6 +1671,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 157,
                 'nombre' => 'Burundi',
+                'nacionalidad' => '',
                 'codigo_ref' => 'BI',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1531,6 +1682,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 158,
                 'nombre' => 'Camboya',
+                'nacionalidad' => 'Camboyano',
                 'codigo_ref' => 'KH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1541,6 +1693,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 159,
                 'nombre' => 'Cabo Verde',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1551,6 +1704,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 164,
                 'nombre' => 'Comores',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1561,6 +1715,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 165,
             'nombre' => 'Congo (Kinshasa)',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CD',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1571,6 +1726,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 166,
                 'nombre' => 'Cook, Islas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1581,6 +1737,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 168,
                 'nombre' => 'Costa de Marfil',
+                'nacionalidad' => '',
                 'codigo_ref' => 'CI',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1591,6 +1748,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 169,
                 'nombre' => 'Djibouti, Yibuti',
+                'nacionalidad' => '',
                 'codigo_ref' => 'DJ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1601,6 +1759,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 171,
                 'nombre' => 'Timor Oriental',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1611,6 +1770,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 172,
                 'nombre' => 'Guinea Ecuatorial',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GQ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1621,6 +1781,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 173,
                 'nombre' => 'Eritrea',
+                'nacionalidad' => '',
                 'codigo_ref' => 'ER',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1631,6 +1792,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 175,
                 'nombre' => 'Feroe, Islas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1641,6 +1803,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 176,
                 'nombre' => 'Fiyi',
+                'nacionalidad' => '',
                 'codigo_ref' => 'FJ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1651,6 +1814,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 178,
                 'nombre' => 'Polinesia Francesa',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1661,6 +1825,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 180,
                 'nombre' => 'Gabón',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1671,6 +1836,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 181,
                 'nombre' => 'Gambia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1681,6 +1847,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 184,
                 'nombre' => 'Granada',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1691,6 +1858,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 185,
                 'nombre' => 'Guatemala',
+                'nacionalidad' => 'Guatemalteco',
                 'codigo_ref' => 'GT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1701,6 +1869,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 186,
                 'nombre' => 'Guernsey',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1711,6 +1880,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 187,
                 'nombre' => 'Guinea',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GN',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1721,6 +1891,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 188,
                 'nombre' => 'Guinea-Bissau',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1731,6 +1902,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 189,
                 'nombre' => 'Guyana',
+                'nacionalidad' => '',
                 'codigo_ref' => 'GY',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1741,6 +1913,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 193,
                 'nombre' => 'Jersey',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1751,6 +1924,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 195,
                 'nombre' => 'Kiribati',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1761,6 +1935,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 196,
                 'nombre' => 'Laos',
+                'nacionalidad' => 'Laosiano',
                 'codigo_ref' => 'LA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1771,6 +1946,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 197,
                 'nombre' => 'Lesotho',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LS',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1781,6 +1957,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 198,
                 'nombre' => 'Liberia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'LR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1791,6 +1968,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 200,
                 'nombre' => 'Maldivas',
+                'nacionalidad' => '',
                 'codigo_ref' => 'FK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1801,6 +1979,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 201,
                 'nombre' => 'Martinica',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1811,6 +1990,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 202,
                 'nombre' => 'Mauricio',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1821,6 +2001,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 205,
                 'nombre' => 'Myanmar',
+                'nacionalidad' => '',
                 'codigo_ref' => 'MM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1831,6 +2012,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 206,
                 'nombre' => 'Nauru',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1841,6 +2023,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 207,
                 'nombre' => 'Antillas Holandesas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1851,6 +2034,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 208,
                 'nombre' => 'Nueva Caledonia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NC',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1861,6 +2045,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 209,
                 'nombre' => 'Nicaragua',
+                'nacionalidad' => 'Nicaragüense',
                 'codigo_ref' => 'NI',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1871,6 +2056,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 210,
                 'nombre' => 'Níger',
+                'nacionalidad' => '',
                 'codigo_ref' => 'NE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1881,6 +2067,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 212,
                 'nombre' => 'Norfolk Island',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1891,6 +2078,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 213,
                 'nombre' => 'Omán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'OM',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1901,6 +2089,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 215,
                 'nombre' => 'Isla Pitcairn',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1911,6 +2100,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 216,
                 'nombre' => 'Qatar',
+                'nacionalidad' => '',
                 'codigo_ref' => 'QA',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1921,6 +2111,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 217,
                 'nombre' => 'Ruanda',
+                'nacionalidad' => '',
                 'codigo_ref' => 'RW',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1931,6 +2122,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 218,
                 'nombre' => 'Santa Elena',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1941,6 +2133,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 219,
                 'nombre' => 'San Cristobal y Nevis',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1951,6 +2144,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 220,
                 'nombre' => 'Santa Lucía',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1961,6 +2155,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 221,
                 'nombre' => 'San Pedro y Miquelón',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1971,6 +2166,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 222,
                 'nombre' => 'San Vincente y Granadinas',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1981,6 +2177,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 223,
                 'nombre' => 'Samoa',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -1991,6 +2188,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 224,
                 'nombre' => 'San Marino',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2001,6 +2199,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 225,
                 'nombre' => 'San Tomé y Príncipe',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2011,6 +2210,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 226,
                 'nombre' => 'Serbia y Montenegro',
+                'nacionalidad' => '',
                 'codigo_ref' => 'RS',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2021,6 +2221,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 227,
                 'nombre' => 'Sierra Leona',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SL',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2031,6 +2232,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 228,
                 'nombre' => 'Islas Salomón',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SB',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2041,6 +2243,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 229,
                 'nombre' => 'Somalia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SO',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2051,6 +2254,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 232,
                 'nombre' => 'Sudán',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SD',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2061,6 +2265,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 234,
                 'nombre' => 'Swazilandia',
+                'nacionalidad' => '',
                 'codigo_ref' => 'SZ',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2071,6 +2276,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 235,
                 'nombre' => 'Tokelau',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2081,6 +2287,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 236,
                 'nombre' => 'Tonga',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2091,6 +2298,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 237,
                 'nombre' => 'Trinidad y Tobago',
+                'nacionalidad' => '',
                 'codigo_ref' => 'TT',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2101,6 +2309,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 239,
                 'nombre' => 'Tuvalu',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2111,6 +2320,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 240,
                 'nombre' => 'Vanuatu',
+                'nacionalidad' => '',
                 'codigo_ref' => 'VU',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2121,6 +2331,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 241,
                 'nombre' => 'Wallis y Futuna',
+                'nacionalidad' => '',
                 'codigo_ref' => NULL,
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2131,6 +2342,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 242,
                 'nombre' => 'Sáhara Occidental',
+                'nacionalidad' => '',
                 'codigo_ref' => 'EH',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2141,6 +2353,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 243,
                 'nombre' => 'Yemen',
+                'nacionalidad' => '',
                 'codigo_ref' => 'YE',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2151,6 +2364,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 246,
                 'nombre' => 'Puerto Rico',
+                'nacionalidad' => '',
                 'codigo_ref' => 'PR',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2161,6 +2375,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 247,
                 'nombre' => 'Birmania',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2171,6 +2386,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 248,
                 'nombre' => 'Islas Marshall',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2181,6 +2397,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 249,
                 'nombre' => 'Kosovo',
+                'nacionalidad' => '',
                 'codigo_ref' => 'XK',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2191,6 +2408,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 250,
                 'nombre' => 'Micronesia',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2201,6 +2419,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 251,
                 'nombre' => 'Palaos',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2211,6 +2430,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 252,
                 'nombre' => 'Palestina',
+                'nacionalidad' => '',
                 'codigo_ref' => 'PS',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2221,6 +2441,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 253,
                 'nombre' => 'Suazilandia',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',
@@ -2231,6 +2452,7 @@ class PaisTableSeeder extends Seeder
             array (
                 'id' => 254,
                 'nombre' => 'Vaticano',
+                'nacionalidad' => '',
                 'codigo_ref' => '',
                 'nativo' => 1,
                 'created_at' => '1990-01-01 01:01:01',

@@ -50,7 +50,7 @@
 		<link rel="icon" href="{{URL::asset('img/favicon/favicon.ico')}}" type="image/x-icon">
 
 		<!-- GOOGLE FONT -->
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+		<!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700"> -->
 
 		<!-- Specifying a Webpage Icon for Web Clip
 			 Ref: https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html -->
@@ -155,34 +155,32 @@
 					</div>
 
 					<!-- projects dropdown -->
-					<div class="project-context hidden-xs">
+					<div class="project-context hidden-md-down">
 
 						<span class="label">Projects:</span>
-						<span id="project-selector" class="popover-trigger-element dropdown-toggle" data-toggle="dropdown">Recent projects <i class="fa fa-angle-down"></i></span>
+						<button id="project-selector" class="popover-trigger-element dropdown-toggle" data-toggle="dropdown">Recent projects</button>
 
 						<!-- Suggestion: populate this list with fetch and push technique -->
-						<ul class="dropdown-menu">
-							<li>
-								<a href="javascript:void(0);">Online e-merchant management system - attaching integration with the iOS</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Notes on pipeline upgradee</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Assesment Report for merchant account</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="javascript:void(0);"><i class="fa fa-power-off"></i> Clear</a>
-							</li>
-						</ul>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="javascript:void(0);">Online e-merchant management system - attaching integration with the iOS</a>
+							<a class="dropdown-item" href="javascript:void(0);">Notes on pipeline upgradee</a>
+							<a class="dropdown-item" href="javascript:void(0);">Assesment Report for merchant account</a>
+
+							<a class="divider"></a>
+							<a class="dropdown-item" href="javascript:void(0);"><i class="fa fa-power-off"></i> Clear</a>
+						</div>
 						<!-- end dropdown-menu-->
 
 					</div>
-					<div class="text-center" id="campusAppSelect">
-						@php 
-						$campusAppSelect = session('campusApp'); 
-						$campusAppNombreSelect = session('campusAppNombre'); 
+					<div class="institution-header data-header hidden-xs-down">
+						<span class="label">Institución:</span>
+						<span class="institution-name" title="{{ session('institucionAppNombre') }}">{{ session('institucionAppNombre') }}</span>
+					</div>
+					<div class="data-header campus-header" id="campusAppSelect">
+						<span class="label">Campus:</span>
+						@php
+							$campusAppSelect = session('campusApp');
+							$campusAppNombreSelect = session('campusAppNombre');
 						@endphp
 						<!--span class="input-group-addon"><i class="fa fa-university fa-lg fa-fw"></i></span-->
 						{{ Form::select('campusAppSelect', ($campusApp ?? array($campusAppSelect => $campusAppNombreSelect)), (old('campusAppSelect') ?? $campusAppSelect), ['class' => 'form-control input-lg', 'rel' => 'tooltip', 'data-original-title' => 'Seleccione el campus que desea usar', 'data-placement' => 'bottom', 'results' => '', 'url' => route('campusAppSelect')]) }}
@@ -211,6 +209,11 @@
 											  color: '#5f895f',
 											  iconSmall: "fa fa-check bounce animated"
 											});
+											$( document ).one('ajaxStop', function() {
+							                	$('#container-loading').addClass("show");
+							                });
+											location.reload();
+
 										},
 								        error: function(msj){
 								        	var row = '';
@@ -256,7 +259,7 @@
 
 						<!-- #MOBILE -->
 						<!-- Top menu profile link : this shows only when top menu is active -->
-						<ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5">
+						<ul id="mobile-profile-img" class="header-dropdown-list hidden-sm-up padding-5">
 							<li class="">
 								<a href="#" class="dropdown-toggle no-margin userdropdown" data-toggle="dropdown"> 
 									<img src="{{URL::asset('img/avatars/juan.png')}}" alt="John Doe" class="online" />
@@ -292,13 +295,13 @@
 						<!-- end logout button -->
 
 						<!-- search mobile button (this is hidden till mobile view port) -->
-						<div id="search-mobile" class="btn-header hidden-xs transparent pull-right">
+						<div id="search-mobile" class="btn-header hidden-md-down transparent pull-right hidden-md-down">
 							<span> <a href="javascript:void(0)" title="Search"><i class="fa fa-search"></i></a> </span>
 						</div>
 						<!-- end search mobile button -->
 
 						<!-- input: search field -->
-						<form action="{{URL::asset('search.php')}}" class="header-search pull-right">
+						<form action="{{URL::asset('search.php')}}" class="header-search pull-right hidden-md-down">
 							<input type="text" name="param" placeholder="Find reports and more" id="search-fld">
 							<button type="submit">
 								<i class="fa fa-search"></i>
@@ -308,14 +311,14 @@
 						<!-- end input: search field -->
 
 						<!-- fullscreen button -->
-						<div id="fullscreen" class="btn-header transparent pull-right">
+						<div id="fullscreen" class="btn-header transparent pull-right hidden-sm-down">
 							<span> <a href="javascript:void(0);" title="Full Screen" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i></a> </span>
 						</div>
 						<!-- end fullscreen button -->
 						
 						<!-- #Voice Command: Start Speech -->
 						<!-- 
-						<div id="speech-btn" class="btn-header transparent pull-right hidden-sm hidden-xs">
+						<div id="speech-btn" class="btn-header transparent pull-right hidden-sm-down hidden-xs-down">
 							<div> 
 								<a href="javascript:void(0)" title="Voice Command" data-action="voiceCommand"><i class="fa fa-microphone"></i></a> 
 								<div class="popover bottom"><div class="arrow"></div>
@@ -337,7 +340,7 @@
 						
 						<!-- multiple lang dropdown : find all flags in the flags page -->
 						<!-- 					
-						<ul class="header-dropdown-list hidden-xs">
+						<ul class="header-dropdown-list hidden-xs-down">
 							<li>
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
 									<img src="{{URL::asset('img/blank.gif')}}" class="flag flag-co')}}" alt="United States"> <span> Español (CO) </span> <i class="fa fa-angle-down"></i> </a>
@@ -359,24 +362,41 @@
 							</li>
 						</ul>
 						-->
-						<div id="google_translate_div" class="btn btn-header transparent pull-right">
+						<div id="google_translate_div" class="btn btn-header transparent pull-right hidden-md-down">
 							<div id="google_translate_element"></div>
 						</div>
+<!--  
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+
 						<script type="text/javascript">
 							
 
-							function googleTranslateElementInit() {
-								new google.translate.TranslateElement({pageLanguage: 'hr', includedLanguages: 'en,fr,pt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
-							}
+							// function googleTranslateElementInit() {
+							// 	new google.translate.TranslateElement({pageLanguage: 'hr', includedLanguages: 'en,fr,pt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+							// }
 
-							$(document).ready(function(){
-								$('#google_translate_element a > span').addClass('hidden-xs');
-							});
+							// $(document).ready(function(){
+							// 	$('#google_translate_element a > span').addClass('hidden-xs-down');
+							// });
+
 
 						</script>
 						<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-						
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+//--------------------------------
+	 -->					
 						<!-- end multiple lang -->
 
 					</div>

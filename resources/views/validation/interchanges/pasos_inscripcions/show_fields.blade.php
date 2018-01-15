@@ -25,7 +25,7 @@
 <!-- Usuario Id Field -->
 <div class="form-group">
     {!! Form::label('validador_id', 'Usuario:') !!}
-    <p>{!! $pasoInscripcion['user_email'] !!} - {!! str_replace("_", " ", $pasoInscripcion['role_name']) !!} {{ ($pasoInscripcion['titulo'] != '' ? '('.$pasoInscripcion['titulo'].')' : '') }} </p>
+    <p>{!! $pasoInscripcion->user_email !!} - {!! str_replace("_", " ", $pasoInscripcion->role_name) !!} {{ ($pasoInscripcion->titulo != '' ? '('.$pasoInscripcion->titulo.')' : '') }} </p>
 </div>
 
 <!-- Observacion Field -->

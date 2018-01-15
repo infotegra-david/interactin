@@ -8,7 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class TipoPaso
  * @package App\Models
- * @version July 5, 2017, 11:01 am COT
+ * @version January 15, 2018, 9:18 am -05
+ *
+ * @property \Illuminate\Database\Eloquent\Collection roleHasPermissions
+ * @property string nombre
+ * @property string titulo
+ * @property string seccion
+ * @property string reglas
  */
 class TipoPaso extends Model
 {
@@ -25,7 +31,9 @@ class TipoPaso extends Model
 
     public $fillable = [
         'nombre',
-        'titulo'
+        'titulo',
+        'seccion',
+        'reglas'
     ];
 
     /**
@@ -36,7 +44,9 @@ class TipoPaso extends Model
     protected $casts = [
         'id' => 'integer',
         'nombre' => 'string',
-        'titulo' => 'string'
+        'titulo' => 'string',
+        'seccion' => 'string',
+        'reglas' => 'string'
     ];
 
     /**
@@ -48,6 +58,7 @@ class TipoPaso extends Model
         
     ];
 
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/

@@ -48,8 +48,7 @@
 	//follow the tree in inc/config.ui.php
 
 	$page_nav = 1;
-	$menu="InterAlliance";
-	$submenu1="Alliances";
+	$page_nav_route[ "InterAlliance" ]["sub"][ "Alliances" ]["active"] = true;
 	//$submenu2='';
 	?>
 
@@ -72,7 +71,7 @@
 					<ul id="sparks">
 						<li class="sparks-info">
 							<h5> Mis alianzas <span class="txt-color-blue">171</span></h5>
-							<div class="sparkline txt-color-blue hidden-mobile">
+							<div class="sparkline txt-color-blue hide-mobile">
 								1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
 							</div>
 						</li>
@@ -86,7 +85,7 @@
 			<section id="widget-grid" class="">
 			
 				<!-- row -->
-				<div class="row">
+				<div class="row col-sm-12">
 					
 				    <div class="hide content text-center" id="datos_alianza">
 						<div class="col-sm-12">
@@ -107,12 +106,14 @@
 				            <div class="box-body content-center text-left">
 				                <div class="row" style="padding-left: 20px">
 				                    @include('InterAlliance.show_fields')
+				                    <br>
 				                    @if( $peticion == "normal" )
 						                <div class="col-sm-12">
+				                    		<br><br>
 						                	<div class="col-sm-12">
-						                    <a href="{!! route('interalliances.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
+						                    	<a href="{!! route('interalliances.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
 							                @if( $editar == true )
-							                    <a href="{!! route('interalliances.edit',$alianzaId) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+							                    <a href="{!! route('interalliances.edit',$alianzaId) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar todo</a>
 							                @endif
 						                	</div>
 						                </div>

@@ -470,12 +470,12 @@ body.loading .modal_loading {
 /* ESTILOS PARA EL FORMULARIO DE VISTA DE LOS E-MAIL*/
 
 
-.ver_mail , .ver_mail *:not(html):not(style):not(br):not(tr):not(code) {
+.ver_email , .ver_email *:not(html):not(style):not(br):not(tr):not(code) {
     font-family: Avenir, Helvetica, sans-serif;
     box-sizing: border-box;
 }
 
-.ver_mail {
+.ver_email {
     /*background-color: #f5f8fa;*/
     color: #74787E !important;
     hyphens: auto;
@@ -498,46 +498,46 @@ body.loading .modal_loading {
     -premailer-width: 100%;
 }
 
-.ver_mail p,
-.ver_mail ul,
-.ver_mail ol,
-.ver_mail blockquote {
+.ver_email p,
+.ver_email ul,
+.ver_email ol,
+.ver_email blockquote {
     line-height: 1.4;
     text-align: left;
 }
 
-.ver_mail a {
+.ver_email a {
     color: #3869D4;
 }
 
-.ver_mail a img {
+.ver_email a img {
     border: none;
 }
 
 /* Typography */
 
-.ver_mail h1 {
+.ver_email h1 {
     color: #2F3133;
     font-size: 19px;
     font-weight: bold;
     text-align: left;
 }
 
-.ver_mail h2 {
+.ver_email h2 {
     color: #2F3133;
     font-size: 16px;
     font-weight: bold;
     text-align: left;
 }
 
-.ver_mail h3 {
+.ver_email h3 {
     color: #2F3133;
     font-size: 14px;
     font-weight: bold;
     text-align: left;
 }
 
-.ver_mail p {
+.ver_email p {
     color: #74787E;
     font-size: 16px;
     line-height: 1.5em;
@@ -545,17 +545,17 @@ body.loading .modal_loading {
     text-align: left;
 }
 
-.ver_mail p.sub {
+.ver_email p.sub {
     font-size: 12px;
 }
 
-.ver_mail img {
+.ver_email img {
     max-width: 100%;
 }
 
 /* Layout */
 
-.ver_mail .wrapper {
+.ver_email .wrapper {
     /*background-color: #f5f8fa;*/
     margin: 0;
     padding: 0;
@@ -566,10 +566,10 @@ body.loading .modal_loading {
 }
 
 
-.ver_mail .wrapper table, .ver_mail .center_table{
+.ver_email .wrapper table, .ver_email .center_table{
     background-color: #f5f8fa;
 }
-.ver_mail .content {
+.ver_email .content {
     margin: 0;
     padding: 0;
     /*width: 100%;*/
@@ -580,12 +580,12 @@ body.loading .modal_loading {
 
 /* Header */
 
-.ver_mail .header {
+.ver_email .header {
     padding: 25px 0;
     text-align: center;
 }
 
-.ver_mail .header a {
+.ver_email .header a {
     /*color: #bbbfc3;*/
     font-size: 19px;
     font-weight: bold;
@@ -596,7 +596,7 @@ body.loading .modal_loading {
 /* Body */
 
 
-.ver_mail .inner-body {
+.ver_email .inner-body {
     /*background-color: #FFFFFF;*/
     margin: 0 auto;
     padding: 0;
@@ -606,19 +606,19 @@ body.loading .modal_loading {
 
 /* Subcopy */
 
-.ver_mail .subcopy {
+.ver_email .subcopy {
     border-top: 1px solid #EDEFF2;
     margin-top: 25px;
     padding-top: 25px;
 }
 
-.ver_mail .subcopy p {
+.ver_email .subcopy p {
     font-size: 12px;
 }
 
 /* Footer */
 
-.ver_mail .footer {
+.ver_email .footer {
     margin: 0 auto;
     padding: 0;
     /*text-align: center;*/
@@ -626,11 +626,11 @@ body.loading .modal_loading {
     -premailer-cellspacing: 0;
 }
 
-.ver_mail .panel {
+.ver_email .panel {
     border: none;
 }
 
-.ver_mail .footer p {
+.ver_email .footer p {
     /*color: #AEAEAE;*/
     font-size: 12px;
     /*text-align: center;*/
@@ -638,7 +638,7 @@ body.loading .modal_loading {
 
 /* Tables */
 
-.ver_mail .table table {
+.ver_email .table table {
     /*margin: 30px auto;*/
     width: 100%;
     -premailer-cellpadding: 0;
@@ -646,27 +646,27 @@ body.loading .modal_loading {
     -premailer-width: 100%;
 }
 
-.ver_mail .table thead tr {
+.ver_email .table thead tr {
     background: none;
 }
 
-.ver_mail .table th {
+.ver_email .table th {
     border-bottom: 1px solid #EDEFF2;
     padding-bottom: 8px;
     background: #e0e0e0;
 }
 
-.ver_mail .table th h2{
+.ver_email .table th h2{
     margin: 0px;
 }
 
-.ver_mail .table tr {
+.ver_email .table tr {
     width: 100%;
 }
-.ver_mail .table td.header h1 {
+.ver_email .table td.header h1 {
     color: #74787E;
 }
-.ver_mail .table td {
+.ver_email .table td {
     color: #74787E;
     font-size: 15px;
     line-height: 18px;
@@ -675,16 +675,16 @@ body.loading .modal_loading {
     vertical-align: top;
 }
 
-.ver_mail .content-cell {
+.ver_email .content-cell {
     padding: 16px 16px 0px 16px;
 }
-.ver_mail .table_padding th, .ver_mail .table_padding td{
+.ver_email .table_padding th, .ver_email .table_padding td{
     padding: 5px 35px;
 }
 
 /* Buttons */
 
-.ver_mail .action {
+.ver_email .action {
     margin: 30px auto;
     padding: 0;
     text-align: center;
@@ -694,7 +694,7 @@ body.loading .modal_loading {
     -premailer-width: 100%;
 }
 
-.ver_mail .button {
+.ver_email .button {
     border-radius: 3px;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
     color: #FFF;
@@ -703,7 +703,7 @@ body.loading .modal_loading {
     -webkit-text-size-adjust: none;
 }
 
-.ver_mail .button-blue {
+.ver_email .button-blue {
     background-color: #3097D1;
     border-top: 10px solid #3097D1;
     border-right: 18px solid #3097D1;
@@ -711,7 +711,7 @@ body.loading .modal_loading {
     border-left: 18px solid #3097D1;
 }
 
-.ver_mail .button-green {
+.ver_email .button-green {
     background-color: #2ab27b;
     border-top: 10px solid #2ab27b;
     border-right: 18px solid #2ab27b;
@@ -719,7 +719,7 @@ body.loading .modal_loading {
     border-left: 18px solid #2ab27b;
 }
 
-.ver_mail .button-red {
+.ver_email .button-red {
     background-color: #bf5329;
     border-top: 10px solid #bf5329;
     border-right: 18px solid #bf5329;
@@ -729,27 +729,27 @@ body.loading .modal_loading {
 
 /* Panels */
 
-.ver_mail .panel {
+.ver_email .panel {
     margin: 0px;
 }
 
-.ver_mail .panel-content {
+.ver_email .panel-content {
     background-color: #EDEFF2;
     padding: 16px;
 }
 
-.ver_mail .panel-item {
+.ver_email .panel-item {
     padding: 0;
 }
 
-.ver_mail .panel-item p:last-of-type {
+.ver_email .panel-item p:last-of-type {
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
 /* Promotions */
 
-.ver_mail .promotion {
+.ver_email .promotion {
     background-color: #FFFFFF;
     border: 2px dashed #9BA2AB;
     margin: 0;
@@ -762,11 +762,11 @@ body.loading .modal_loading {
     -premailer-width: 100%;
 }
 
-.ver_mail .promotion h1 {
+.ver_email .promotion h1 {
     text-align: center;
 }
 
-.ver_mail .promotion p {
+.ver_email .promotion p {
     font-size: 15px;
     text-align: center;
 }

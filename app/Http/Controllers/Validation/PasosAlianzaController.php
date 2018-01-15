@@ -11,7 +11,6 @@ use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
-
 use App\Authorizable;
 
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +21,7 @@ use App\Models\Admin\Role;
 use App\Models\Admin\Permission;
 use App\Models\TipoPaso;
 use PDF;
-use App\Http\Traits\Mails;
+use App\Http\Traits\Emails;
 use App\Http\Traits\Validador;
 use App\Http\Traits\AdminDocs;
 
@@ -31,7 +30,7 @@ use Illuminate\Support\Facades\Hash;
 class PasosAlianzaController extends AppBaseController
 {
     use Authorizable;
-    use Mails;
+    use Emails;
     use Validador;
     use AdminDocs;
     
@@ -40,28 +39,49 @@ class PasosAlianzaController extends AppBaseController
     private $pasosAlianza;
     private $user;
     private $campusApp;
+    private $campusAppFound;
     private $tipoPaso;
     private $peticion;
+    private $viewWith;
 
     public function __construct(PasosAlianzaRepository $pasosAlianzaRepo, PasosAlianza $pasosAlianzaModel, TipoPaso $tipoPasoModel, Request $request)
     {
         $this->middleware(function ($request, $next) {
 
-            $this->user = Auth::user();
-            if (isset($this->user->campus)) {
-                $this->campusApp = $this->user->campus;
-                if (session('campusApp') == null) {
-                    session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
-                    session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
-                }
-                if (count($this->campusApp)) {
-                    $this->campusApp = $this->campusApp->pluck('nombre','id');
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
                 }else{
                     $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
-            }else{
-                $this->campusApp = 0;
             }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                return redirect(route('home'));
+            }
+            if ( Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = ['campusApp' => $this->campusApp];
 
             return $next($request);
         });
@@ -75,6 +95,10 @@ class PasosAlianzaController extends AppBaseController
             $this->peticion = "ajax";
         }else{
             $this->peticion = "normal";
+        }
+
+        if (!isset($this->user->id)) {
+            $this->user = Auth::user();
         }
     }
 
@@ -118,7 +142,7 @@ class PasosAlianzaController extends AppBaseController
 
 
 
-        return view('validation.alliances.pasos_alianzas.index')
+        return view('validation.interalliances.pasos_alianzas.index')
             ->with(['campusApp' => $this->campusApp, 'peticion' => $this->peticion, 'pasosAlianzas' => $pasosAlianzasTodos]);
         */
     }
@@ -135,11 +159,10 @@ class PasosAlianzaController extends AppBaseController
         
         //notificar a el validador en caso que este asociado al paso 
         $datos = $request;
-        $datos['paso'] = 6;
+        // $datos['paso'] = 6;
         $datos['accion'] = 'creacion';
         $datos['origen_peticion'] = 'local';
         //$datos['tipo_paso_id'] = $tipo_paso_id;
-        $datos['alianzaId'] = $request['alianzaId'];
         $notificarValidador = $this->notificarValidador('alianza', $datos);
         if (isset($notificarValidador['errors'])) {
             $returnMsg['ok'] = false;
@@ -173,7 +196,7 @@ class PasosAlianzaController extends AppBaseController
         $archivosAdjuntos = '';
         $CoordinadorInterno = 0;
         $CoordinadorExterno = 0;
-        $viewWith = [];
+        $viewWith = $this->viewWith;
 
         // $user_actual = \App\User::find($this->user->id);
         $user_actual = $this->user;
@@ -184,7 +207,7 @@ class PasosAlianzaController extends AppBaseController
         if ( empty($alianza) ) {
             Flash::error('Alianza no encontrada');
 
-            return redirect(route('intervalidation.interalliances.validations.index'));
+            return redirect(route('interalliances.validations_interalliances.index'));
         }else{
             $alianzaId = $alianza->id;
         }
@@ -219,16 +242,16 @@ class PasosAlianzaController extends AppBaseController
 
             if ( empty($pasosAlianza) ) {
                 Flash::error('No se ha encontrado el registro del paso.');
-                return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+                return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
             }else{
-                $viewWith = ['pasoAlianza' => $pasosAlianza];
-                $view = 'validation.alliances.pasos_alianzas.show';
+                $viewWith = array_merge($viewWith,['pasoAlianza' => $pasosAlianza]);
+                $view = 'validation.interalliances.pasos_alianzas.show';
             }
 
 
         }else{
             
-            $viewWith = app('App\Http\Controllers\InterAllianceController')->show($alianza_id, 'local');
+            $viewWith = array_merge($viewWith,app('App\Http\Controllers\InterAllianceController')->show($alianza_id, 'local'));
             
             if ( $viewWith['dataAlianza']['estado_nombre'] != 'ACTIVA' ) {
                 $viewWithCreate = $this->create($alianza_id, 'local');
@@ -253,14 +276,14 @@ class PasosAlianzaController extends AppBaseController
 
             if ( empty($pasosAlianza) ) {
                 Flash::error('No se ha encontrado el registro del paso.');
-                return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+                return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
             }
             
             //verifica si tiene el rol para generar el documento
             $hasAllRoles = $user_actual->hasAllRoles('generar_documento');
             if ( $hasAllRoles ) {
 
-                $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza')->select('id','nombre')->get()->toArray();
+                $tipos_pasos = $this->tipoPaso->where('nombre','like','%_interalliance')->select('id','nombre')->get()->toArray();
                 $roleValidador = Role::where('name','validador')->pluck('id');
                 $ultimoValidador = \App\Models\Validation\UserPaso::select('users.id')
                             ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
@@ -306,13 +329,13 @@ class PasosAlianzaController extends AppBaseController
 
             }
 
-            $view = 'validation.alliances.show';
+            $view = 'validation.interalliances.show';
             
             $viewWith = array_merge($viewWith, ['pasosAlianza' => $pasosAlianza, 'GenerarDocumento' => $GenerarDocumento, 'pre_formas' => $pre_formas]);
                 
         }
 
-        $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'peticion' => $this->peticion, 'alianzaId' => $alianzaId, 'user_actual' => $user_actual->id, 'editar' => $editar]);
+        $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'alianzaId' => $alianzaId, 'user_actual' => $user_actual->id, 'editar' => $editar]);
         //print_r($viewWith);
         if ( $peticion == 'local' ) {
             return $viewWith;
@@ -336,15 +359,15 @@ class PasosAlianzaController extends AppBaseController
         if ( empty($alianza) ) {
             Flash::error('No se encontro la alianza');
 
-            return redirect(route('intervalidation.interalliances.validations.index'));
+            return redirect(route('interalliances.validations_interalliances.index'));
         }else{
             $alianza_id = $alianza->id;
         }
 
-        $viewWith = [];
-        $viewWith = $this->show($alianza_id,'', 'local');
+        $viewWith = $this->viewWith;
+        $viewWith = array_merge($viewWith,$this->show($alianza_id,'', 'local'));
         $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'peticion' => 'limpio']);
-        $view = 'validation.alliances.show';
+        $view = 'validation.interalliances.show';
         //$view = 'welcome';
         
         //$pdf = PDF::loadView($view, $viewWith);
@@ -381,13 +404,13 @@ class PasosAlianzaController extends AppBaseController
         $errors = 0;
         $errorsMsg = '';
         $okMsg = '';
-        $view = 'print.editor_word_drag_drop';
-        $route_back = route('intervalidation.interalliances.validations.show',$alianza_id);
+        $view = 'files.editor_word_drag_drop';
+        $route_back = route('interalliances.validations_interalliances.show',$alianza_id);
         $route_new = '';
         $this->user = Auth::user();
         $user_actual = $this->user->id;
 
-        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza')->select('id','nombre')->get()->toArray();
+        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_interalliance')->select('id','nombre')->get()->toArray();
         $roleValidador = Role::where('name','validador')->pluck('id');
         $ultimoValidador = \App\Models\Validation\UserPaso::select('users.id','user_tipo_paso.tipo_paso_id')
                     ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
@@ -398,7 +421,7 @@ class PasosAlianzaController extends AppBaseController
                     ->first();
         //compara si el ultimo validador es es actual para mostrarle la opcion
         if ($ultimoValidador->id != $user_actual) {
-            $view = route('intervalidation.interalliances.validations.show',$alianza_id);
+            $view = route('interalliances.validations_interalliances.show',$alianza_id);
             $errors += 1;
             $errorsMsg = 'No tiene permitido imprimir el documento.';
             goto end;
@@ -408,7 +431,7 @@ class PasosAlianzaController extends AppBaseController
 
         if ( empty($alianza) ) {
 
-            $view = route('intervalidation.interalliances.validations.index');
+            $view = route('interalliances.validations_interalliances.index');
             $errors += 1;
             $errorsMsg = 'No se encontro la alianza.';
             goto end;
@@ -416,7 +439,7 @@ class PasosAlianzaController extends AppBaseController
             $alianza_id = $alianza->id;
         }
 
-        $ruta_guardar = ['intervalidation.interalliances.validations.documents.store',$alianza_id];
+        $ruta_guardar = ['interalliances.validations_interalliances.documents.store',$alianza_id];
         $editar = ['nombre' => true];
 
         $estadoGenerarDocumento = \App\Models\Estado::where('nombre','GENERAR DOCUMENTO')->pluck('id')->first();
@@ -432,7 +455,7 @@ class PasosAlianzaController extends AppBaseController
         if (!is_string($thisStoreUpdate) && !is_array($thisStoreUpdate)) {
             return $thisStoreUpdate;
         }
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         //$viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'peticion' => 'normal']);
 
         if (isset($request['pre_forma'])) {
@@ -457,7 +480,7 @@ class PasosAlianzaController extends AppBaseController
                 $institucionId = $this->user->campus->first()->institucion->id;
             }
             
-            $viewError = ['intervalidation.interalliances.validations.show',$alianza_id];
+            $viewError = ['interalliances.validations_interalliances.show',$alianza_id];
 
             $documentoDe = 'alianza';
             $datosDocumento = $this->verDocumento('alianza',['archivo_id' => $archivo_id, 'alianzaId' => $alianza_id, 'view' => $viewError, 'peticion' => 'local' ]);
@@ -470,19 +493,19 @@ class PasosAlianzaController extends AppBaseController
 
             if ( is_string($datosDocumento) && $datosDocumento === 'error_documento' ) {
 
-                $view = route('intervalidation.interalliances.validations.show',$alianza_id);
+                $view = route('interalliances.validations_interalliances.show',$alianza_id);
                 $errors += 1;
                 $errorsMsg = 'No se encontro el documento.';
                 goto end;
             }elseif ( is_string($datosDocumento) && $datosDocumento === 'error_proceso' ) {
 
-                $view = route('intervalidation.interalliances.validations.show',$alianza_id);
+                $view = route('interalliances.validations_interalliances.show',$alianza_id);
                 $errors += 1;
                 $errorsMsg = 'El nombre del proceso no se encuentra.';
                 goto end;
             }elseif ( is_string($datosDocumento) && $datosDocumento === 'seleccione_documento' ) {
 
-                $view = route('intervalidation.interalliances.validations.show',$alianza_id);
+                $view = route('interalliances.validations_interalliances.show',$alianza_id);
                 $errors += 1;
                 $errorsMsg = 'Seleccione un documento.';
                 goto end;
@@ -515,7 +538,7 @@ class PasosAlianzaController extends AppBaseController
                     'COORDINADOR_INTERNO_TELEFONO' => array('keyword' => 'COORDINADOR_INTERNO_TELEFONO', 'name' => 'coordinador interno telefono', 'value' => strtoupper($dataUsers[$keyCoordInterno]['coordinador_telefono'])),
                     'COORDINADOR_INTERNO_EMAIL' => array('keyword' => 'COORDINADOR_INTERNO_EMAIL', 'name' => 'coordinador interno email', 'value' => strtoupper($dataUsers[$keyCoordInterno]['coordinador_email'])),
 
-                    'COORDINADOR_EXTERNO_NOMBRE' => array('keyword' => 'COORDINADOR_EXTERNO_NOMBRE', 'name' => 'coordinador externo nombre', 'value' => strtoupper($dataUsers[$keyCoordExterno]['coordinador_nombres'].' '.$dataUsers[$keyCoordInterno]['coordinador_apellidos'])),
+                    'COORDINADOR_EXTERNO_NOMBRE' => array('keyword' => 'COORDINADOR_EXTERNO_NOMBRE', 'name' => 'coordinador externo nombre', 'value' => strtoupper($dataUsers[$keyCoordExterno]['coordinador_nombres'].' '.$dataUsers[$keyCoordExterno]['coordinador_apellidos'])),
                     'COORDINADOR_EXTERNO_CARGO' => array('keyword' => 'COORDINADOR_EXTERNO_CARGO', 'name' => 'coordinador externo cargo', 'value' => strtoupper($dataUsers[$keyCoordExterno]['coordinador_cargo'])),
                     'COORDINADOR_EXTERNO_TELEFONO' => array('keyword' => 'COORDINADOR_EXTERNO_TELEFONO', 'name' => 'coordinador externo telefono', 'value' => strtoupper($dataUsers[$keyCoordExterno]['coordinador_telefono'])),
                     'COORDINADOR_EXTERNO_EMAIL' => array('keyword' => 'COORDINADOR_EXTERNO_EMAIL', 'name' => 'coordinador externo email', 'value' => strtoupper($dataUsers[$keyCoordExterno]['coordinador_email'])),
@@ -572,21 +595,21 @@ class PasosAlianzaController extends AppBaseController
             }
 
         }else{
-            $view = route('intervalidation.interalliances.validations.show',$alianza_id);
+            $view = route('interalliances.validations_interalliances.show',$alianza_id);
             $errors += 1;
             $errorsMsg = 'Seleccione un documento.';
             goto end;
         }
 
         /*
-        //return view('print.editor')->with($viewWith);
+        //return view('files.editor')->with($viewWith);
         if (isset($request['tipo_editor'])) {
             if ($request['tipo_editor'] == 1) {
-                $view = 'print.editor';
+                $view = 'files.editor';
             }elseif ($request['tipo_editor'] == 2) {
-                $view = 'print.editor_drag_drop';
+                $view = 'files.editor_drag_drop';
             }elseif ($request['tipo_editor'] == 3) {
-                $view = 'print.editor_word_drag_drop';
+                $view = 'files.editor_word_drag_drop';
             }
         }*/
 
@@ -632,7 +655,7 @@ class PasosAlianzaController extends AppBaseController
         $okMsg = '';
         $errors = 0;
         $route = (isset($request['route']) ? $request['route'] : route('interalliances.index') );
-        $route_error = route('intervalidation.interalliances.validations.show',$alianza_id);
+        $route_error = route('interalliances.validations_interalliances.show',$alianza_id);
         $this->user = Auth::user();
 
         if ( $request->file('archivo_input') != null ) {
@@ -717,7 +740,7 @@ class PasosAlianzaController extends AppBaseController
         if ( empty($alianza) ) {
             Flash::error('No se encontro la alianza');
 
-            return redirect(route('intervalidation.interalliances.validations.index'));
+            return redirect(route('interalliances.validations_interalliances.index'));
         }else{
             $alianza_id = $alianza->id;
         }
@@ -727,25 +750,27 @@ class PasosAlianzaController extends AppBaseController
         if (empty($pasoAlianza)) {
             Flash::error('No se encontro el paso de la alianza');
 
-            return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+            return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
         }
 
         if ($pasoAlianza->user_id != $this->user->id) {
             Flash::error('No puede editar esta validación');
 
-            return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+            return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
         }
 
         $datosAlianza = app('App\Http\Controllers\InterAllianceController')->show($alianza_id, 'local');
 
         $viewWith = $this->editCreateData($alianza,$paso_id);
         if (!is_array($viewWith) && $viewWith != '' )   {
-            return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+            return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
         }
+
+        $viewWith = array_merge($viewWith,$this->viewWith);
         
         $viewWith = array_merge($viewWith, $datosAlianza);
 
-        return view('validation.alliances.pasos_alianzas.edit')->with($viewWith);
+        return view('validation.interalliances.pasos_alianzas.edit')->with($viewWith);
     }
 
 
@@ -764,7 +789,7 @@ class PasosAlianzaController extends AppBaseController
             if ( empty($alianza) ) {
                 Flash::error('No se encontro la alianza');
 
-                return redirect(route('intervalidation.interalliances.validations.index'));
+                return redirect(route('interalliances.validations_interalliances.index'));
             }else{
                 $alianza_id = $alianza->id;
             }
@@ -786,16 +811,17 @@ class PasosAlianzaController extends AppBaseController
             if ($peticion == 'local') {
                 return $viewWith;
             }else{
-                return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+                return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
             }
         }else{
+            $viewWith = array_merge($viewWith, $this->viewWith);
             $viewWith = array_merge($viewWith, $datosAlianza);
         }
         
         if ($peticion == 'local') {
             return $viewWith;
         }else{
-            return view('validation.alliances.pasos_alianzas.create')->with($viewWith);
+            return view('validation.interalliances.pasos_alianzas.create')->with($viewWith);
         }
     }
 
@@ -808,7 +834,7 @@ class PasosAlianzaController extends AppBaseController
      */
     public function editCreateData($alianza,$paso_id ='')
     {
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         $pasoAlianza = 0;
         $user_actual = $this->user;
         $alianza_id = $alianza->id;
@@ -819,11 +845,11 @@ class PasosAlianzaController extends AppBaseController
             if (empty($pasoAlianza)) {
                 Flash::error('No se encontro el paso de la alianza');
 
-                return redirect(route('intervalidation.interalliances.validations.show',[$alianza_id]));
+                return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
             }
         }
 
-        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza');
+        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_interalliance');
         $estadoAlianza = \App\Models\Estado::where('id',$alianza->estado_id)->select('id','nombre')->first();
         
         if ($estadoAlianza->nombre == 'ACTIVA') {
@@ -916,6 +942,28 @@ class PasosAlianzaController extends AppBaseController
         $tipos_pasos = $tipos_pasos->whereIn('id',array_column($validadoresResultado->toArray(), 'tipo_paso_id'))
             ->select(DB::raw("concat(replace(substr(nombre,instr(nombre,'paso')+4,2),'_',''),' - ',titulo) AS titulo"),'id')
             ->pluck('titulo','id');
+
+
+        $keysTiposPasos = array_keys($tipos_pasos->toArray());
+
+        $paso_id = $keysTiposPasos[0] ?? 0;
+
+        //verifica si puede editar o crear un registro 
+        $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id,$paso_id);
+        if ($validarEditar == false) {
+            if ($validarEditar['dondeSalio'] == 'PASOS_INCOMPLETOS') {
+
+                Flash::error('No puede agregar o editar validaciones en esta alianza, no se han registrados los datos de todos los pasos.');
+
+                return 'error_editar';
+            }else{
+
+                Flash::error('No es su turno, aún no puede agregar o editar validaciones en esta alianza.');
+
+                return 'error_editar';
+            }
+        }
+
         $usersValidadores = [];
         foreach ($validadoresResultado as $key => $value) {
             $usersValidadores[$value['id']] = $value['name'];
@@ -1021,17 +1069,20 @@ class PasosAlianzaController extends AppBaseController
                 'tipo_paso_id' => 'required',
                 'estado_id' => 'required',
                 'user_id' => 'required',
-                'observacion' => 'required',
+                'observacion' => 'required|max:190',
                 'alianza_id' => 'required'
             ]);
             $input = $request->all();
         }
         $input['user_id'] = $user_actual->id;
 
+        $datos = $input;
+
+
         if ($request['user_id'] != $user_actual->id) {
             Flash::error('No puede editar esta validación');
 
-            return redirect(route('intervalidation.interalliances.validations.show',[$input['alianza_id']]));
+            return redirect(route('interalliances.validations_interalliances.show',[$input['alianza_id']]));
         }
 
         if ($peticion == '') {
@@ -1057,15 +1108,15 @@ class PasosAlianzaController extends AppBaseController
             if (empty($pasosAlianza) && $peticion != 'local' ) {
                 Flash::error('Validación de la alianza no encontrada.');
 
-                return redirect(route('intervalidation.interalliances.validations.show',$input['alianza_id']));
+                return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
             }
         }
-
-        $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id);
+        $paso_id = $input['tipo_paso_id'];
+        $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id,$paso_id);
         if ($validarEditar == false) {
             Flash::error('No es su turno, aún no se puede registrar la validación.');
 
-            return redirect(route('intervalidation.interalliances.validations.show',$input['alianza_id']));
+            return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
         }
         
         $esUltimoValidador = false;
@@ -1096,10 +1147,10 @@ class PasosAlianzaController extends AppBaseController
         if ($alianza->estado_id == $estadoAlianzaActiva[$keyAlianzaActiva]['id'] && $esUltimoValidador == false) {
             Flash::error('No se puede realizar la validación, la alianza ya esta activa.');
 
-            return redirect(route('intervalidation.interalliances.validations.show',$input['alianza_id']));
+            return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
         }
 
-        $comprobarValidacion = $this->comprobarValidacion('alianza',['alianzaId' => $alianza_id, 'estado_id' => $input['estado_id'], 'paso' => $paso, 'user_id' => $input['user_id']]);
+        $comprobarValidacion = $this->comprobarValidacion('alianza',['campus_id' => $alianza->campus_id, 'alianzaId' => $alianza_id, 'estado_id' => $input['estado_id'], 'tipo_paso_id' => $input['tipo_paso_id'], 'paso' => $paso, 'user_id' => $input['user_id']]);
         
         if ($comprobarValidacion['ok'] === false) {
             
@@ -1110,14 +1161,19 @@ class PasosAlianzaController extends AppBaseController
                 //     $alianza->save();
                 // }
                 Flash::error($comprobarValidacion['returnMsg']);
-                // return redirect(route('intervalidation.interalliances.validations.show',$input['alianza_id']));
+                // return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
                 return redirect(route('interalliances.index'));
             }/*else{
                 $msg .= $comprobarValidacion['returnMsg'].'<br>';
             }*/
+        }else{
+
+            $datos['pasos_anteriores'] = $comprobarValidacion;
         }
 
         DB::beginTransaction();
+
+        $input['campus_id'] = $alianza->campus_id;
 
         // $buscar_registro = $this->pasosAlianza->where('tipo_paso_id',$input['tipo_paso_id'])->where('estado_id',$input['estado_id'])->where('user_id',$input['user_id'])->where('alianza_id',$input['alianza_id'])->orderBy('id','desc')->get();
         $buscar_registro = $this->pasosAlianza->where('tipo_paso_id',$input['tipo_paso_id'])->where('user_id',$input['user_id'])->where('alianza_id',$input['alianza_id'])->orderBy('id','desc')->get();
@@ -1150,13 +1206,25 @@ class PasosAlianzaController extends AppBaseController
             }
         }
 
-        $datos = $input;
+        // $datos['paso_proceso_id'] = 0;
+        // if (isset($pasosAlianza->id)) {
+        //     $datos['paso_proceso_id'] = $pasosAlianza->id;
+        // }
+
+        $datos['paso_proceso_id'] = $pasosAlianza->id ?? $id;
+
+
+        $datos['campus_id'] = $alianza->campus_id;
         $datos['alianzaId'] = $alianza_id;
-        $datos['paso_id'] =$input['tipo_paso_id'];
+        $datos['tipo_paso_id'] =$input['tipo_paso_id'];
         // if (!count($buscar_registro)) {
         //como este metodo es usado para editar y crear entonces se trabaja con el registro del paso y luego se verifica que no hubiera estado ya registrado
+
         if ($comprobarValidacion['ok'] === true) {
             $notificarValidador = $this->datosNotificarValidador($datos); 
+            // print_r($notificarValidador);
+            // DB::rollBack();
+            // return 1;
             if ($notificarValidador['ok'] === false) {
                 $errors += 1;
                 $errorsMsg = implode("<br> ", $notificarValidador['returnMsg']);
@@ -1197,8 +1265,9 @@ class PasosAlianzaController extends AppBaseController
             }
             //echo 'correcto <br>';
         }
+
         //llegara aqui si no es de tipo ajax la peticion
-        // return redirect(route('intervalidation.interalliances.validations.show',$input['alianza_id']));
+        // return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
         return redirect(route('interalliances.index'));
 
     }
@@ -1217,7 +1286,7 @@ class PasosAlianzaController extends AppBaseController
         if (empty($pasosAlianza)) {
             Flash::error('Pasos Alianza not found');
 
-            // return redirect(route('intervalidation.interalliances.validations.index'));
+            // return redirect(route('interalliances.validations_interalliances.index'));
             return redirect(route('interalliances.index'));
         }
 
@@ -1225,7 +1294,7 @@ class PasosAlianzaController extends AppBaseController
 
         Flash::success('Pasos Alianza deleted successfully.');
 
-        // return redirect(route('intervalidation.interalliances.validations.index'));
+        // return redirect(route('interalliances.validations_interalliances.index'));
         return redirect(route('interalliances.index'));
     }
 
@@ -1236,14 +1305,17 @@ class PasosAlianzaController extends AppBaseController
      *
      * @return Response
      */
-    public function validarEditar($tipo,$user_id,$alianza_id = '')
+    public function validarEditar($tipo,$user_id,$alianza_id = '',$paso_id = 0)
     {   
-        $retorno = false;
+        
+        $puedeEditar = false;
+        $dondeSalio = 'VACIO';
+
+        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_interalliance');
+        $tipos_pasos_array = $tipos_pasos->select('id','nombre')->get()->toArray();
 
         if ($tipo == 'generar_documento') {
             //verificar que el validador sea el ultimo de la lista para habilitar la opcion de ACTIVA
-            $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza');
-            $tipos_pasos_array = $tipos_pasos->select('id','nombre')->get()->toArray();
             $roleValidador = Role::where('name','validador')->pluck('id');
             $ultimoValidador = \App\Models\Validation\UserPaso::select('users.id')
                         ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
@@ -1255,8 +1327,10 @@ class PasosAlianzaController extends AppBaseController
             //compara si el ultimo validador es es actual para mostrarle la opcion
             if ($ultimoValidador->id != $user_id) {
                 $retorno = false;
+                $dondeSalio = 'GENERAR_DOCUMENTO';
             }else{
                 $retorno = true;
+                $dondeSalio = 'GENERAR_DOCUMENTO';
             }
         }elseif($tipo == 'editar'){
             $estados = \App\Models\Estado::get()->toArray();
@@ -1275,50 +1349,61 @@ class PasosAlianzaController extends AppBaseController
             reset($estadosValidador);
             $keyEstadosValidador = key($estadosValidador);
 
-            $yaValido = \App\Models\Validation\PasosAlianza::select('pasos_alianza.estado_id','pasos_alianza.user_id','estado.uso AS estado_uso','estado.nombre AS estado_nombre')
+            $registrosPasos = \App\Models\Validation\PasosAlianza::select('pasos_alianza.tipo_paso_id','pasos_alianza.estado_id','pasos_alianza.user_id','estado.uso AS estado_uso','estado.nombre AS estado_nombre','email.estado AS email_estado')
                         ->join('estado', 'pasos_alianza.estado_id', '=', 'estado.id')
+                        ->leftJoin('pasos_alianza_email','pasos_alianza.id','pasos_alianza_email.pasos_alianza_id')
+                        ->leftJoin('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                         ->where('pasos_alianza.alianza_id',$alianza_id )
                         ->orderBy('pasos_alianza.tipo_paso_id','asc')
-                        ->orderBy('pasos_alianza.updated_at','asc')
+                        ->orderBy('pasos_alianza.id','asc')
                         ->get()->toArray();
                     // ->whereIn('estado.id',array_column($estadosValidador, 'id') )
 
-            $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza')->select('id',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS numero'))->pluck('numero','id');
 
-            $puedeEditar = false;
             $hayValidaciones = 0;
-            $dondeSalio = 'vacio';
-            foreach ($yaValido as $key => $value) {
+            $keyAnterior = null;
+            foreach ($registrosPasos as $key => $value) {
 
-                if(in_array($yaValido[$key]['estado_uso'],['USER','EXTERNAL']) ){
-                    if ($yaValido[$key]['estado_nombre'] == 'ACEPTADO'){
+                if(in_array($registrosPasos[$key]['estado_uso'],['USER','EXTERNAL']) ){
+                    if ($registrosPasos[$key]['estado_nombre'] == 'ACEPTADO'){
                         $puedeEditar = true;
-                    }elseif($yaValido[$key]['estado_nombre'] == 'DECLINADO'){
+                        $dondeSalio = 'ACEPTADO';
+                    }elseif($registrosPasos[$key]['estado_nombre'] == 'DECLINADO'){
                         $puedeEditar = false;
-
                         $dondeSalio = 'DECLINADO';
 
                         break;
                     }
                 }
 
-                if(in_array($yaValido[$key]['estado_uso'],['VALIDATOR']) ){
+                if(in_array($registrosPasos[$key]['estado_uso'],['VALIDATOR']) ){
                     $hayValidaciones = 1;
-                    if(in_array($yaValido[$key]['estado_nombre'],['EN REVISIÓN','GENERAR DOCUMENTO']) ){
-                        if ($yaValido[$key]['user_id'] == $user_id){
+                    if(in_array($registrosPasos[$key]['estado_nombre'],['EN REVISIÓN','GENERAR DOCUMENTO']) ){
+                        if ($registrosPasos[$key]['user_id'] == $user_id){
                             $puedeEditar = true;
-
-                            $dondeSalio = 'EN REVISIÓN, GENERAR DOCUMENTO';
+                            $dondeSalio = 'REVISION_GENERAR';
 
                             break;
                         }else{
                             $puedeEditar = false;
+                            $dondeSalio = 'REVISION_GENERAR';
                         }
-                    }elseif(in_array($yaValido[$key]['estado_nombre'],['RECHAZADO']) ){
-                        if ($yaValido[$key]['user_id'] == $user_id){
-                            $puedeEditar = true;
+                    }elseif(in_array($registrosPasos[$key]['estado_nombre'],['RECHAZADO']) ){
+                        if ($registrosPasos[$key]['user_id'] == $user_id){
+                            // $puedeEditar = true;
+                            if ($keyAnterior !== null && $registrosPasos[$keyAnterior]['estado_nombre'] == 'APROBADO') {
+                                // SI EL PASO ANTERIOR ES DE UN VALIDADOR
+                                $puedeEditar = true;
+                                $dondeSalio = 'ANTERIOR_APROBADO';
+                            }elseif ($keyAnterior !== null && $registrosPasos[$keyAnterior]['estado_nombre'] == 'ACEPTADO') {
+                                // SI EL PASO ANTERIOR ES DE UN COORD. EXTERNO
+                                $puedeEditar = true;
+                                $dondeSalio = 'ANTERIOR_ACEPTADO';
+                            }else{
+                                $puedeEditar = false;
+                            }
 
-                            $dondeSalio = 'RECHAZADO == user_id';                            
+                            $dondeSalio = 'RECHAZADO_USER';
 
                             break;
                         }else{
@@ -1332,7 +1417,9 @@ class PasosAlianzaController extends AppBaseController
                 }else{
                     $hayValidaciones = 0;
                 }
+                $keyAnterior = $key;
             }
+
 
             if ($hayValidaciones == 0) {
                 //se espera que no cambie el tipo de paso de la alianza
@@ -1352,6 +1439,106 @@ class PasosAlianzaController extends AppBaseController
                 }
             }
 
+
+
+
+            if ($paso_id != 0) {
+                $tipo_paso_id = $paso_id;
+            }else{
+                $paso = 6;
+                $tipo_paso_id = $this->tipoPaso->where('nombre','paso'.$paso.'_interalliance')->pluck('id')->first();
+            }
+
+            $roleValidador = Role::where('name','validador')->pluck('id');
+            $validadoresPaso = \App\Models\Validation\UserPaso::select('users.id AS user_id')
+                        ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
+                        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->where('user_tipo_paso.tipo_paso_id',$tipo_paso_id)
+                        ->where('model_has_roles.role_id',$roleValidador )
+                        ->orderBy('user_tipo_paso.orden','asc');
+            
+            $validadoresPaso = $validadoresPaso->get()->toArray();
+
+            if ($hayValidaciones == 0) {
+                //se espera que no cambie el tipo de paso de la inscripcion
+                
+                $primerValidador = current($validadoresPaso);
+
+                if ($primerValidador['user_id'] != $user_id) {
+
+                    $puedeEditar = false;
+
+                    $dondeSalio = 'PRIMER_VALIDADOR';
+
+                }else{
+                    $puedeEditar = true;
+
+                    $dondeSalio = 'PRIMER_VALIDADOR';
+                }
+            }else{
+                $ultimoRegistro = end($registrosPasos);
+                foreach ($validadoresPaso as $key => $validadorPaso) {
+                    if ($validadorPaso['user_id'] == $ultimoRegistro['user_id']) {
+                        $siguienteValidador = next($validadoresPaso) ?? [];
+                        if (count($siguienteValidador) && $siguienteValidador['user_id'] == $user_id) {
+                            
+                            $puedeEditar = true;
+
+                            $dondeSalio = 'HAY_VALIDACIONES';
+                        }
+                    }
+                }
+            }
+
+
+            //--------------------------------------
+            //--------------------------------------
+            //--------------------------------------
+            if ($paso_id != 0) {
+                $pasoRecibido = $paso_id;
+                $pasos_validacion = array_filter($tipos_pasos_array, function($var) use ($pasoRecibido) {
+                    return ($var['id'] < $pasoRecibido);
+                });
+
+                //obtiene el registro de los pasos registrados por el usuario (estudiante o coordinador)
+                $pasos_registrados = \App\Models\Validation\PasosAlianza::join('estado','pasos_alianza.estado_id','estado.id')
+                    ->where('pasos_alianza.alianza_id',$alianza_id)
+                    ->where('estado.uso', 'USER')
+                    ->select('pasos_alianza.tipo_paso_id')
+                    ->get()
+                    ->toArray();
+
+                $tipos_pasos_registrados = array_column($pasos_registrados, 'tipo_paso_id');
+
+                // si no se han registrado todos los pasos anteriores devuelve un mensaje de error
+                foreach ($pasos_validacion as $key => $value) {
+
+                    $estaRegistrado = array_search($value['id'], $tipos_pasos_registrados);
+
+                    if ($estaRegistrado === false) {
+
+                        $puedeEditar = false;
+
+                        $dondeSalio = 'PASOS_INCOMPLETOS';
+
+                        /*
+                        $errors += 1;
+                        array_push($errorsMsg, 'No ha registrado toda la información, es necesario que complete los datos que faltan.');
+                        array_push($errorsMsg, 'El paso #'.$value['orden'].' - \''.$value['titulo'].'\' no aparece registrado.');
+                        goto end;
+                        */
+                    }
+                }
+
+            }
+
+            //--------------------------------------
+            //--------------------------------------
+            //--------------------------------------
+
+
+        
+        // echo $registrosPasos[$keyAnterior]['estado_nombre'];
         // echo $dondeSalio;
 
             $retorno = $puedeEditar;

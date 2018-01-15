@@ -7,7 +7,7 @@ Registro las siguientes observaciones:
 
 @component('mail::panel')
 
-{{ $dataMail[0]->paso_observacion }}
+<strong>{{ $dataEmail[0]->paso_observacion }}</strong>
 
 @endcomponent
 

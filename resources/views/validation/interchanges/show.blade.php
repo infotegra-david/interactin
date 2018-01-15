@@ -17,7 +17,7 @@
     YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
     E.G. $page_title = "Custom Title" */
 
-    $pagetitle = "Validación - Vista de la inscripción";
+    $pagetitle = "Validación - Vista de la Inscripcion";
 
     /* ---------------- END PHP Custom Scripts ------------- */
 
@@ -36,7 +36,7 @@
     //follow the tree in inc/config.ui.php
 
     $page_nav = 1;
-    $menu="Validation";
+    $menu="InterValidations";
     $submenu1="InterChanges";
     //$submenu2='';
     ?>
@@ -46,7 +46,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Datos de la Inscripción
+            Datos de la Inscripcion #{{ $inscripcionId }}
         </h1>
     </section>
 
@@ -59,12 +59,10 @@
     <div class="content">
         <div class="box box-primary">
             <div class="box-body">
-                <div class="row {{ ( $peticion == 'normal' ? 'hide' : '') }}" style="padding-left: 20px" id="datos_validacion_inscripcion">
+                <div class="row {{ ( $peticion == 'normal' ? 'hide' : '') }}" style="padding-left: 20px" id="datos_validacion">
                     
                     @include('validation.interchanges.show_fields')
-                    @if( $peticion == "normal" )
-                    <a href="{!! route('intervalidation.interchanges.validations.index') !!}" class="btn btn-default">Atras</a>
-                    @endif
+                    
                 </div>
             </div>
         </div>
@@ -75,7 +73,10 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('div#datos_validacion_inscripcion div').removeClass('form-group').removeClass('input-group').removeClass('form-control');
-            $('div#datos_validacion_inscripcion').removeClass('hide');
+            $('div#datos_validacion_inscripcion .collapseInscripcion').removeClass('hide');
+            $('div#datos_validacion_inscripcion #collapseDataInscripcion').addClass('collapse');
+            
+            $('div#datos_validacion_inscripcion, div#datos_validacion').removeClass('hide');
         });
     </script>
 @endsection

@@ -1,100 +1,80 @@
-<?php
+@extends( $peticion == "normal" ? 'layouts.app' : 'layouts.empty' )
 
-//initilize the page
-require_once("inc/init.php");
+@section('requires')
 
-//require UI configuration (nav, ribbon, etc.)
-require_once("inc/config.ui.php");
-
-/*---------------- PHP Custom Scripts ---------
-
-YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
-E.G. $page_title = "Custom Title" */
-
-$page_title = "Inscripciones";
-
-/* ---------------- END PHP Custom Scripts ------------- */
-
-//include header
-//you can add your custom css in $page_css array.
-//Note: all css files are inside css/ folder
-$page_css[] = "your_style.css";
-include("inc/header.php");
-
-//include left panel (navigation)
-//follow the tree in inc/config.ui.php
-$page_nav["InterChange"]["sub"]["InterChangeMap"]["active"] = true;
-include("inc/nav.php");
-
-?>
-<!-- ==========================CONTENT STARTS HERE ========================== -->
-<!-- MAIN PANEL -->
-<div id="main" role="main">
 	<?php
-		//configure ribbon (breadcrumbs) array("name"=>"url"), leave url empty if no url
-		//$breadcrumbs["New Crumb"] => "http://url.com"
-		include("inc/ribbon.php");
+
+	//require_once(base_path()."/resources/views/inc/...");
+	
 	?>
 
+@endsection
+
+@section('styles')
+	<style type="text/css">
+
+		#bootstrap-wizard-1 > div.form-bootstrapWizard > ul > li{
+			height: 80px;
+		}
+
+	</style>
+
+@endsection
+
+@section('head_vars')
+
+	<?php
+	/*---------------- PHP Custom Scripts ---------
+
+	YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
+	E.G. $page_title = "Custom Title" */
+
+	$pagetitle = "Mapa de InterAlliance";
+
+	/* ---------------- END PHP Custom Scripts ------------- */
+
+	//include header
+	//you can add your custom css in $page_css array.
+	$your_style = 'your_style.css';
+	//$your_style = 'bootstrap-select.min.css';
+	//$your_script = 'js/my_functions.js';
+
+	//include left panel (navigation)
+	//follow the tree in inc/config.ui.php
+
+	$page_nav = 1;
+	$page_nav_route[ "InterAlliance" ]["sub"][ "InterAllianceMap" ]["active"] = true;
+	//$submenu2='';
+	?>
+
+@endsection
+
+@section('content')
+
+
 	<!-- MAIN CONTENT -->
-	<div id="content">
+	<div id="contenido">
 
 		<div class="row">
 			<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-			  <h1><em></em> InterChange &gt; Mapa</h1>
+			  <h1><em></em> InterAlliance &gt; Mapa</h1>
+
 			</div>
 			<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8"> </div>
 		</div>
 		<!-- widget grid -->
 		<section id="widget-grid" class="">
 
-			<!-- row -->
-			<div class="row">
-				<article class="col-sm-12">
-					<!-- new widget -->
-					<div class="jarviswidget" id="wid-id-0" data-widget-togglebutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-colorbutton="false" data-widget-deletebutton="false">
-						<!-- widget options:
-						usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-
-						data-widget-colorbutton="false"
-						data-widget-editbutton="false"
-						data-widget-togglebutton="false"
-						data-widget-deletebutton="false"
-						data-widget-fullscreenbutton="false"
-						data-widget-custombutton="false"
-						data-widget-collapsed="true"
-						data-widget-sortable="false"
-
-						-->
-						<!-- widget div-->
-						<div class="no-padding">
-							<!-- widget edit box -->
-							<div class="jarviswidget-editbox">
-							</div>
-							<!-- end widget edit box -->
-
-                                        <div id="updating-chart" class="chart-large txt-color-blue" style="display:none"></div>
-					
-
-						</div>
-						<!-- end widget div -->
-					</div>
-					<!-- end widget -->
-
-				</article>
-			</div>
-
-			<!-- end row -->
-
+			
 			<!-- row -->
 
 			<div class="row">
-<article class="col-sm-12 col-md-12 col-lg-12">
+				<article class="col-sm-12 col-md-12 col-lg-12">
 
-			<!-- new widget -->
-			<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false">
+				<!-- new widget -->
+					<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false">
 
-						<!-- widget options:
+						<!-- widget options:""
 						usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
 						data-widget-colorbutton="false"
@@ -110,7 +90,7 @@ include("inc/nav.php");
 
 						<header>
 							<span class="widget-icon"> <i class="fa fa-map-marker"></i> </span>
-							<h2>Mapa InterChange</h2>
+							<h2>Mapa InterAlliance</h2>
 							&nbsp;&nbsp;&nbsp;
 							<div class="btn-group">
 								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -149,15 +129,17 @@ include("inc/nav.php");
 								<!-- content goes here -->
 
 								<div id="vector-map" class="vector-map"></div>
+								<!-- <div id="map1" style="width: 600px; height: 400px"></div> -->
 								<div id="heat-fill">
 									<span class="fill-a">0</span>
 
 									<span class="fill-b">5,000</span>
 								</div>
 
-								<table class="table table-striped table-hover table-condensed">
+								<table id="lista_paises" class="table table-striped table-hover table-condensed">
 									<thead>
 										<tr>
+											<th></th>
 											<th>País</th>
 											<th>Alianzas</th>
 											<th class="text-align-center">Actividad</th>
@@ -165,162 +147,20 @@ include("inc/nav.php");
 										</tr>
 									</thead>
 									<tbody>
+										@foreach($paisesAlianzas as $paises)
 										<tr>
-											<td><a href="javascript:void(0);">USA</a></td>
-											<td>4,977</td>
-											<td class="text-align-center">
-											<div class="sparkline txt-color-blue text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												2700, 3631, 2471, 1300, 1877, 2500, 2577, 2700, 3631, 2471, 2000, 2100, 3000
-											</div></td>
-											
-											<td class="text-align-center">
-											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												17,83
-											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
-												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-cog fa-lg"></i>
-												</button>
-												<ul class="dropdown-menu dropdown-menu-xs pull-right">
-													<li>
-														<a href="docs/Presentación.pdf" target="_blank"><i class="fa fa-file fa-lg fa-fw txt-color-redLight"></i> <u>P</u>DF</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-greenLight"></i> <u>E</u>xcel</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-orange"></i> P<u>o</u>werPoint</a>
-													</li>
-												</ul>
-											</div></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0);">Colombia</a></td>
-											<td>4,873</td>
-											<td class="text-align-center">
-											<div class="sparkline txt-color-blue text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												1000, 1100, 3030, 1300, -1877, -2500, -2577, -2700, 3631, 2471, 4700, 1631, 2471
-											</div></td>
-											
-											<td class="text-align-center">
-											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												22,88
-											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
-												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-cog fa-lg"></i>
-												</button>
-												<ul class="dropdown-menu dropdown-menu-xs pull-right">
-													<li>
-														<a href="docs/Presentación.pdf" target="_blank"><i class="fa fa-file fa-lg fa-fw txt-color-redLight"></i> <u>P</u>DF</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-greenLight"></i> <u>E</u>xcel</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-orange"></i> P<u>o</u>werPoint</a>
-													</li>
-												</ul>
-											</div></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0);">India</a></td>
-											<td>3,671</td>
-											<td class="text-align-center">
-											<div class="sparkline txt-color-blue text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												3631, 1471, 2400, 3631, 471, 1300, 1177, 2500, 2577, 3000, 4100, 3000, 7700
-											</div></td>
-											
-											<td class="text-align-center">
-											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												10,90
-											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
-												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-cog fa-lg"></i>
-												</button>
-												<ul class="dropdown-menu dropdown-menu-xs pull-right">
-													<li>
-														<a href="docs/Presentación.pdf" target="_blank"><i class="fa fa-file fa-lg fa-fw txt-color-redLight"></i> <u>P</u>DF</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-greenLight"></i> <u>E</u>xcel</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-orange"></i> P<u>o</u>werPoint</a>
-													</li>
-												</ul>
-											</div></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0);">Brazil</a></td>
-											<td>2,476</td>
-											<td class="text-align-center">
-											<div class="sparkline txt-color-blue text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												2700, 1877, 2500, 2577, 2000, 3631, 2471, -2700, -3631, 2471, 1300, 2100, 3000,
-											</div></td>
-											<td class="text-align-center">
-											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												34,66
-											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
-												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-cog fa-lg"></i>
-												</button>
-												<ul class="dropdown-menu dropdown-menu-xs pull-right">
-													<li>
-														<a href="docs/Presentación.pdf" target="_blank"><i class="fa fa-file fa-lg fa-fw txt-color-redLight"></i> <u>P</u>DF</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-greenLight"></i> <u>E</u>xcel</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-orange"></i> P<u>o</u>werPoint</a>
-													</li>
-												</ul>
-											</div></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0);">Turkey</a></td>
-											<td>1,476</td>
-											<td class="text-align-center">
-											<div class="sparkline txt-color-blue text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												1300, 1877, 2500, 2577, 2000, 2100, 3000, -2471, -2700, -3631, -2471, 2700, 3631
-											</div></td>
-											
-											<td class="text-align-center">
-											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												75,25
-											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
-												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-cog fa-lg"></i>
-												</button>
-												<ul class="dropdown-menu dropdown-menu-xs pull-right">
-													<li>
-														<a href="docs/Presentación.pdf" target="_blank"><i class="fa fa-file fa-lg fa-fw txt-color-redLight"></i> <u>P</u>DF</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-greenLight"></i> <u>E</u>xcel</a>
-													</li>
-													<li>
-														<a href="javascript:void(0);"><i class="fa fa-file fa-lg fa-fw txt-color-orange"></i> P<u>o</u>werPoint</a>
-													</li>
-												</ul>
-											</div></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0);">Canada</a></td>
-											<td>146</td>
+											<td></td>
+											<td><a href="javascript:void(0);">{{ $paises->nombre }}</a></td>
+											<td>{{ $paises->conteo_total }}</td>
 											<td class="text-align-center">
 											<div class="sparkline txt-color-orange text-align-center" data-sparkline-height="22px" data-sparkline-width="90px" data-sparkline-barwidth="2">
-												5, 34, 10, 1, 4, 6, -9, -1, 0, 0, 5, 6, 7
+												5, 4, 10, 1, 4, 6, -9, -6, 0, 0, 5, 6, 7
 											</div></td>
-																						<td class="text-align-center">
+											<td class="text-align-center">
 											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
-												50,50
+												25,75
 											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
+											<div class="btn-group display-inline pull-right text-align-left hide-tablet">
 												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 													<i class="fa fa-cog fa-lg"></i>
 												</button>
@@ -337,29 +177,8 @@ include("inc/nav.php");
 												</ul>
 											</div></td>
 										</tr>
+						            	@endforeach
 									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan=5>
-											<ul class="pagination pagination-xs no-margin">
-												<li class="prev disabled">
-													<a href="javascript:void(0);">Previous</a>
-												</li>
-												<li class="active">
-													<a href="javascript:void(0);">1</a>
-												</li>
-												<li>
-													<a href="javascript:void(0);">2</a>
-												</li>
-												<li>
-													<a href="javascript:void(0);">3</a>
-												</li>
-												<li class="next">
-													<a href="javascript:void(0);">Next</a>
-												</li>
-											</ul></td>
-										</tr>
-									</tfoot>
 								</table>
 
 								<!-- end content -->
@@ -371,24 +190,6 @@ include("inc/nav.php");
 					</div>
 					<!-- end widget -->
 
-					<!-- new widget -->
-					<div class="jarviswidget jarviswidget-color-blue" id="wid-id-4" data-widget-editbutton="false" data-widget-colorbutton="false">
-
-						<!-- widget options:
-						usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-
-						data-widget-colorbutton="false"
-						data-widget-editbutton="false"
-						data-widget-togglebutton="false"
-						data-widget-deletebutton="false"
-						data-widget-fullscreenbutton="false"
-						data-widget-custombutton="false"
-						data-widget-collapsed="true"
-						data-widget-sortable="false"
-
-						-->
-						<!-- widget div-->						<!-- end widget div -->
-					</div>
 					<!-- end widget -->
 
 				</article>
@@ -403,592 +204,296 @@ include("inc/nav.php");
 	</div>
 	<!-- END MAIN CONTENT -->
 
-</div>
-<!-- END MAIN PANEL -->
-
 <!-- ==========================CONTENT ENDS HERE ========================== -->
+@endsection
 
-<!-- PAGE FOOTER -->
-<?php
-	include("inc/footer.php");
-?>
-<!-- END PAGE FOOTER -->
+@section('scripts')
 
-<?php 
-	//include required scripts
-	include("inc/scripts.php"); 
-?>
 
-<!-- PAGE RELATED PLUGIN(S) 
-<script src="..."></script>-->
-<!-- Flot Chart Plugin: Flot Engine, Flot Resizer, Flot Tooltip -->
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/flot/jquery.flot.cust.min.js"></script>
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/flot/jquery.flot.resize.min.js"></script>
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/flot/jquery.flot.time.min.js"></script>
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/flot/jquery.flot.tooltip.min.js"></script>
+	<!-- Vector Maps Plugin: Vectormap engine, Vectormap language -->
+	{{ Html::style('/js/plugin/vectormap/jquery-jvectormap-2.0.3.css') }}
+	{{ Html::script('/js/plugin/vectormap/jquery-jvectormap-2.0.3.min.js') }}
+	{{ Html::script('/js/plugin/vectormap/jquery-jvectormap-world-mill-en.js') }}
 
-<!-- Vector Maps Plugin: Vectormap engine, Vectormap language -->
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/vectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+		<!-- SPARKLINES -->
+	{{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
+	{{ Html::script('js/smartwidgets/jarvis.widget.min.js') }}
+	{{ Html::script('/js/plugin/datatables/jquery.dataTables.min.js') }}
+	{{ Html::script('/js/plugin/datatables/dataTables.bootstrap.min.js') }}
 
-<!-- Full Calendar -->
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/moment/moment.min.js"></script>
-<script src="<?php echo ASSETS_URL; ?>/js/plugin/fullcalendar/jquery.fullcalendar.min.js"></script>
 
-<script>
-	$(document).ready(function() {
+	<script>
+		$(document).ready(function() {
 
-		/*
-		 * PAGE RELATED SCRIPTS
-		 */
 
-		$(".js-status-update a").click(function() {
-			var selText = $(this).text();
-			var $this = $(this);
-			$this.parents('.btn-group').find('.dropdown-toggle').html(selText + ' <span class="caret"></span>');
-			$this.parents('.dropdown-menu').find('li').removeClass('active');
-			$this.parent().addClass('active');
-		});
+			
+			/*
+			 * VECTOR MAP
+			 */
 
-		/*
-		* TODO: add a way to add more todo's to list
-		*/
+			data_array = {
+		              @foreach($paisesAlianzas as $paises)
+		              	"{{ $paises->codigo_ref }}": {{ $paises->conteo_total }},
+		              @endforeach
+		            };
 
-		// initialize sortable
-		$(function() {
-			$("#sortable1, #sortable2").sortable({
-				handle : '.handle',
-				connectWith : ".todo",
-				update : countTasks
-			}).disableSelection();
-		});
-
-		// check and uncheck
-		$('.todo .checkbox > input[type="checkbox"]').click(function() {
-			var $this = $(this).parent().parent().parent();
-
-			if ($(this).prop('checked')) {
-				$this.addClass("complete");
-
-				// remove this if you want to undo a check list once checked
-				//$(this).attr("disabled", true);
-				$(this).parent().hide();
-
-				// once clicked - add class, copy to memory then remove and add to sortable3
-				$this.slideUp(500, function() {
-					$this.clone().prependTo("#sortable3").effect("highlight", {}, 800);
-					$this.remove();
-					countTasks();
-				});
-			} else {
-				// insert undo code here...
-			}
-
-		})
-		// count tasks
-		function countTasks() {
-
-			$('.todo-group-title').each(function() {
-				var $this = $(this);
-				$this.find(".num-of-tasks").text($this.next().find("li").size());
-			});
-
-		}
-
-		/*
-		* RUN PAGE GRAPHS
-		*/
-
-		/* TAB 1: UPDATING CHART */
-		// For the demo we use generated data, but normally it would be coming from the server
-
-		var data = [], totalPoints = 200, $UpdatingChartColors = $("#updating-chart").css('color');
-
-		function getRandomData() {
-			if (data.length > 0)
-				data = data.slice(1);
-
-			// do a random walk
-			while (data.length < totalPoints) {
-				var prev = data.length > 0 ? data[data.length - 1] : 50;
-				var y = prev + Math.random() * 10 - 5;
-				if (y < 0)
-					y = 0;
-				if (y > 100)
-					y = 100;
-				data.push(y);
-			}
-
-			// zip the generated y values with the x values
-			var res = [];
-			for (var i = 0; i < data.length; ++i)
-				res.push([i, data[i]])
-			return res;
-		}
-
-		// setup control widget
-		var updateInterval = 1500;
-		$("#updating-chart").val(updateInterval).change(function() {
-
-			var v = $(this).val();
-			if (v && !isNaN(+v)) {
-				updateInterval = +v;
-				$(this).val("" + updateInterval);
-			}
-
-		});
-
-		// setup plot
-		var options = {
-			yaxis : {
-				min : 0,
-				max : 100
-			},
-			xaxis : {
-				min : 0,
-				max : 100
-			},
-			colors : [$UpdatingChartColors],
-			series : {
-				lines : {
-					lineWidth : 1,
-					fill : true,
-					fillColor : {
-						colors : [{
-							opacity : 0.4
-						}, {
-							opacity : 0
-						}]
-					},
-					steps : false
-
-				}
-			}
-		};
-
-		var plot = $.plot($("#updating-chart"), [getRandomData()], options);
-
-		/* live switch */
-		$('input[type="checkbox"]#start_interval').click(function() {
-			if ($(this).prop('checked')) {
-				$on = true;
-				updateInterval = 1500;
-				update();
-			} else {
-				clearInterval(updateInterval);
-				$on = false;
-			}
-		});
-
-		function update() {
-			if ($on == true) {
-				plot.setData([getRandomData()]);
-				plot.draw();
-				setTimeout(update, updateInterval);
-
-			} else {
-				clearInterval(updateInterval)
-			}
-
-		}
-
-		var $on = false;
-
-		/*end updating chart*/
-
-		/* TAB 2: Social Network  */
-
-		$(function() {
-			// jQuery Flot Chart
-			var twitter = [[1, 27], [2, 34], [3, 51], [4, 48], [5, 55], [6, 65], [7, 61], [8, 70], [9, 65], [10, 75], [11, 57], [12, 59], [13, 62]], facebook = [[1, 25], [2, 31], [3, 45], [4, 37], [5, 38], [6, 40], [7, 47], [8, 55], [9, 43], [10, 50], [11, 47], [12, 39], [13, 47]], data = [{
-				label : "Twitter",
-				data : twitter,
-				lines : {
-					show : true,
-					lineWidth : 1,
-					fill : true,
-					fillColor : {
-						colors : [{
-							opacity : 0.1
-						}, {
-							opacity : 0.13
-						}]
+			$('#vector-map').vectorMap({
+				map : 'world_mill_en',
+		        focusOn: {
+		          x: 0.5,
+		          y: 1,
+		          scale: 1.2,
+		          animate: true
+		        },
+				backgroundColor : '#fff',
+				regionStyle : {
+					initial : {
+						fill : '#c4c4c4'
 					}
 				},
-				points : {
-					show : true
-				}
-			}, {
-				label : "Facebook",
-				data : facebook,
-				lines : {
-					show : true,
-					lineWidth : 1,
-					fill : true,
-					fillColor : {
-						colors : [{
-							opacity : 0.1
-						}, {
-							opacity : 0.13
-						}]
-					}
+				series : {
+					regions : [{
+						values : data_array,
+						scale : ['#99FFFF', '#009999'],
+						normalizeFunction : 'polynomial'
+					}]
 				},
-				points : {
-					show : true
-				}
-			}];
-
-			var options = {
-				grid : {
-					hoverable : true
-				},
-				colors : ["#568A89", "#3276B1"],
-				tooltip : true,
-				tooltipOpts : {
-					//content : "Value <b>$x</b> Value <span>$y</span>",
-					defaultTheme : false
-				},
-				xaxis : {
-					ticks : [[1, "JAN"], [2, "FEB"], [3, "MAR"], [4, "APR"], [5, "MAY"], [6, "JUN"], [7, "JUL"], [8, "AUG"], [9, "SEP"], [10, "OCT"], [11, "NOV"], [12, "DEC"], [13, "JAN+1"]]
-				},
-				yaxes : {
-
-				}
-			};
-
-			var plot3 = $.plot($("#statsChart"), data, options);
-		});
-
-		// END TAB 2
-
-		// TAB THREE GRAPH //
-		/* TAB 3: Revenew  */
-
-		$(function() {
-
-			var trgt = [[1354586000000, 153], [1364587000000, 658], [1374588000000, 198], [1384589000000, 663], [1394590000000, 801], [1404591000000, 1080], [1414592000000, 353], [1424593000000, 749], [1434594000000, 523], [1444595000000, 258], [1454596000000, 688], [1464597000000, 364]], prft = [[1354586000000, 53], [1364587000000, 65], [1374588000000, 98], [1384589000000, 83], [1394590000000, 980], [1404591000000, 808], [1414592000000, 720], [1424593000000, 674], [1434594000000, 23], [1444595000000, 79], [1454596000000, 88], [1464597000000, 36]], sgnups = [[1354586000000, 647], [1364587000000, 435], [1374588000000, 784], [1384589000000, 346], [1394590000000, 487], [1404591000000, 463], [1414592000000, 479], [1424593000000, 236], [1434594000000, 843], [1444595000000, 657], [1454596000000, 241], [1464597000000, 341]], toggles = $("#rev-toggles"), target = $("#flotcontainer");
-
-			var data = [{
-				label : "Target Profit",
-				data : trgt,
-				bars : {
-					show : true,
-					align : "center",
-					barWidth : 30 * 30 * 60 * 1000 * 80
-				}
-			}, {
-				label : "Actual Profit",
-				data : prft,
-				color : '#3276B1',
-				lines : {
-					show : true,
-					lineWidth : 3
-				},
-				points : {
-					show : true
-				}
-			}, {
-				label : "Actual Signups",
-				data : sgnups,
-				color : '#71843F',
-				lines : {
-					show : true,
-					lineWidth : 1
-				},
-				points : {
-					show : true
-				}
-			}]
-
-			var options = {
-				grid : {
-					hoverable : true
-				},
-				tooltip : true,
-				tooltipOpts : {
-					//content: '%x - %y',
-					//dateFormat: '%b %y',
-					defaultTheme : false
-				},
-				xaxis : {
-					mode : "time"
-				},
-				yaxes : {
-					tickFormatter : function(val, axis) {
-						return "$" + val;
-					},
-					max : 1200
-				}
-
-			};
-
-			plot2 = null;
-
-			function plotNow() {
-				var d = [];
-				toggles.find(':checkbox').each(function() {
-					if ($(this).is(':checked')) {
-						d.push(data[$(this).attr("name").substr(4, 1)]);
-					}
-				});
-				if (d.length > 0) {
-					if (plot2) {
-						plot2.setData(d);
-						plot2.draw();
+				onRegionTipShow : function(e, el, code) {
+					if ( typeof data_array[code] == 'undefined') {
+						e.preventDefault();
 					} else {
-						plot2 = $.plot(target, d, options);
-					}
-				}
-
-			};
-
-			toggles.find(':checkbox').on('change', function() {
-				plotNow();
-			});
-			plotNow()
-
-		});
-
-		/*
-		 * VECTOR MAP
-		 */
-
-		data_array = {
-			"US" : 4977,
-			"CO" : 4873,
-			"IN" : 3671,
-			"BR" : 2476,
-			"TR" : 1476,
-			"CN" : 146,
-			"CA" : 134,
-			"BD" : 100
-		};
-
-		$('#vector-map').vectorMap({
-			map : 'world_mill_en',
-			backgroundColor : '#fff',
-			regionStyle : {
-				initial : {
-					fill : '#c4c4c4'
-				},
-				hover : {
-					"fill-opacity" : 1
-				}
-			},
-			series : {
-				regions : [{
-					values : data_array,
-					scale : ['#99FFFF', '#009999'],
-					normalizeFunction : 'polynomial'
-				}]
-			},
-			onRegionLabelShow : function(e, el, code) {
-				if ( typeof data_array[code] == 'undefined') {
-					e.preventDefault();
-				} else {
-					var countrylbl = data_array[code];
-					el.html(el.html() + ': ' + countrylbl + ' visits');
-				}
-			}
-		});
-
-		/*
-		 * FULL CALENDAR JS
-		 */
-
-		if ($("#calendar").length) {
-			var date = new Date();
-			var d = date.getDate();
-			var m = date.getMonth();
-			var y = date.getFullYear();
-
-			var calendar = $('#calendar').fullCalendar({
-
-				editable : true,
-				draggable : true,
-				selectable : false,
-				selectHelper : true,
-				unselectAuto : false,
-				disableResizing : false,
-				height: "auto",
-
-				header : {
-					left : 'title', //,today
-					center : 'prev, next, today',
-					right : 'month, agendaWeek, agenDay' //month, agendaDay,
-				},
-
-				select : function(start, end, allDay) {
-					var title = prompt('Event Title:');
-					if (title) {
-						calendar.fullCalendar('renderEvent', {
-							title : title,
-							start : start,
-							end : end,
-							allDay : allDay
-						}, true // make the event "stick"
-						);
-					}
-					calendar.fullCalendar('unselect');
-				},
-
-				events : [{
-					title : 'All Day Event',
-					start : new Date(y, m, 1),
-					description : 'long description',
-					className : ["event", "bg-color-greenLight"],
-					icon : 'fa-check'
-				}, {
-					title : 'Long Event',
-					start : new Date(y, m, d - 5),
-					end : new Date(y, m, d - 2),
-					className : ["event", "bg-color-red"],
-					icon : 'fa-lock'
-				}, {
-					id : 999,
-					title : 'Repeating Event',
-					start : new Date(y, m, d - 3, 16, 0),
-					allDay : false,
-					className : ["event", "bg-color-blue"],
-					icon : 'fa-clock-o'
-				}, {
-					id : 999,
-					title : 'Repeating Event',
-					start : new Date(y, m, d + 4, 16, 0),
-					allDay : false,
-					className : ["event", "bg-color-blue"],
-					icon : 'fa-clock-o'
-				}, {
-					title : 'Meeting',
-					start : new Date(y, m, d, 10, 30),
-					allDay : false,
-					className : ["event", "bg-color-darken"]
-				}, {
-					title : 'Lunch',
-					start : new Date(y, m, d, 12, 0),
-					end : new Date(y, m, d, 14, 0),
-					allDay : false,
-					className : ["event", "bg-color-darken"]
-				}, {
-					title : 'Birthday Party',
-					start : new Date(y, m, d + 1, 19, 0),
-					end : new Date(y, m, d + 1, 22, 30),
-					allDay : false,
-					className : ["event", "bg-color-darken"]
-				}, {
-					title : 'Smartadmin Open Day',
-					start : new Date(y, m, 28),
-					end : new Date(y, m, 29),
-					className : ["event", "bg-color-darken"]
-				}],
-
-
-				eventRender : function(event, element, icon) {
-					if (!event.description == "") {
-						element.find('.fc-title').append("<br/><span class='ultra-light'>" + event.description + "</span>");
-					}
-					if (!event.icon == "") {
-						element.find('.fc-title').append("<i class='air air-top-right fa " + event.icon + " '></i>");
+						el.html(el.html() + ': ' + data_array[code] + ' alianzas');
 					}
 				}
 			});
 
-		};
 
-		/* hide default buttons */
-		$('.fc-toolbar .fc-right, .fc-toolbar .fc-center').hide();
 
-		// calendar prev
-		$('#calendar-buttons #btn-prev').click(function() {
-			$('.fc-prev-button').click();
-			return false;
-		});
 
-		// calendar next
-		$('#calendar-buttons #btn-next').click(function() {
-			$('.fc-next-button').click();
-			return false;
-		});
-
-		// calendar today
-		$('#calendar-buttons #btn-today').click(function() {
-			$('.fc-button-today').click();
-			return false;
-		});
-
-		// calendar month
-		$('#mt').click(function() {
-			$('#calendar').fullCalendar('changeView', 'month');
-		});
-
-		// calendar agenda week
-		$('#ag').click(function() {
-			$('#calendar').fullCalendar('changeView', 'agendaWeek');
-		});
-
-		// calendar agenda day
-		$('#td').click(function() {
-			$('#calendar').fullCalendar('changeView', 'agendaDay');
-		});
-
-		/*
-		 * CHAT
-		 */
-
-		$.filter_input = $('#filter-chat-list');
-		$.chat_users_container = $('#chat-container > .chat-list-body')
-		$.chat_users = $('#chat-users')
-		$.chat_list_btn = $('#chat-container > .chat-list-open-close');
-		$.chat_body = $('#chat-body');
-
-		/*
-		* LIST FILTER (CHAT)
-		*/
-
-		// custom css expression for a case-insensitive contains()
-		jQuery.expr[':'].Contains = function(a, i, m) {
-			return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-		};
-
-		function listFilter(list) {// header is any element, list is an unordered list
-			// create and add the filter form to the header
-
-			$.filter_input.change(function() {
-				var filter = $(this).val();
-				if (filter) {
-					// this finds all links in a list that contain the input,
-					// and hide the ones not containing the input while showing the ones that do
-					$.chat_users.find("a:not(:Contains(" + filter + "))").parent().slideUp();
-					$.chat_users.find("a:Contains(" + filter + ")").parent().slideDown();
-				} else {
-					$.chat_users.find("li").slideDown();
+			// clears the variable if left blank
+		    var table = $('#lista_paises').DataTable( {
+		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hide-xs-down'l>r>"+
+					"t"+
+					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hide-xs-down'i><'col-xs-12 col-sm-6'p>>",
+		        "bDestroy": true,
+		        "iDisplayLength": 15,
+		        "oLanguage": {
+				    "sSearch": '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>'
 				}
-				return false;
-			}).keyup(function() {
-				// fire the above change event after every letter
-				$(this).change();
-
 			});
 
-		}
 
-		// on dom ready
-		listFilter($.chat_users);
 
-		// open chat list
-		$.chat_list_btn.click(function() {
-			$(this).parent('#chat-container').toggleClass('open');
-		})
 
-		$.chat_body.animate({
-			scrollTop : $.chat_body[0].scrollHeight
-		}, 500);
 
-	});
 
-</script>
 
-<?php 
-	//include footer
-	include("inc/google-analytics.php"); 
-?>
+/*
+
+
+			$('#map1').vectorMap({
+		        map: 'world_mill_en',
+		        panOnDrag: true,
+		        focusOn: {
+		          x: 0.5,
+		          y: 0.5,
+		          scale: 2,
+		          animate: true
+		        },
+		        series: {
+		          regions: [{
+		            scale: ['#C8EEFF', '#0071A4'],
+		            normalizeFunction: 'polynomial',
+		            values: {
+		              "AF": 16.63,
+		              "AL": 11.58,
+		              "DZ": 158.97,
+		              "AO": 85.81,
+		              "AG": 1.1,
+		              "AR": 351.02,
+		              "AM": 8.83,
+		              "AU": 1219.72,
+		              "AT": 366.26,
+		              "AZ": 52.17,
+		              "BS": 7.54,
+		              "BH": 21.73,
+		              "BD": 105.4,
+		              "BB": 3.96,
+		              "BY": 52.89,
+		              "BE": 461.33,
+		              "BZ": 1.43,
+		              "BJ": 6.49,
+		              "BT": 1.4,
+		              "BO": 19.18,
+		              "BA": 16.2,
+		              "BW": 12.5,
+		              "BR": 2023.53,
+		              "BN": 11.96,
+		              "BG": 44.84,
+		              "BF": 8.67,
+		              "BI": 1.47,
+		              "KH": 11.36,
+		              "CM": 21.88,
+		              "CA": 1563.66,
+		              "CV": 1.57,
+		              "CF": 2.11,
+		              "TD": 7.59,
+		              "CL": 199.18,
+		              "CN": 5745.13,
+		              "CO": 283.11,
+		              "KM": 0.56,
+		              "CD": 12.6,
+		              "CG": 11.88,
+		              "CR": 35.02,
+		              "CI": 22.38,
+		              "HR": 59.92,
+		              "CY": 22.75,
+		              "CZ": 195.23,
+		              "DK": 304.56,
+		              "DJ": 1.14,
+		              "DM": 0.38,
+		              "DO": 50.87,
+		              "EC": 61.49,
+		              "EG": 216.83,
+		              "SV": 21.8,
+		              "GQ": 14.55,
+		              "ER": 2.25,
+		              "EE": 19.22,
+		              "ET": 30.94,
+		              "FJ": 3.15,
+		              "FI": 231.98,
+		              "FR": 2555.44,
+		              "GA": 12.56,
+		              "GM": 1.04,
+		              "GE": 11.23,
+		              "DE": 3305.9,
+		              "GH": 18.06,
+		              "GR": 305.01,
+		              "GD": 0.65,
+		              "GT": 40.77,
+		              "GN": 4.34,
+		              "GW": 0.83,
+		              "GY": 2.2,
+		              "HT": 6.5,
+		              "HN": 15.34,
+		              "HK": 226.49,
+		              "HU": 132.28,
+		              "IS": 12.77,
+		              "IN": 1430.02,
+		              "ID": 695.06,
+		              "IR": 337.9,
+		              "IQ": 84.14,
+		              "IE": 204.14,
+		              "IL": 201.25,
+		              "IT": 2036.69,
+		              "JM": 13.74,
+		              "JP": 5390.9,
+		              "JO": 27.13,
+		              "KZ": 129.76,
+		              "KE": 32.42,
+		              "KI": 0.15,
+		              "KR": 986.26,
+		              "KW": 117.32,
+		              "KG": 4.44,
+		              "LA": 6.34,
+		              "LV": 23.39,
+		              "LB": 39.15,
+		              "LS": 1.8,
+		              "LR": 0.98,
+		              "LY": 77.91,
+		              "LT": 35.73,
+		              "LU": 52.43,
+		              "MK": 9.58,
+		              "MG": 8.33,
+		              "MW": 5.04,
+		              "MY": 218.95,
+		              "MV": 1.43,
+		              "ML": 9.08,
+		              "MT": 7.8,
+		              "MR": 3.49,
+		              "MU": 9.43,
+		              "MX": 1004.04,
+		              "MD": 5.36,
+		              "MN": 5.81,
+		              "ME": 3.88,
+		              "MA": 91.7,
+		              "MZ": 10.21,
+		              "MM": 35.65,
+		              "NA": 11.45,
+		              "NP": 15.11,
+		              "NL": 770.31,
+		              "NZ": 138,
+		              "NI": 6.38,
+		              "NE": 5.6,
+		              "NG": 206.66,
+		              "NO": 413.51,
+		              "OM": 53.78,
+		              "PK": 174.79,
+		              "PA": 27.2,
+		              "PG": 8.81,
+		              "PY": 17.17,
+		              "PE": 153.55,
+		              "PH": 189.06,
+		              "PL": 438.88,
+		              "PT": 223.7,
+		              "QA": 126.52,
+		              "RO": 158.39,
+		              "RU": 1476.91,
+		              "RW": 5.69,
+		              "WS": 0.55,
+		              "ST": 0.19,
+		              "SA": 434.44,
+		              "SN": 12.66,
+		              "RS": 38.92,
+		              "SC": 0.92,
+		              "SL": 1.9,
+		              "SG": 217.38,
+		              "SK": 86.26,
+		              "SI": 46.44,
+		              "SB": 0.67,
+		              "ZA": 354.41,
+		              "ES": 1374.78,
+		              "LK": 48.24,
+		              "KN": 0.56,
+		              "LC": 1,
+		              "VC": 0.58,
+		              "SD": 65.93,
+		              "SR": 3.3,
+		              "SZ": 3.17,
+		              "SE": 444.59,
+		              "CH": 522.44,
+		              "SY": 59.63,
+		              "TW": 426.98,
+		              "TJ": 5.58,
+		              "TZ": 22.43,
+		              "TH": 312.61,
+		              "TL": 0.62,
+		              "TG": 3.07,
+		              "TO": 0.3,
+		              "TT": 21.2,
+		              "TN": 43.86,
+		              "TR": 729.05,
+		              "TM": 0,
+		              "UG": 17.12,
+		              "UA": 136.56,
+		              "AE": 239.65,
+		              "GB": 2258.57,
+		              "US": 14624.18,
+		              "UY": 40.71,
+		              "UZ": 37.72,
+		              "VU": 0.72,
+		              "VE": 285.21,
+		              "VN": 101.99,
+		              "YE": 30.02,
+		              "ZM": 15.69,
+		              "ZW": 5.57
+		            }
+		          }]
+		        }
+		    });*/
+
+		});
+
+	</script>
+
+@endsection

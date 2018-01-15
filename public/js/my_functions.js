@@ -13,11 +13,21 @@
 		var destino = $(thisElement).attr('target');
 		var thisName = $(thisElement).attr('name').replace('[]', '');
 		var formId = $(thisElement).parents('form').attr('id');
-		var formClass = $(thisElement).parents('form').attr('class');
 		var exists999999 = -1;
+		if ($(thisElement).parents('form').hasClass('PreRegistro_form')) {
+			var formClass = 'PreRegistro_form';
+		}else if ($(thisElement).parents('form').hasClass('PreRegistro_form_solo')) {
+			var formClass = 'PreRegistro_form_solo';
+		}else if ($(thisElement).parents('form').hasClass('Registro_form')) {
+			var formClass = 'PreRegistro_form_solo';
+		}else if ($(thisElement).parents('form').hasClass('Registro_form_solo')) {
+			var formClass = 'PreRegistro_form_solo';
+		}else{
+			var formClass = $(thisElement).parents('form').attr('class');
+		}
 		
 		//console.log(texto);
-		if ( formClass == 'PreRegistro_form'|| formClass == 'PreRegistro_form_solo' ) {
+		if ( formClass == 'PreRegistro_form' || formClass == 'PreRegistro_form_solo' || formClass == 'Registro_form' || formClass == 'Registro_form_solo' ) {
 			//mostrar el resto del formulario al seleccionar el tipo de tramite
 			if ( thisName == 'tipo_tramite' && valor != '' ) {
 				$('#'+ formId +' div.paso1').removeClass('hide');
@@ -69,7 +79,7 @@
 
 	}
 
-	$('.PreRegistro_form select, .PreRegistro_form_solo select').each(function(){
+	$('.PreRegistro_form select, .PreRegistro_form_solo select, .Registro_form select, .Registro_form_solo select').each(function(){
 		mostrarContenido($(this));
 	});
 
@@ -82,16 +92,20 @@
 		var texto = $(this).find(':selected').text();
 		var destino = $(this).attr('target');
 		var thisName = $(this).attr('name').replace('[]', '');
+		// var exists999999 = -1;
 		var formId = $(this).parents('form').attr('id');
-		var exists999999 = -1;
-		
-		//console.log(texto);
+		if (formId == undefined) {
+			formId = $(this).parents('.form').attr('id');
+		}
+		var origenParent = formId;
+
+		// console.log('|'+formId+'|');
 
 		mostrarContenido($(this));
 
 		//console.log(valor+ ' - ' +destino);
 		if ( valor != null && destino != '' && destino != undefined ) {
-			CambiarContenidoSelect( $(this) , destino);
+			CambiarContenidoSelect( $(this) , destino, origenParent);
 			
 			//si hay mas de un target hara otras operaciones
 			destino = destino.split(",");
@@ -109,10 +123,10 @@
 
 
 	// realiza la carga automatica y dinamica de los select 
-	function CambiarContenidoSelect(origen,destinoName){
+	function CambiarContenidoSelect(origen,destinoName,origenParent){
 		var origenVal = origen.val();
 		var urlDestino = origen.attr('url');
-		var origenParent =  origen.parents('form').attr('id');
+		// var origenParent =  origen.parents('form').attr('id');
 		var placeholder = {};
 		var cloneDefaultOptions = {};
 		//si hay mas de un target hara otras operaciones
@@ -135,9 +149,10 @@
 				var cloneDefault = $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').find('option[value="999999"]');
 				cloneDefault = cloneDefault.clone();
 				var sizecloneDefault = cloneDefault.size();
+console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 				$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').empty();
 				if (sizecloneDefault > 0) {
-					$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append('<option value="">' + placeholder + '</option>');
+					// $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append('<option value="">' + placeholder + '</option>');
 					$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append(cloneDefault);
 					
 				}
@@ -195,16 +210,26 @@
 			});
 		}
 
-		var data = {_token: $("input[name=_token]").val(), id : origenVal};
+		// var data = {_token : $("input[name=_token]").val(), id : origenVal};
+		var data = {};
+		data['_token'] = $("input[name=_token]").val();
+		data['id'] = origenVal;
+
 
 		if ( origen.attr('name') == 'institucion_destino') {
-			data = {_token: $("input[name=_token]").val(), id : origenVal, rol : 'coordinador_destino'};
+			// data = {_token: $("input[name=_token]").val(), id : origenVal, rol : 'coordinador_destino'};
+			data['rol'] = 'coordinador_destino';
 		}
 		if ( origen.attr('name') == 'coordinador_origen') {
-			data = {_token: $("input[name=_token]").val(), id : origenVal, rol : 'coordinador_origen'};
+			data['rol'] = 'coordinador_origen';
 		}
 		if ( origen.attr('name') == 'coordinador_destino') {
-			data = {_token: $("input[name=_token]").val(), id : origenVal, rol : 'coordinador_destino_datos'};
+			data['rol'] = 'coordinador_destino_datos';
+		}
+		if ( origen.attr('val_extra') !== undefined) {
+			var val_extra_name = origen.attr('val_extra');
+			var val_extra = origen.parents('form').find('[name="'+val_extra_name+'"]').val();
+			data[val_extra_name] = val_extra;
 		}
 
 
@@ -322,7 +347,7 @@
 //INICIO ENVIAR AJAX POST
 
 	// Attach a submit handler to the form
-	$( ".PreRegistro_form, .Registro_form" ).submit(function( event ) {
+	$( ".PreRegistro_form, .Registro_form, .Form_submit_ajax" ).submit(function( event ) {
 		// Stop form from submitting normally
 		event.preventDefault();
 		var form = '#' + $(this).attr('id');
@@ -330,7 +355,47 @@
 		var menu = '#' + $(form).parents('.wizard_content').attr('id');
 		var botones = '#' + $(form).parents('.wizard_content').find('.button-content').attr('id');
 		var sinArchivos = true;
-		var divData = $(form).serialize();
+		var data_extra_exists = $(form).find('[name="data_extra"]').size();
+		var divData = [];
+
+		if (data_extra_exists > 0 ) { 
+
+			var data_extra = $(form).find('[name="data_extra"]').val();
+			var data_extra_type = $(form).find('[name="data_extra"]').attr('data_extra_type');
+			var data_extra_name = $(form).find('[name="data_extra"]').attr('data_extra_name');
+			if (data_extra_type == 'jqGrid' ) {
+
+				divData = $(form).serializeArray();
+				
+                var getGridData = $(data_extra).getGridParam('data');
+                divData = divData.concat([
+                    {name: data_extra_name, value: JSON.stringify(getGridData)}
+                ]);
+
+                // console.log(divData);
+
+                if (getGridData.length == 0) {
+                    var dialogError = $(form).find('#dialogError').clone().removeClass('hide');
+                    dialogError.dialog({
+                        autoOpen: true,
+                        modal: true,
+                        dialogClass: "alert text-danger",
+                        buttons: {
+                            Ok: function() {
+                              $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                    // dialogError.dialog( "open" );
+                    return false;
+                }
+
+			}else{
+				divData = $(form).serialize();
+			}
+		}else{
+			divData = $(form).serialize();
+		}
 
 		if ( $(form + ' input[type="file"]').size() > 0 ) {
 			sinArchivos = false;
@@ -343,23 +408,53 @@
 		if( formEnviar(form,divData,results,'creación','no',sinArchivos) ){
 			$( document ).one('ajaxStop', function() {
 				if( $(results).attr('return') == 'correcto' ){
-					if ( $( results ).find('.dato_adicional#noNext').size() == 0 ) {
-						$(menu + ' .actions .btn-next').click();
+					var time = 2000;
+					if( $(form).hasClass('Form_submit_ajax') == false ){
+						if ( $( results ).find('.dato_adicional#noNext').size() == 0 ) {
+							$(menu + ' .actions .btn-next').click();
+						}else{
+							$(botones + ' #btnNext').addClass('disabled');
+						}
+
+						//cambiar el id de la alianza en el titulo de cada paso
+						// var alianzaId = $(results).find('[name="alianzaId"]').val();
+						// $('span.alianza b').each(function(){
+						// 	$(this).html(alianzaId+'jejejejejejejejejejejeje');
+						// 	$(this).parent().removeClass(hide);
+						// });
+
+
+						$( results ).find('.dato_adicional').each(function(){
+							var thisName = $(this).attr('name');
+							$( '.step-pane.active form .dato_adicional[name="'+ thisName +'"]' ).remove();
+							$( '.step-pane.active form' ).append($(this));
+							
+						});
+
+						// se carga con cualquiera de los dos valores
+			            var procesoId = $(form).find('[name="alianzaId"]').val();
+			            if (procesoId == undefined) {
+			            	procesoId = $(form).find('[name="inscripcionId"]').val();
+			            }
+			            if (procesoId == undefined) {
+			            	procesoId = $(form).find('[name="iniciativaId"]').val();
+			            }
+			            if (procesoId == undefined) {
+			            	procesoId = $(form).find('[name="oportunidadId"]').val();
+			            }
+			            $('.PreRegistro_form, form.PreRegistro').find('.span-proceso-id b').text(procesoId);
+			            $('.PreRegistro_form, form.PreRegistro').find('.span-proceso-id').removeClass('hide');
+
 					}else{
-						$(botones + ' #btnNext').addClass('disabled');
+						time = 0;
 					}
-					$( results ).find('.dato_adicional').each(function(){
-						var thisName = $(this).attr('name');
-						$( '.step-pane.active form .dato_adicional[name="'+ thisName +'"]' ).remove();
-						$( '.step-pane.active form' ).append($(this));
-						
-					});
 					
 					if ( $( results ).find('#redirect_url').size() > 0 ) {
+
 						var redirect_url = $( results ).find('#redirect_url').val();
-						setTimeout(function(){
+						// setTimeout(function(){
 							window.location.href = redirect_url;
-						}, 2000);
+						// }, time);
 					}
 
 				};
@@ -367,6 +462,7 @@
 				//handler.off();
             });
 		};
+		return false;
 	});
 
 	$( "#files" ).submit(function( event ) {
@@ -463,8 +559,15 @@
 	            //console.log(msj.responseJSON);
 	            if( msj.responseJSON != undefined ){
 	            	row = '';
+	            	var fields = [];
 	            	$.each(msj.responseJSON, function( index, value ) {
+	            	
 	               		row = row + value + "<br>";
+	               		fields.push(index);
+	            	});
+
+	            	$.each(fields, function( index, value ) {
+	            		$('input[name="'+ value +'"], select[name="'+ value +'"], select[name="'+ value +'[]"], textarea[name="'+ value +'"]').parents('div.input-group').addClass('has-error');
 	            	});
 		        }
 
@@ -552,4 +655,260 @@
 	};
 
 
+	$('#seleccionar_todos[type="checkbox"]').change(function(){
+		$checked = false;
+		if ( $(this).is(':checked') ) {
+			$checked = true;
+		}
+		$(this).parents('.checkbox_show').find('[type="checkbox"]').prop('checked', $checked);
+	});
 
+
+	$('#remove_filter').click(function(){
+		$(this).parents('tr').find('input').val('').keyup(); 
+	});
+
+	$('input, select, textarea').change(function(){
+		$(this).parents('div.input-group').removeClass('has-error');
+	});
+
+
+	$('#ver_pre_registro').on('click', function () {
+		// console.log('entro #ver_pre_registro');
+		var route = $(this).attr('url');
+		var thisForm =  $(this).parents('form').attr('id');
+		var token = $('#'+ thisForm).find('input[name="_token"]').val();
+		
+		$('#'+ thisForm ).find('> .dato_adicional').each(function(){
+			var thisName = $(this).attr('name');
+			$( '#'+ thisForm + ' .para_ver_datos [name="'+ thisName +'"]' ).remove();
+			$( '#'+ thisForm + ' .para_ver_datos' ).append($(this));
+			
+		});
+		var inputData =  $('#'+ thisForm + ' .para_ver_datos').find('input, textarea, select').serialize();
+		var results = '#'+ thisForm +' div#ver_datos';
+		var accion = 'vista';
+
+
+		if ( EnviarDatosAjax(route,token,inputData,results,accion) ){
+			$( document ).one('ajaxStop', function() {
+				if( $(results).attr('return') == 'correcto' ){
+					$('div#datos_email_enviar').removeClass('hide');
+				};
+            });
+		};
+		
+	});
+
+
+	$('#enviar_pre_registro').on('click', function (e, data) {
+		//console.log('entro #enviar_pre_registro');
+		var proceso = 'enviados';
+		var color = '#5f895f';
+		var mensaje = 'Cuando den una respuesta se enviará un mensaje a su correo electrónico.';
+		if ($(this).parents('form').hasClass('interalliance')) {
+			mensaje = 'Cuando la institución de una respuesta se enviará un mensaje a su correo electrónico.';
+		}else if ($(this).parents('form').hasClass('interchange')) {
+			mensaje = 'Cuando el director de programa de una respuesta se enviará un mensaje a su correo electrónico.';
+		}
+
+		var thisForm =  $(this).parents('form').attr('id');
+		/*
+		var route = $(this).attr('url');
+		var token = $('#'+ thisForm).find('input[name="_token"]').val();
+
+		var inputData = "paso="+$('#'+ thisForm ).find('input[name="paso"]').val();
+		inputData = inputData+"&alianzaId="+$('#'+ thisForm ).find('input[name="alianzaId"]').val();
+		inputData = inputData+"&aceptar_alianza="+$('#'+ thisForm ).find('input[name="aceptar_alianza"]').val();
+		inputData = inputData+"&enviar="+$('#'+ thisForm ).find('input[name="enviar"]').val();
+		inputData = inputData+"&tokenmail="+$('#'+ thisForm ).find('input[name="tokenmail"]').val();
+		//var inputData =  $('#'+ thisForm ).find('input, textarea, select').serialize();
+		//console.log(inputData);
+		var results = '#'+ thisForm +' div#ver_datos';
+		var accion = 'vista';
+		*/
+
+		var results = '#' + $('#'+ thisForm).attr('results') + ' #show-msg';
+
+
+		//$('.article_registro').find('input, textarea, button, select').removeAttr('disabled');
+		//$('.article_registro').removeClass('hide');  
+		//$("#PreRegistro_wizard_form").submit();
+
+		//if ( EnviarDatosAjax(route,token,inputData,results,accion) ){
+		var counter = 0;
+		var intervalCounter = setInterval(function() {
+		    counter++;
+		}, 1000);
+		//console.log(thisForm);
+		$('#'+ thisForm).submit();
+			//console.log("submitted!");
+			$( document ).one('ajaxStop', function() {
+				if( $(results).attr('return') == 'correcto' ){
+					$('div#datos_email_enviar').addClass('hide');
+					$.smallBox({
+					  title: "Perfecto! Los datos fueron " + proceso + " correctamente",
+					  content: "Hace <i class='fa fa-clock-o'></i> <i>"+counter+" segundos...</i> <br> " + mensaje,
+					  color: color,
+					  iconSmall: "fa fa-check bounce animated"
+					});
+					clearInterval(intervalCounter);
+					/*
+					setTimeout(function(){
+					  location.reload();
+					}, 2000);
+					*/
+				};
+            });
+		//};
+
+		//
+	});
+
+
+
+
+
+
+	//funcionaes para los radio button o chekbox que sirvan para mostrar algun contenido
+	//funcionaes para los radio button o chekbox que sirvan para mostrar algun contenido
+	//funcionaes para los radio button o chekbox que sirvan para mostrar algun contenido
+	//funcionaes para los radio button o chekbox que sirvan para mostrar algun contenido
+	//funcionaes para los radio button o chekbox que sirvan para mostrar algun contenido
+
+	function mostrarCheckbox_show(thisId,accion){
+		if (accion == 'mostrar') {
+			if ( $('div.checkbox_show#'+ thisId ).hasClass('disabledContent') ) {
+				$('div.checkbox_show#'+ thisId ).removeClass('disabledContent').addClass('enabledContent');
+			}
+			if ( $('div.checkbox_show#'+ thisId ).hasClass('hide') ) {
+				$('div.checkbox_show#'+ thisId ).removeClass('hide');
+			}
+			$('div.checkbox_show#'+ thisId ).show('fast');
+
+		}else if(accion == 'ocultar'){
+			if ( $('div.checkbox_show#'+ thisId ).hasClass('enabledContent') ) {
+				$('div.checkbox_show#'+ thisId ).addClass('disabledContent').removeClass('enabledContent');
+			}else{
+				$('div.checkbox_show#'+ thisId ).hide('fast');
+			}
+		}
+
+	}
+	
+	$('input.checkbox_show').each(function(){
+		var thisId = $(this).attr('id');
+		var thisForm = $(this).parents('form').attr('id');
+		var accion = $(this).attr('accion');
+		
+		//console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
+		
+		//tipo radio button
+		if ( $(this).is(':radio') && $(this).val() == 'SI' && $(this).is(':checked') ) {
+			accion = accion || 'ocultar';
+			mostrarCheckbox_show(thisId,accion);
+			//especifico para la aceptacion o rechazo de la solicitud de alianza
+			if ( thisId == 'aceptar_alianza' ) {
+				$(this).parents('form').find('div#aceptar_alianza_enviar').addClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza').removeClass('hide');
+				$(this).parents('#Registro_content').find('#btnNext').removeClass('disabled');
+			}
+		}else if ( $(this).is(':radio') && $(this).val() == 'NO' && $(this).is(':checked') )  {
+			accion = accion || 'mostrar';
+			mostrarCheckbox_show(thisId,accion);
+			//especifico para la aceptacion o rechazo de la solicitud de alianza
+			if ( thisId == 'aceptar_alianza' ) {
+				$(this).parents('form').find('div#aceptar_alianza_enviar').removeClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza').addClass('hide');
+				$(this).parents('#Registro_content').find('#btnNext').addClass('disabled');
+			}
+		}
+
+		//tipo checkbox
+		if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
+			accion = accion || 'ocultar';
+			mostrarCheckbox_show(thisId,accion);
+		}	
+		
+	});
+
+	// para que se vea animado el progreso de los pasos
+	// $('input.checkbox_show').on('change', function(){
+
+	$(document).on('change','input.checkbox_show',function(){
+		var thisId = $(this).attr('id');
+		var thisForm = $(this).parents('form').attr('id');
+		var accion = $(this).attr('accion');
+		//console.log(thisId + ' - ' + $(this).val() + ' - ' + accion);
+		
+		//tipo radio button
+		if ( $(this).is(':radio') && $(this).val() == 'SI' ) {
+
+			accion = accion || 'ocultar';
+			mostrarCheckbox_show(thisId,accion);
+
+			//especifico para la aceptacion o rechazo de la solicitud de alianza
+			if ( thisId == 'aceptar_alianza' ) {
+				//$('#' + thisForm +' div#aceptar_alianza_enviar').addClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza_enviar').addClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza').removeClass('hide');
+				$(this).parents('#Registro_content').find('#btnNext').removeClass('disabled');
+			}
+		}else if ( $(this).is(':radio') && $(this).val() == 'NO' )  {
+			accion = accion || 'mostrar';
+			mostrarCheckbox_show(thisId,accion);
+
+			//especifico para la aceptacion o rechazo de la solicitud de alianza
+			if ( thisId == 'aceptar_alianza' ) {
+				//$('#' + thisForm +' div#aceptar_alianza_enviar').addClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza_enviar').removeClass('hide');
+				$(this).parents('form').find('div#aceptar_alianza').addClass('hide');
+				$(this).parents('#Registro_content').find('#btnNext').addClass('disabled');
+			}
+		}
+
+		//tipo checkbox
+		if ( $(this).is(':checkbox') && $(this).is(':checked') ) {
+			accion = accion || 'ocultar';
+			mostrarCheckbox_show(thisId,accion);
+		}else if ( $(this).is(':checkbox') && !$(this).is(':checked') )  {
+			accion = accion || 'mostrar';
+			mostrarCheckbox_show(thisId,accion);
+		}	
+		
+	});
+
+	
+
+
+
+
+
+	/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
+	/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
+	/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
+	/*se usan botones situados en otro lugar para ejecutar las funciones de los botones originales*/
+
+	$(document).on('click','#PreRegistro_content #btnNext, #Registro_content #btnNext',function(){
+		/*var $valid = $(".PreRegistro_form").valid();
+		if (!$valid) {
+		  $validator_PreRegistro.focusInvalid();
+		  return false;
+		} else {
+		  //$('.PreRegistro_form').wizard('next');
+		    $('#menuPreRegistro .actions .btn-next').click();
+		}*/
+		var FormContent = $(this).parents('.step-content').attr('id');
+		$( "#" + FormContent + " .step-pane.active form" ).submit();
+	});
+
+	$(document).on('click','#PreRegistro_content #btnBack, #Registro_content #btnBack',function(){
+
+		var menu = '#' + $(this).parents('.wizard_content').attr('id');
+		var botones = '#' + $(this).parents('.wizard_content').find('.button-content').attr('id');
+		
+		$(menu + ' .actions.menu .btn-prev').click();
+		$(botones + ' #btnNext').removeClass('disabled');
+	});
+
+	

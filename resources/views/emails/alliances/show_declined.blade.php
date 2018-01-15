@@ -1,7 +1,7 @@
 @extends( 'emails.layouts.ver' )
 
 <?php
-    $content = json_decode($dataMail[0]->content);
+    $content = json_decode($dataEmail[0]->content);
 ?>
 
 @section('msj_header')
@@ -27,7 +27,7 @@
         <td class="content-cell">
             <div class="col-sm-12">
                 <div class="col-sm-12">
-                    {{ $dataMail[0]->paso_observacion }}
+                    {{ $dataEmail[0]->paso_observacion }}
                 </div>
             </div>
         </td>
@@ -36,7 +36,7 @@
 
 
 
-@section('mail_content')
+@section('email_content')
     {{ $content['footer'] }}
 @endsection
 

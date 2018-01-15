@@ -16,7 +16,7 @@
             }
         }
     </style>
-<div class="ver_mail cuerpo">
+<div class="ver_email cuerpo">
     <div align="center">
         <table class="center_table">
             <!-- Email header -->

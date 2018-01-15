@@ -11,10 +11,6 @@
 @endsection
 
 @section('styles')
-    @if( $peticion == "basico" )
-    <link rel="stylesheet" type="text/css" href="{{URL::asset('css/bootstrap.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{URL::asset('css/your_style.css')}}">
-    @endif
     <style type="text/css">
 
         #bootstrap-wizard-1 > div.form-bootstrapWizard > ul > li{
@@ -42,9 +38,10 @@
     if( $peticion == "normal" ){
         $your_style = 'bootstrap-select.min.css,your_style.css';
     }elseif( $peticion == "limpio" ){
-        $your_style = '';
+        $your_style = 'your_style.css';
     }
 
+    $your_script = '/js/plugin/sparkline/jquery.sparkline.min.js';
     //$your_style = 'bootstrap-select.min.css';
     
 
@@ -52,9 +49,11 @@
     //follow the tree in inc/config.ui.php
 
     $page_nav = 1;
-    $menu="InterChange";
-    $submenu1=$tipoInterChange;
+    $page_nav_route[ "InterChange" ]["sub"][ $tipoInterChange ]["sub"][ $tipoInterChange.'List' ]["active"] = true;
+    // $menu="InterChange";
+    // $submenu1=$tipoInterChange;
     //$submenu2='';
+    
     ?>
 
 @endsection
@@ -69,49 +68,53 @@
                   <h1 class="page-title txt-color-blueDark"><em class="fa fa-pencil-square-o fa-fw "></em> InterChange <span>&gt; Vista de la inscripción </span></h1>
                 </div>
 
-                <!-- right side of the page with the sparkline graphs -->
-                <!-- col -->
-                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
-                    <ul id="sparks" class="">
-                        <li class="sparks-info">
-                            <h5> Mi Presupuesto <span class="txt-color-blue">USD$2.500</span></h5>
-                            <div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
-                                1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- end col -->
             </div>
             @endif
             <!-- widget grid -->
             <section id="widget-grid" class="">
             
                 <!-- row -->
-                <div class="row">
-                    
-                    <div class="col-sm-12">
-                        <section class="content-header">
-                            <h1>
-                                Datos de la inscripción
-                            </h1>
-                        </section>
-                    </div>
-                    
-                    <div class="row">
-                        <div id="flash-msg">
-                            @include('flash::message')
-                            @include('adminlte-templates::common.errors')
+                <div class="row col-sm-12">
+                    <div class="hide content text-center" id="datos_inscripcion">
+                        <div class="col-sm-12">
+                            <div class="content-header content-center text-left">
+                                <h1>
+                                    Datos de la inscripción #{{ $inscripcionId }}
+                                </h1>
+                            </div>
                         </div>
-                    </div>
-                    <div class="content">
+                        
+                        <div class="col-sm-12">
+                            <div id="flash-msg">
+                                @include('flash::message')
+                                @include('adminlte-templates::common.errors')
+                            </div>
+                        </div>
                         <div class="box box-primary">
-                            <div class="box-body">
-                                <div class="row" style="padding-left: 20px">
+                            <div class="box-body content-center text-left">
+                                <div class="row {{ $metodo ?? '' }}" style="padding-left: 20px">
                                     @include('InterChange.show_fields')
                                     @if( $peticion == "normal" )
-                                    <a href="{!! route('interchanges.'.$tipoInterChange.'.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
-                                    <a href="{!! route('interchanges.'.$tipoInterChange.'.edit',$inscripcionId) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                                        <div class="col-sm-12">
+                                            <br><br>
+                                            <div class="col-sm-12">
+                                                <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
+
+                                                @if( $editar_paso == true )
+                                                    <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.edit',$inscripcionId) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar todo</a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="">
+                                                <div class=" full">
+                                                    <!-- Updated At Field -->
+                                                    <div class=" full">
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -137,7 +140,8 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
-            
+            $('div#datos_inscripcion div:not(.no_tocar)').removeClass('form-group').removeClass('input-group').removeClass('form-control');
+            $('div#datos_inscripcion').removeClass('hide');
         });
 
     </script>

@@ -1,7 +1,7 @@
 <!-- Usuario Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('usuario_id', 'Usuario Id:') !!}
-    {!! Form::number('usuario_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('user_id', 'Usuario Id:') !!}
+    {!! Form::number('user_id', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Fecha Field -->

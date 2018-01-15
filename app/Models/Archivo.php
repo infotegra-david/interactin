@@ -99,7 +99,7 @@ class Archivo extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosInscripcions()
+    public function documentosInscripcion()
     {
         return $this->hasMany(\App\Models\DocumentosInscripcion::class);
     }
@@ -107,7 +107,7 @@ class Archivo extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosInstitucions()
+    public function documentosInstitucion()
     {
         return $this->hasMany(\App\Models\DocumentosInstitucion::class);
     }
@@ -115,7 +115,7 @@ class Archivo extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosOportunidads()
+    public function documentosOportunidad()
     {
         return $this->hasMany(\App\Models\DocumentosOportunidad::class);
     }
@@ -123,9 +123,9 @@ class Archivo extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function mail()
+    public function email()
     {
-        return $this->belongsToMany('\App\Models\Mail','mail_archivo','archivo_id','mail_id');
+        return $this->belongsToMany('\App\Models\Email','email_archivo','archivo_id','email_id');
     }
 
     /**

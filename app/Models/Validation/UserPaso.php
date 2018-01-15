@@ -24,6 +24,7 @@ class UserPaso extends Model
 
 
     public $fillable = [
+        'campus_id',
         'tipo_paso_id',
         'user_id',
         'orden',
@@ -35,13 +36,14 @@ class UserPaso extends Model
      *
      * @var array
      */
-    protected $casts = [
-        'id' => 'integer',
-        'tipo_paso_id' => 'integer',
-        'user_id' => 'integer',
-        'orden' => 'integer',
-        'titulo' => 'string'
-    ];
+    // protected $casts = [
+    //     'id' => 'integer',
+    //     'campus_id' => 'integer',
+    //     'tipo_paso_id' => 'integer',
+    //     'user_id' => 'integer',
+    //     'orden' => 'integer',
+    //     'titulo' => 'string'
+    // ];
 
     /**
      * Validation rules
@@ -49,6 +51,7 @@ class UserPaso extends Model
      * @var array
      */
     public static $rules = [
+        'campus_id' => 'required|integer',
         'tipo_paso_id' => 'required|integer',
         'user_id' => 'required|integer',
         'orden' => 'required|integer',
@@ -74,8 +77,8 @@ class UserPaso extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function mail()
+    public function email()
     {
-        return $this->belongsToMany('\App\Models\Mail','user_tipo_paso_mail','user_tipo_paso_id','mail_id');
+        return $this->belongsToMany('\App\Models\Email','user_tipo_paso_email','user_tipo_paso_id','email_id');
     }
 }

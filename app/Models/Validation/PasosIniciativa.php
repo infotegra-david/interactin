@@ -33,6 +33,7 @@ class PasosIniciativa extends Model
         'tipo_paso_id',
         'estado_id',
         'user_id',
+        'campus_id',
         'observacion',
         'iniciativa_id'
     ];
@@ -47,6 +48,7 @@ class PasosIniciativa extends Model
         'tipo_paso_id' => 'integer',
         'estado_id' => 'integer',
         'user_id' => 'integer',
+        'campus_id' => 'integer',
         'observacion' => 'string',
         'iniciativa_id' => 'integer'
     ];
@@ -96,8 +98,8 @@ class PasosIniciativa extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function mail()
+    public function email()
     {
-        return $this->belongsToMany('\App\Models\Mail','pasos_iniciativa_mail','pasos_inicitativa_id','mail_id');
+        return $this->belongsToMany('\App\Models\Email','pasos_iniciativa_email','pasos_inicitativa_id','email_id');
     }
 }

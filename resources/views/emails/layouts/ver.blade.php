@@ -1,10 +1,11 @@
 
 <?php
-
-    $to = json_decode($dataMail[0]->to);
-    $cc = json_decode($dataMail[0]->cc);
-    $bcc = json_decode($dataMail[0]->bcc);
-    $replyto = json_decode($dataMail[0]->replyto);
+    if (isset($dataEmail)) {
+        $to = json_decode($dataEmail[0]->to);
+        $cc = json_decode($dataEmail[0]->cc);
+        $bcc = json_decode($dataEmail[0]->bcc);
+        $replyto = json_decode($dataEmail[0]->replyto);
+    }
 
     
 ?>
@@ -25,8 +26,9 @@
             }
         }
     </style>
-<div class="ver_mail cuerpo">
+<div class="ver_email cuerpo">
     <div class="wrapper">
+    @if(isset($dataEmail))
         <table class="table text-left" width="100%" cellpadding="0" cellspacing="0">
             <!--
             <tr>
@@ -100,108 +102,83 @@
                 <td>
                     <div class="col-sm-12">
                         <div class="col-sm-12">
-                            <strong>Asunto:</strong>  {{ $dataMail[0]->subject }}
+                            <strong>Asunto:</strong>  {{ $dataEmail[0]->subject }}
                         </div>
                     </div>
                 </td>
             </tr>
         </table>
             <hr>
+    @endif
         <table class="table text-left" width="100%" cellpadding="0" cellspacing="0">
             <!-- Email header -->
-            <tr>
-                <td class="header ">
-                    <div class="col-sm-12">
+            @if(isset($dataEmail))
+                <tr>
+                    <td class="header ">
                         <div class="col-sm-12">
-                            <h1 class="text-center">{{  Config::get('app.name') }}</h1>
+                            <div class="col-sm-12">
+                                <h1 class="text-center">{{  Config::get('app.name') }}</h1>
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-            <!-- Body content -->
-            <tr>
-                <td class="content-cell">
-                    <div class="col-sm-12">
+                    </td>
+                </tr>
+                <!-- Body content -->
+                <tr>
+                    <td class="content-cell">
                         <div class="col-sm-12">
-                            <h1>Cordial saludo</h1>
+                            <div class="col-sm-12">
+                                <h1>Cordial saludo</h1>
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-            
-            @yield('msj_header')
+                    </td>
+                </tr>
+                
+                @yield('msj_header')
+            @endif
             
             <tr>
                 <td >
-                    <div class="datos_alianza" width="" cellpadding="0" cellspacing="0">
+                    <div class="datos_proceso" width="" cellpadding="0" cellspacing="0">
                         
                         @yield('data')
 
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td class="panel-item" style="background-color: rgba(237, 239, 242, 0.21);padding:16px;">
-                    <div class="col-sm-12">
+            @if(isset($dataEmail))
+                <tr>
+                    <td class="panel-item" style="background-color: rgba(237, 239, 242, 0.21);padding:16px;">
                         <div class="col-sm-12">
-                            @yield('mail_content')
+                            <div class="col-sm-12">
+                                @yield('email_content')
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
+                    </td>
+                </tr>
+                <tr>
 
-            </tr>
-            <tr>
-                <td class="content-cell" >
-                    <div class="col-sm-12">
+                </tr>
+                <tr>
+                    <td class="content-cell" >
                         <div class="col-sm-12">
-                            Gracias,<br>
-                            {{ config('app.name') }}
-                            @yield('email_footer')
-                            <br>
-                            <br>
+                            <div class="col-sm-12">
+                                Gracias,<br>
+                                {{ config('app.name') }}
+                                @yield('email_footer')
+                                <br>
+                                <br>
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-            <hr>
-        <table class="table text-left table-responsive table_padding" width="100%" cellpadding="0" cellspacing="0">
-            @if( isset($archivosAdjuntos) &&  count($archivosAdjuntos) )
-                <thead>
-                    <tr>
-                        <th>
-                            <h3>Archivos adjuntos:</h3>
-                        </th>
-                        <th class="" >
-                        </th>
-                    </tr>
-                
-                </thead>
-                <tbody>
-                    @foreach( $archivosAdjuntos as $archivoAdjunto )
-                    <tr class="" >
-                        <td class="content-cell" >
-                            {{ $archivoAdjunto->nombre }}
-                        </td>       
-                        <td class="content-cell" >
-                            <a class="btn btn-xs btn-default pull-right" target="_blank"href="{{ Storage::url($archivoAdjunto->path) }}">Ver</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                    <tr>
-                        <td class="content-cell" >
-                            <br>
-                        </td>
-                        <td class="" >
-                        </td>
-                    </tr>
-                </tbody>
+                    </td>
+                </tr>
             @endif
         </table>
+            <hr>
+        
     {{ Form::hidden('enviar', true) }}
-    {{ Form::hidden('tokenmail', $dataMail[0]->tokenmail) }}
+    @if(isset($dataEmail))
+        {{ Form::hidden('tokenemail', $dataEmail[0]->tokenemail) }}
+    @endif
     </div>
 </div>
 
@@ -209,8 +186,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.datos_alianza div').removeClass('form-group').removeClass('input-group').removeClass('form-control').removeClass('table-hover').removeClass('panel');
-        $('.datos_alianza .collapseAlianza').removeClass('hide');
-        $('.datos_alianza #collapseDataAlianza').addClass('collapse');
+        $('.datos_proceso div').removeClass('form-group').removeClass('input-group').removeClass('form-control').removeClass('table-hover').removeClass('panel');
+        $('.datos_proceso .collapseProceso').removeClass('hide');
+        // $('.datos_proceso #collapseDataAlianza').addClass('collapse');
     });
 </script>

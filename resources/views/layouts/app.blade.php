@@ -110,7 +110,9 @@ require_once(base_path()."/resources/views/inc/config.ui.php");
 
             //se encarga mostrar la pantalla que muestra un gif con tres puntos cuando se da click en un link que recargue la pagina
             $(document).on('click','nav a',function(e){
-                $('#container-loading').addClass("show");
+            	if ( $(this).attr("href") != '#' ) {
+                	$('#container-loading').addClass("show");
+            	}
             });
 
 

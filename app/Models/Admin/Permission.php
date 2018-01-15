@@ -59,10 +59,10 @@ class Permission extends \Spatie\Permission\Models\Permission
             'edit_pasosalianzas',
             'delete_pasosalianzas',
 
-            'view_mails',
-            'add_mails',
-            'edit_mails',
-            'delete_mails',
+            'view_emails',
+            'add_emails',
+            'edit_emails',
+            'delete_emails',
 
             'view_logs',
             'add_logs',

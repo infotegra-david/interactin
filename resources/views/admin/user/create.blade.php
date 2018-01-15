@@ -48,6 +48,12 @@
 
         @include('flash::message')
 
+        <div id="Form_user_results">
+            <div id="show-msg" return="">
+                @include( 'layouts.alerts' )
+            </div>
+        </div>
+
     <div class="clearfix"></div>
     
     <div class="row">
@@ -62,11 +68,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            {!! Form::open(['route' => [$route], 'id' => 'Form_create_user' ]) !!}
-                @include($include)
-                <!-- Submit Form Button -->
-                {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
-            {!! Form::close() !!}
+            @include($include)
         </div>
     </div>
 @endsection

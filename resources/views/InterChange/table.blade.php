@@ -16,7 +16,7 @@
     <tbody>
     @foreach($interChanges as $interChange)
         <tr>
-            <td>{!! $interChange->usuario_id !!}</td>
+            <td>{!! $interChange->user_id !!}</td>
             <td>{!! $interChange->fecha !!}</td>
             <td>{!! $interChange->periodo_id !!}</td>
             <td>{!! $interChange->programa_origen_id !!}</td>

@@ -36,9 +36,11 @@ class DocumentosInstitucionController extends AppBaseController
 
     private $user;
     private $campusApp;
+    private $campusAppFound;
     private $institucion;
     private $tipo_documento;
     private $peticion;
+    private $viewWith;
 
     public function __construct(DocumentosInstitucionRepository $documentosInstitucionRepo, User $userModel, Institucion $institucionModel, TipoDocumento $tipoDocumentoModel, Request $request)
     {
@@ -51,6 +53,7 @@ class DocumentosInstitucionController extends AppBaseController
                     if (session('campusApp') == null) {
                         session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
                         session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
                     }
                     if (count($this->campusApp)) {
                         $this->campusApp = $this->campusApp->pluck('nombre','id');
@@ -61,6 +64,23 @@ class DocumentosInstitucionController extends AppBaseController
                     $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
             }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                return redirect(route('home'));
+            }
+            if ( Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = ['campusApp' => $this->campusApp];
+
             return $next($request);
         });
 
@@ -77,6 +97,7 @@ class DocumentosInstitucionController extends AppBaseController
             $this->peticion = "normal";
         }
 
+
     }
 
     /**
@@ -90,8 +111,10 @@ class DocumentosInstitucionController extends AppBaseController
         $this->documentosInstitucionRepository->pushCriteria(new RequestCriteria($request));
         $documentosInstitucions = $this->documentosInstitucionRepository->all();
 
+        $this->viewWith = array_merge($this->viewWith,['documentosInstitucions' => $documentosInstitucions]);
+
         return view('admin.documentos_institucion.index')
-            ->with('documentosInstitucions', $documentosInstitucions);
+            ->with($this->viewWith);
     }
 
     /**
@@ -130,7 +153,9 @@ class DocumentosInstitucionController extends AppBaseController
         //agregar el campo 'Otro' para que agreguen una nueva unidad (tipo_documento)
         $tipo_documento = $this->tipo_documento->select(DB::raw("'Otro' AS nombre, '999999' AS id"))->pluck('nombre','id');
 
-        return view('admin.documentos_institucion.create')->with(['institucion' => $institucion,'tipo_documento' => $tipo_documento]);
+        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion,'tipo_documento' => $tipo_documento]);
+
+        return view('admin.documentos_institucion.create')->with($this->viewWith);
     }
 
     /**
@@ -294,7 +319,7 @@ class DocumentosInstitucionController extends AppBaseController
         }else{
             DB::commit();
 
-            return view($view)->with($viewWith);
+            return view($view)->with($this->viewWith);
         }
 
         // $documentosInstitucion = $this->documentosInstitucionRepository->create($input);
@@ -321,9 +346,9 @@ class DocumentosInstitucionController extends AppBaseController
             return redirect(route('admin.documentosInstitucion.index'));
         }
 
+        $this->viewWith = array_merge($this->viewWith,['documentosInstitucion' => $documentosInstitucion]);
 
-
-        return view('admin.documentos_institucion.show')->with('documentosInstitucion', $documentosInstitucion);
+        return view('admin.documentos_institucion.show')->with($this->viewWith);
     }
 
     /**
@@ -346,8 +371,8 @@ class DocumentosInstitucionController extends AppBaseController
         $errors = 0;
         $errorsMsg = '';
         $okMsg = '';
-        $view = 'print.editor_word_drag_drop';
-        $viewWith = [];
+        $view = 'files.editor_word_drag_drop';
+        $viewWith = $this->viewWith;
 
         $tipo_documento = \App\Models\TipoDocumento::find($documentosInstitucion->tipo_documento_id);
 
@@ -455,14 +480,14 @@ class DocumentosInstitucionController extends AppBaseController
 
         $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'documentosInstitucion' => $documentosInstitucion]);
 
-        //return view('print.editor')->with($viewWith);
+        //return view('files.editor')->with($viewWith);
         if (isset($request['tipo_editor'])) {
             if ($request['tipo_editor'] == 1) {
-                $view = 'print.editor';
+                $view = 'files.editor';
             }elseif ($request['tipo_editor'] == 2) {
-                $view = 'print.editor_drag_drop';
+                $view = 'files.editor_drag_drop';
             }elseif ($request['tipo_editor'] == 3) {
-                $view = 'print.editor_word_drag_drop';
+                $view = 'files.editor_word_drag_drop';
             }
         }
 

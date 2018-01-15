@@ -28,7 +28,7 @@ class RoleController extends \App\Http\Controllers\Controller
         $permissions = Permission::all();
         
         //lista de todos los roles y sus respectivos permisos
-        $roles = Role::join('role_has_permissions','roles.id','role_has_permissions.role_id')
+        $roles = Role::leftJoin('role_has_permissions','roles.id','role_has_permissions.role_id')
             ->leftJoin('permissions','role_has_permissions.permission_id','permissions.id')
             ->select('roles.id','roles.name','permissions.id AS permissions_id','permissions.name AS permissions_name');
         $roles = $roles->get()->toArray();

@@ -23,8 +23,14 @@ return [
 	],
 	'duracion_unid' => [
 		''			=> 'Seleccione el periodo...',
-		'MESES'		=> 'Meses',
-		'AÑOS'		=> 'Años'
+		'MESES'		=> 'Mes(es)',
+		'AÑOS'		=> 'Año(s)'
+	],
+	'genero' => [
+		''			=> 'Seleccione el género...',
+		'1'		=> 'Masculino',
+		'2'		=> 'Femenino',
+		'3'		=> 'No responde'
 	],
 	/*
     |--------------------------------------------------------------------------

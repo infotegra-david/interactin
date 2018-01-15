@@ -22,6 +22,7 @@ class TipoDocumentoTableSeeder extends Seeder
                 'id' => 1,
                 'nombre' => 'REPRESENTACIÓN LEGAL',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -31,6 +32,7 @@ class TipoDocumentoTableSeeder extends Seeder
                 'id' => 2,
                 'nombre' => 'ACTA DE NOMBRAMIENTO',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -40,6 +42,7 @@ class TipoDocumentoTableSeeder extends Seeder
                 'id' => 3,
                 'nombre' => 'ACTA DE POSESIÓN',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -47,8 +50,9 @@ class TipoDocumentoTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-            'nombre' => 'CÉDULA (C)(E)',
-                'clase_documento_id' => 2,
+                'nombre' => 'CÁMARA DE COMERCIO',
+                'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -56,8 +60,9 @@ class TipoDocumentoTableSeeder extends Seeder
             4 => 
             array (
                 'id' => 5,
-                'nombre' => 'CÁMARA DE COMERCIO',
+                'nombre' => 'RESOLUCIÓN/DECRETO',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -65,8 +70,9 @@ class TipoDocumentoTableSeeder extends Seeder
             5 => 
             array (
                 'id' => 6,
-                'nombre' => 'RESOLUCIÓN/DECRETO',
+                'nombre' => 'PERSONERÍA JURÍDICA',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -74,8 +80,9 @@ class TipoDocumentoTableSeeder extends Seeder
             6 => 
             array (
                 'id' => 7,
-                'nombre' => 'PERSONERÍA JURÍDICA',
+            'nombre' => 'CARTA DEL DECANO(A)',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -83,8 +90,9 @@ class TipoDocumentoTableSeeder extends Seeder
             7 => 
             array (
                 'id' => 8,
-            'nombre' => 'CARTA DEL DECANO(A)',
+                'nombre' => 'PRE-FORMAS',
                 'clase_documento_id' => 3,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -93,7 +101,8 @@ class TipoDocumentoTableSeeder extends Seeder
             array (
                 'id' => 9,
                 'nombre' => 'PRE-FORMAS',
-                'clase_documento_id' => 3,
+                'clase_documento_id' => 6,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -101,8 +110,9 @@ class TipoDocumentoTableSeeder extends Seeder
             9 => 
             array (
                 'id' => 10,
-                'nombre' => 'PRE-FORMAS',
-                'clase_documento_id' => 6,
+                'nombre' => 'CÉDULA DE CIUDADANÍA',
+                'clase_documento_id' => 7,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -110,8 +120,9 @@ class TipoDocumentoTableSeeder extends Seeder
             10 => 
             array (
                 'id' => 11,
-                'nombre' => 'CÉDULA DE CIUDADANÍA',
+                'nombre' => 'CÉDULA DE EXTRANJERÍA',
                 'clase_documento_id' => 7,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -119,8 +130,9 @@ class TipoDocumentoTableSeeder extends Seeder
             11 => 
             array (
                 'id' => 12,
-                'nombre' => 'CÉDULA DE EXTRANJERÍA',
+                'nombre' => 'PASAPORTE',
                 'clase_documento_id' => 7,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -128,8 +140,9 @@ class TipoDocumentoTableSeeder extends Seeder
             12 => 
             array (
                 'id' => 13,
-                'nombre' => 'PASAPORTE',
-                'clase_documento_id' => 7,
+                'nombre' => 'DOCUMENTOS FINALES ALIANZA',
+                'clase_documento_id' => 6,
+                'descripcion' => NULL,
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,
@@ -137,8 +150,29 @@ class TipoDocumentoTableSeeder extends Seeder
             13 => 
             array (
                 'id' => 14,
-                'nombre' => 'DOCUMENTOS FINALES ALIANZA',
-                'clase_documento_id' => 6,
+                'nombre' => 'DOCUMENTOS SOPORTE',
+                'clase_documento_id' => 2,
+                'descripcion' => '[{"nombre": "Certificado de notas", "descripcion": ""},{"nombre": "Pasaporte", "descripcion": ""},{"nombre": "Carta de intención del estudiante", "descripcion": ""},{"nombre": "Carta de recomendación de un profesor", "descripcion": ""},{"nombre": "Hoja de vida", "descripcion": ""},{"nombre": "Carta de compromiso padres - acudientes", "descripcion": ""},{"nombre": "Formulario de inscripcion destino", "descripcion": ""},{"nombre": "Certificado conocimiento del idioma destino", "descripcion": ""}]',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'nombre' => 'FOTO',
+                'clase_documento_id' => 2,
+                'descripcion' => NULL,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'nombre' => 'DOCUMENTOS FINALES INSCRIPCION',
+                'clase_documento_id' => 2,
+                'descripcion' => '[{"nombre": "Recibo de derechos de movilidad cancelado", "descripcion": ""},{"nombre": "Seguro medico internacional", "descripcion": ""},{"nombre": "Visado otorgado (Si aplica)", "descripcion": ""},{"nombre": "Tiquete aéreo", "descripcion": ""},{"nombre": "Carta de compromiso según tipo de movilidad", "descripcion": "Semestre Académico (<a href=\'archivo1.pdf\'>Descargar</a>) <br> Prácticas o Pasantías (<a href=\'archivo2.pdf\'>Descargar</a>)"}]',
                 'created_at' => NULL,
                 'updated_at' => NULL,
                 'deleted_at' => NULL,

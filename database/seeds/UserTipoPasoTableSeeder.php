@@ -22,6 +22,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 1,
                 'tipo_paso_id' => 6,
                 'user_id' => 18,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'Director de programa',
                 'created_at' => '2017-07-13 18:07:32',
@@ -33,6 +34,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 2,
                 'tipo_paso_id' => 6,
                 'user_id' => 19,
+                'campus_id' => 1,
                 'orden' => 2,
                 'titulo' => 'Rectoría',
                 'created_at' => '2017-07-13 18:07:45',
@@ -44,6 +46,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 3,
                 'tipo_paso_id' => 6,
                 'user_id' => 6,
+                'campus_id' => 1,
                 'orden' => 3,
                 'titulo' => 'Abogados',
                 'created_at' => '2017-07-13 18:07:54',
@@ -55,6 +58,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 4,
                 'tipo_paso_id' => 6,
                 'user_id' => 12,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'copia_oculta_emails',
                 'created_at' => '2017-08-10 00:00:00',
@@ -66,6 +70,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 5,
                 'tipo_paso_id' => 10,
                 'user_id' => 18,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'Director de programa',
                 'created_at' => '2017-08-10 00:00:00',
@@ -77,6 +82,7 @@ class UserTipoPasoTableSeeder extends Seeder
                 'id' => 6,
                 'tipo_paso_id' => 10,
                 'user_id' => 12,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'copia_oculta_emails',
                 'created_at' => '2017-08-02 14:34:25',
@@ -86,8 +92,9 @@ class UserTipoPasoTableSeeder extends Seeder
             6 => 
             array (
                 'id' => 7,
-                'tipo_paso_id' => 20,
+                'tipo_paso_id' => 19,
                 'user_id' => 18,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'Director de programa',
                 'created_at' => '2017-08-02 14:34:25',
@@ -97,8 +104,9 @@ class UserTipoPasoTableSeeder extends Seeder
             7 => 
             array (
                 'id' => 8,
-                'tipo_paso_id' => 20,
+                'tipo_paso_id' => 19,
                 'user_id' => 13,
+                'campus_id' => 1,
                 'orden' => 2,
                 'titulo' => 'ORII',
                 'created_at' => '2017-08-02 14:34:25',
@@ -108,8 +116,9 @@ class UserTipoPasoTableSeeder extends Seeder
             8 => 
             array (
                 'id' => 9,
-                'tipo_paso_id' => 20,
+                'tipo_paso_id' => 19,
                 'user_id' => 5,
+                'campus_id' => 1,
                 'orden' => 3,
                 'titulo' => 'Universidad/Institución de destino',
                 'created_at' => '2017-08-02 14:34:25',
@@ -119,8 +128,9 @@ class UserTipoPasoTableSeeder extends Seeder
             9 => 
             array (
                 'id' => 10,
-                'tipo_paso_id' => 20,
+                'tipo_paso_id' => 19,
                 'user_id' => 12,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'copia_oculta_emails',
                 'created_at' => '2017-08-10 00:00:00',
@@ -131,8 +141,9 @@ class UserTipoPasoTableSeeder extends Seeder
             10 => 
             array (
                 'id' => 11,
-                'tipo_paso_id' => 21,
+                'tipo_paso_id' => 20,
                 'user_id' => 13,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'ORII',
                 'created_at' => '2017-08-02 14:34:25',
@@ -142,8 +153,9 @@ class UserTipoPasoTableSeeder extends Seeder
             11 => 
             array (
                 'id' => 12,
-                'tipo_paso_id' => 21,
+                'tipo_paso_id' => 20,
                 'user_id' => 14,
+                'campus_id' => 1,
                 'orden' => 2,
             'titulo' => 'Vicerrectoría Académica (VRAC)',
                 'created_at' => '2017-08-02 14:34:25',
@@ -153,8 +165,9 @@ class UserTipoPasoTableSeeder extends Seeder
             12 => 
             array (
                 'id' => 13,
-                'tipo_paso_id' => 21,
+                'tipo_paso_id' => 20,
                 'user_id' => 15,
+                'campus_id' => 1,
                 'orden' => 3,
             'titulo' => 'Oficina de Admisiones y Registro (OAR)',
                 'created_at' => '2017-08-02 14:34:25',
@@ -165,19 +178,9 @@ class UserTipoPasoTableSeeder extends Seeder
             13 => 
             array (
                 'id' => 14,
-                'tipo_paso_id' => 21,
-                'user_id' => 13,
-                'orden' => 1,
-                'titulo' => 'ORII',
-                'created_at' => '2017-08-10 00:00:00',
-                'updated_at' => '2017-08-10 00:00:00',
-                'deleted_at' => NULL,
-            ),
-            14 => 
-            array (
-                'id' => 15,
-                'tipo_paso_id' => 21,
+                'tipo_paso_id' => 20,
                 'user_id' => 12,
+                'campus_id' => 1,
                 'orden' => 1,
                 'titulo' => 'copia_oculta_emails',
                 'created_at' => NULL,

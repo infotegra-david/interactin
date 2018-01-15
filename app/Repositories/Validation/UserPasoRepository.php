@@ -11,6 +11,7 @@ class UserPasoRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
+        'campus_id',
         'tipo_paso_id',
         'user_id',
         'orden',

@@ -10,10 +10,22 @@
     <p>{!! $tipoPaso->nombre !!}</p>
 </div>
 
-<!-- Validador Id Field -->
+<!-- Titulo Field -->
 <div class="form-group">
-    {!! Form::label('validador_id', 'Validador Id:') !!}
-    <p>{!! $tipoPaso->validador_id !!}</p>
+    {!! Form::label('titulo', 'Titulo:') !!}
+    <p>{!! $tipoPaso->titulo !!}</p>
+</div>
+
+<!-- Seccion Field -->
+<div class="form-group">
+    {!! Form::label('seccion', 'Seccion:') !!}
+    <p>{!! $tipoPaso->seccion !!}</p>
+</div>
+
+<!-- Reglas Field -->
+<div class="form-group">
+    {!! Form::label('reglas', 'Reglas:') !!}
+    <p>{!! $tipoPaso->reglas !!}</p>
 </div>
 
 <!-- Created At Field -->

@@ -28,6 +28,7 @@ class PasosInscripcion extends Model
         'tipo_paso_id',
         'estado_id',
         'user_id',
+        'campus_id',
         'observacion',
         'inscripcion_id'
     ];
@@ -42,6 +43,7 @@ class PasosInscripcion extends Model
         'tipo_paso_id' => 'integer',
         'estado_id' => 'integer',
         'user_id' => 'integer',
+        'campus_id' => 'integer',
         'observacion' => 'string',
         'inscripcion_id' => 'integer'
     ];
@@ -91,8 +93,8 @@ class PasosInscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function mail()
+    public function email()
     {
-        return $this->belongsToMany('\App\Models\Mail','pasos_inscripcion_mail','pasos_inscripcion_id','mail_id');
+        return $this->belongsToMany('\App\Models\Email','pasos_inscripcion_email','pasos_inscripcion_id','email_id');
     }
 }

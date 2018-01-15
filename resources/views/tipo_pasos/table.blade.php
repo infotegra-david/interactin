@@ -1,14 +1,18 @@
 <table class="table table-responsive" id="tipoPasos-table">
     <thead>
         <th>Nombre</th>
-        <th>Validador Id</th>
+        <th>Titulo</th>
+        <th>Seccion</th>
+        <th>Reglas</th>
         <th colspan="3">Action</th>
     </thead>
     <tbody>
     @foreach($tipoPasos as $tipoPaso)
         <tr>
             <td>{!! $tipoPaso->nombre !!}</td>
-            <td>{!! $tipoPaso->validador_id !!}</td>
+            <td>{!! $tipoPaso->titulo !!}</td>
+            <td>{!! $tipoPaso->seccion !!}</td>
+            <td>{!! $tipoPaso->reglas !!}</td>
             <td>
                 {!! Form::open(['route' => ['tipoPasos.destroy', $tipoPaso->id], 'method' => 'delete']) !!}
                 <div class='btn-group'>

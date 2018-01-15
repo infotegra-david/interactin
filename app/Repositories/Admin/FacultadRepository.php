@@ -32,4 +32,18 @@ class FacultadRepository extends BaseRepository
     {
         return Facultad::class;
     }
+    /**
+     * Lista los registros segun el id pasado por parametro.
+     *
+     * @param  int 
+     *
+     * @return Response
+     */
+    public function listFaculties($campus_id = null)
+    {
+        if (!is_array($campus_id)){
+            $campus_id = array($campus_id);
+        }
+        return Facultad::whereIn('campus_id', $campus_id)->pluck('nombre','id');
+    }
 }

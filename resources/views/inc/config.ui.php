@@ -22,7 +22,7 @@ ex:
 
 */
 $page_nav = array(
-	"dashboard" => array(
+	"Inicio" => array(
 		"title" => "Inicio",
 		"icon" => "fa-home",
 		"sub" => array()
@@ -31,6 +31,8 @@ $page_nav = array(
 );
 
 $runPendingMisAlianzas = auth()->user()->pending('mis_alianzas');
+// print_r($runPendingMisAlianzas);
+
 
 //lista de roles del usuario actual
 $roles = auth()->user()->getRoleNames();
@@ -65,38 +67,45 @@ $isCoordinador_externo = array_search('coordinador_externo', $roles);
 $page_nav = array();
 
 //submenu Inicio
-	$InicioSub = array();
+	$HomeSub = array();
 	//comprobar los permisos para cada formulario
 	if($isAdministrador !== false){
-		$InicioSub["Administrador"] = array(
+		$HomeSub["Administrador"] = array(
 					"icon" => "fa-gear",
 					"title" => "Administrador",
 					"url" => route('home')
 				);
 	}
 	if($isEstudiante !== false){
-		$InicioSub["Estudiante"] = array(
+		$HomeSub["Estudiante"] = array(
 					"title" => "Estudiante",
 					"icon" => "fa-graduation-cap",
 					"url" => url("/html/estudiante_home.php")
 				);
 	}
 	if($isValidador !== false){
-		$InicioSub["Validador"] = array(
+		$HomeSub["Validador"] = array(
 					"title" => "Validador",
 					"icon" => "fa-search",
 					"url" => url("/html/validador_home.php")
 				);
 	}
+	if($isProfesor !== false){
+		$HomeSub["profesor"] = array(
+					"title" => "Profesor",
+					"icon" => "fa-search",
+					"url" => url("/html/coordinador_home.php")
+				);
+	}
 	if($isCoordinador_interno !== false){
-		$InicioSub["Coordinador_int"] = array(
+		$HomeSub["Coordinador_int"] = array(
 					"title" => "Coordinador Int.",
 					"icon" => "fa-user-circle-o",
 					"url" => url("/html/coordinador_home.php")
 				);
 	}
 	if($isCoordinador_externo !== false){
-		$InicioSub["Coordinador_ext"] = array(
+		$HomeSub["Coordinador_ext"] = array(
 					"title" => "Coordinador Ext.",
 					"icon" => "fa-user-circle-o",
 					"url" => url("/html/coordinador_home.php")
@@ -104,42 +113,97 @@ $page_nav = array();
 	}
 
 	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
-	if ( count($InicioSub) ) {
+	if ( count($HomeSub) ) {
 
-		$page_nav["dashboard"]["sub"] = $InicioSub;
+		$page_nav = array(
+			"Home" => array(
+				"title" => "Inicio",
+				"icon" => "fa-home",
+				"sub" => $HomeSub
+			)
+			
+		);
 	}
 
 //submenu InterChange
 	$InterChangeSub = array();
+	$InterOutSub = array();
+	$InterInSub = array();
 	//comprobar los permisos para cada formulario
 	if(isset($listPermissions['view_interout'])){
-		$InterChangeSub["InterOutMap"] = array(
+		$InterOutSub["InterOutMap"] = array(
 			        "title" => "InterOutMap",
 			        "icon" => "fa-map",
 			        "url" => url("/interchanges/interout/map")
 				);
-	}
-	if(isset($listPermissions['add_interout'])){
-		$InterChangeSub["InterOut"] = array(
-					"title" => "InterOut",
-					"icon" => "fa-arrow-up",
+		$InterOutSub["InterOutList"] = array(
+					"title" => "InterOutList",
+					"icon" => "fa-list-ul",
 					"url" => url("/interchanges/interout")
 					//"url" => route('interchanges.interout.create')
 				);
 	}
+	if(isset($listPermissions['add_interout'])){
+		$InterOutSub["RegisterInterOut"] = array(
+					"title" => "Registrar Movilidad",
+					"icon" => "fa-address-book-o",
+					"url" => url("/interchanges/interout/create")
+				);
+	}
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterOutSub) ) {
+		$InterChangeSub["InterOut"] = array(
+					"title" => "InterOut",
+					"icon" => "fa-arrow-up",
+					"sub" => $InterOutSub
+				);
+	}
+
+	//comprobar los permisos para cada formulario
 	if(isset($listPermissions['view_interin'])){
-		$InterChangeSub["InterInMap"] = array(
-					"title" => "InterInMap",
-					"icon" => "fa-map-o",
-					"url" => url("/interchanges/interin/map")
+		$InterInSub["InterInMap"] = array(
+			        "title" => "InterInMap",
+			        "icon" => "fa-map-o",
+			        "url" => url("/interchanges/interin/map")
+				);
+		$InterInSub["InterInList"] = array(
+					"title" => "InterInList",
+					"icon" => "fa-list-ul",
+					"url" => url("/interchanges/interin")
+					//"url" => route('interchanges.interin.create')
 				);
 	}
 	if(isset($listPermissions['add_interin'])){
+		$InterInSub["RegisterInterIn"] = array(
+					"title" => "Registrar Movilidad",
+					"icon" => "fa-address-book-o",
+					"url" => url("/interchanges/interin/create")
+				);
+	}
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterInSub) ) {
 		$InterChangeSub["InterIn"] = array(
-			        "title" => "InterIn",
-			        "icon" => "fa-arrow-down",
-			        "url" => url("/interchanges/interin")
-			        //"url" => route('interchanges.interin.create')
+					"title" => "InterIn",
+					"icon" => "fa-arrow-down",
+					"sub" => $InterInSub
+				);
+	}
+
+	if(isset($listPermissions['view_assignments_interchanges'])){
+		//los formularios comparten el mismo permiso
+		$InterChangeSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => route('interchanges.assignments_interchanges.index')
+				);
+	}
+
+	if(isset($listPermissions['view_emails_interchanges'])){
+		//los formularios comparten el mismo permiso
+		$InterChangeSub["Emails"] = array(
+			        "title" => "Emails",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interchanges.emails_interchanges.index')
 				);
 	}
 
@@ -189,6 +253,26 @@ $page_nav = array();
 				);
 	}
 
+	if(isset($listPermissions['view_assignments_interalliances'])){
+		//los formularios comparten el mismo permiso
+
+		$InterAllianceSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => route('interalliances.assignments_interalliances.index')
+				);
+	}
+
+	if(isset($listPermissions['view_emails_interalliances'])){
+		//los formularios comparten el mismo permiso
+
+		$InterAllianceSub["Emails"] = array(
+			        "title" => "Emails",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interalliances.emails_interalliances.index')
+				);
+	}
+
 	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
 	if ( count($InterAllianceSub) ) {
 
@@ -225,6 +309,24 @@ $page_nav = array();
 			        "title" => "Enviar inicativa",
 			        "icon" => "fa-lightbulb-o",
 			        "url" => url("/html/initiative.php")
+				);
+	}
+	if(isset($listPermissions['view_assignments_interactions'])){
+		//los formularios comparten el mismo permiso
+
+		$InterActionsSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => route('interactions.assignments_interactions.index')
+				);
+	}
+	if(isset($listPermissions['view_emails_interactions'])){
+		//los formularios comparten el mismo permiso
+
+		$InterActionsSub["Emails"] = array(
+			        "title" => "Emails",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interactions.emails_interactions.index')
 				);
 	}
 
@@ -275,27 +377,20 @@ $page_nav = array();
 		$InterValidationsSub["InterChanges"] = array(
 			        "title" => "InterChanges",
 			        "icon" => "fa-exchange	",
-			        "url" => route('intervalidation.interchanges.validations.index')
+			        "url" => route('interchanges.validations_interchanges.index')
 				);
 		$InterValidationsSub["InterAlliances"] = array(
 			        "title" => "InterAlliances",
 			        "icon" => "fa-handshake-o	",
-			        "url" => route('intervalidation.interalliances.validations.index')
+			        "url" => route('interalliances.validations_interalliances.index')
 				);
 		$InterValidationsSub["InterActions"] = array(
 			        "title" => "InterActions",
 			        "icon" => "fa-globe	",
-			        "url" => route('intervalidation.interactions.validations.index')
+			        "url" => route('interactions.validations_interactions.index')
 				);
 	}
-	if(isset($listPermissions['view_assignments'])){
-		//los formularios comparten el mismo permiso
-		$InterValidationsSub["Assignments"] = array(
-			        "title" => "Assignments",
-			        "icon" => "fa-user-plus",
-			        "url" => route('intervalidation.assignments.index')
-				);
-	}
+
 
 	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
 	if ( count($InterValidationsSub) ) {

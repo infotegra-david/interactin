@@ -19,7 +19,9 @@ class CampusController extends AppBaseController
     private $campusRepository;
     private $user;
     private $campusApp;
+    private $campusAppFound;
     private $campus = array();
+    private $viewWith;
 
     public function __construct(CampusRepository $campusRepo)
     {
@@ -31,6 +33,7 @@ class CampusController extends AppBaseController
                     if (session('campusApp') == null) {
                         session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
                         session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
                     }
                     if (count($this->campusApp)) {
                         $this->campusApp = $this->campusApp->pluck('nombre','id');
@@ -38,13 +41,31 @@ class CampusController extends AppBaseController
                         $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                     }
                 }else{
-                    $this->campusApp = 0;
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
             }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                return redirect(route('home'));
+            }
+            if ( Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = ['campusApp' => $this->campusApp];
+
             return $next($request);
         });
 
         $this->campusRepository = $campusRepo;
+
     }
 
     /**
@@ -58,8 +79,10 @@ class CampusController extends AppBaseController
         $this->campusRepository->pushCriteria(new RequestCriteria($request));
         $campuses = $this->campusRepository->all();
 
+        $this->viewWith = array_merge($this->viewWith,['campuses' => $campuses]);
+
         return view('admin.campus.index')
-            ->with(['campusApp' => $this->campusApp, 'campuses' => $campuses]);
+            ->with($this->viewWith);
     }
 
     /**
@@ -69,7 +92,8 @@ class CampusController extends AppBaseController
      */
     public function create()
     {
-        return view('admin.campus.create');
+        return view('admin.campus.create')
+            ->with($this->viewWith);
     }
 
     /**
@@ -107,7 +131,9 @@ class CampusController extends AppBaseController
             return redirect(route('admin.campus.index'));
         }
 
-        return view('admin.campus.show')->with(['campusApp' => $this->campusApp, 'campus' => $campus]);
+        $this->viewWith = array_merge($this->viewWith,['campus' => $campus]);
+
+        return view('admin.campus.show')->with($this->viewWith);
     }
 
     /**
@@ -127,7 +153,9 @@ class CampusController extends AppBaseController
             return redirect(route('admin.campus.index'));
         }
 
-        return view('admin.campus.edit')->with(['campusApp' => $this->campusApp, 'campus' => $campus]);
+        $this->viewWith = array_merge($this->viewWith,['campus' => $campus]);
+
+        return view('admin.campus.edit')->with($this->viewWith);
     }
 
     /**

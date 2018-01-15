@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         //Model::unguard();
         
         */
+
         // $this->call(MigrationsTableSeeder::class);
         $this->call(AlianzaTableSeeder::class);
         $this->call(AlianzaAplicacionesTableSeeder::class);
@@ -65,14 +66,13 @@ class DatabaseSeeder extends Seeder
         $this->call(FinanciacionTableSeeder::class);
         $this->call(FormatoTableSeeder::class);
         $this->call(FuenteFinanciacionTableSeeder::class);
-        $this->call(IdiomasTableSeeder::class);
         $this->call(IniciativaTableSeeder::class);
         $this->call(IniciativaActorTableSeeder::class);
         $this->call(InscripcionTableSeeder::class);
         $this->call(InscripcionAsignaturaTableSeeder::class);
         $this->call(InstitucionTableSeeder::class);
-        $this->call(MailTableSeeder::class);
-        $this->call(MailArchivoTableSeeder::class);
+        $this->call(EmailTableSeeder::class);
+        $this->call(EmailArchivoTableSeeder::class);
         $this->call(MatriculaTableSeeder::class);
         $this->call(ModalidadesTableSeeder::class);
         // $this->call(ModelHasPermissionsTableSeeder::class);
@@ -85,15 +85,14 @@ class DatabaseSeeder extends Seeder
         $this->call(PaginaTableSeeder::class);
         $this->call(PaisTableSeeder::class);
         $this->call(PasosAlianzaTableSeeder::class);
-        $this->call(PasosAlianzaMailTableSeeder::class);
+        $this->call(PasosAlianzaEmailTableSeeder::class);
         $this->call(PasosIniciativaTableSeeder::class);
-        $this->call(PasosIniciativaMailTableSeeder::class);
+        $this->call(PasosIniciativaEmailTableSeeder::class);
         $this->call(PasosInscripcionTableSeeder::class);
-        $this->call(PasosInscripcionMailTableSeeder::class);
+        $this->call(PasosInscripcionEmailTableSeeder::class);
         $this->call(PasswordResetsTableSeeder::class);
         $this->call(PeriodoTableSeeder::class);
         // $this->call(PermissionsTableSeeder::class);
-        $this->call(PersonaContactoTableSeeder::class);
         $this->call(PostulacionTableSeeder::class);
         $this->call(ProgramaTableSeeder::class);
         $this->call(RolIniciativaTableSeeder::class);
@@ -110,15 +109,19 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoPasoTableSeeder::class);
         $this->call(TipoTramiteTableSeeder::class);
         $this->call(UserCampusTableSeeder::class);
+        $this->call(UserContactoTableSeeder::class);
+        $this->call(UserIdiomasTableSeeder::class);
         $this->call(UserTipoPasoTableSeeder::class);
-        $this->call(UserTipoPasoMailTableSeeder::class);
+        $this->call(UserTipoPasoEmailTableSeeder::class);
         $this->call(UsersTableSeeder::class);
 
         // lista de roles
-        $list_roles = "administrador,director_programa,coordinador_externo,coordinador_interno,profesor,validador,representante_legal,creador_iniciativa,aliado_iniciativa,estudiante,particular,copia_oculta_email,generar_documento";
+        $list_roles = "administrador,director_programa,coordinador_externo,coordinador_interno,profesor,validador,representante_legal,creador_iniciativa,aliado_iniciativa,estudiante,particular,copia_oculta_email,generar_documento,contacto";
 
-        $list_permissions = "view_users,add_users,edit_users,delete_users,view_roles,add_roles,edit_roles,delete_roles,view_interalliances,add_interalliances,edit_interalliances,delete_interalliances,view_interactions,add_interactions,edit_interactions,delete_interactions,view_interin,add_interin,edit_interin,delete_interin,view_interout,add_interout,edit_interout,delete_interout,view_countries,add_countries,edit_countries,delete_countries,view_states,add_states,edit_states,delete_states,view_cities,add_cities,edit_cities,delete_cities,view_pasosalianzas,add_pasosalianzas,edit_pasosalianzas,delete_pasosalianzas,view_mails,add_mails,edit_mails,delete_mails,view_logs,add_logs,edit_logs,delete_logs,view_validations,add_validations,edit_validations,delete_validations,view_destination,add_destination,edit_destination,delete_destination,view_assignments,add_assignments,edit_assignments,delete_assignments,view_institutions,add_institutions,edit_institutions,delete_institutions,view_campus,add_campus,edit_campus,delete_campus,view_faculties,add_faculties,edit_faculties,delete_faculties,view_programs,add_programs,edit_programs,delete_programs,view_subjects,add_subjects,edit_subjects,delete_subjects,view_user,add_user,edit_user,delete_user";
-        
+        $list_permissions = "view_users,add_users,edit_users,delete_users,view_roles,add_roles,edit_roles,delete_roles,view_interalliances,add_interalliances,edit_interalliances,delete_interalliances,view_interactions,add_interactions,edit_interactions,delete_interactions,view_interin,add_interin,edit_interin,delete_interin,view_interout,add_interout,edit_interout,delete_interout,view_countries,add_countries,edit_countries,delete_countries,view_states,add_states,edit_states,delete_states,view_cities,add_cities,edit_cities,delete_cities,view_pasosalianzas,add_pasosalianzas,edit_pasosalianzas,delete_pasosalianzas,view_emails,add_emails,edit_emails,delete_emails,view_logs,add_logs,edit_logs,delete_logs,view_destination,add_destination,edit_destination,delete_destination,view_institutions,add_institutions,edit_institutions,delete_institutions,view_campus,add_campus,edit_campus,delete_campus,view_faculties,add_faculties,edit_faculties,delete_faculties,view_programs,add_programs,edit_programs,delete_programs,view_subjects,add_subjects,edit_subjects,delete_subjects,view_user,add_user,edit_user,delete_user,view_origin,add_origin,edit_origin,delete_origin,view_validations_interalliances,add_validations_interalliances,edit_validations_interalliances,delete_validations_interalliances,view_validations_interchanges,add_validations_interchanges,edit_validations_interchanges,delete_validations_interchanges,view_validations_interactions,add_validations_interactions,edit_validations_interactions,delete_validations_interactions,view_assignments_interalliances,add_assignments_interalliances,edit_assignments_interalliances,delete_assignments_interalliances,view_assignments_interchanges,add_assignments_interchanges,edit_assignments_interchanges,delete_assignments_interchanges,view_assignments_interactions,add_assignments_interactions,edit_assignments_interactions,delete_assignments_interactions,view_emails_interactions,add_emails_interactions,edit_emails_interactions,delete_emails_interactions,view_emails_interchanges,add_emails_interchanges,edit_emails_interchanges,delete_emails_interchanges,view_emails_interalliances,add_emails_interalliances,edit_emails_interalliances,delete_emails_interalliances";
+
+
+
         //SELECT model_has_roles.model_id, roles.name FROM model_has_roles inner join roles on (model_has_roles.role_id = roles.id) ORDER BY model_has_roles.model_id asc
         $list_model_has_roles = array(
             array( "id" => 1, "rol" => "coordinador_interno"),
@@ -146,23 +149,23 @@ class DatabaseSeeder extends Seeder
             array( "id" => 19, "rol" => "validador"),
         );
 
-
         //SELECT roles.name, permissions.name FROM role_has_permissions INNER join permissions on (role_has_permissions.permission_id = permissions.id) INNER JOIN roles on (role_has_permissions.role_id=roles.id) ORDER BY `roles`.`name` ASC, permissions.name Asc
 
         $list_role_has_permissions = array(
-            'administrador' => array('add_assignments','add_campus','add_cities','add_countries','add_destination','add_faculties','add_institutions','add_interactions','add_interalliances','add_interin','add_interout','add_logs','add_mails','add_pasosalianzas','add_programs','add_roles','add_states','add_subjects','add_user','add_users','add_validations','delete_assignments','delete_campus','delete_cities','delete_countries','delete_destination','delete_faculties','delete_institutions','delete_interactions','delete_interalliances','delete_interin','delete_interout','delete_logs','delete_mails','delete_pasosalianzas','delete_programs','delete_roles','delete_states','delete_subjects','delete_user','delete_users','delete_validations','edit_assignments','edit_campus','edit_cities','edit_countries','edit_destination','edit_faculties','edit_institutions','edit_interactions','edit_interalliances','edit_interin','edit_interout','edit_logs','edit_mails','edit_pasosalianzas','edit_programs','edit_roles','edit_states','edit_subjects','edit_user','edit_users','edit_validations','view_assignments','view_campus','view_cities','view_countries','view_destination','view_faculties','view_institutions','view_interactions','view_interalliances','view_interin','view_interout','view_logs','view_mails','view_pasosalianzas','view_programs','view_roles','view_states','view_subjects','view_user','view_users','view_validations'),
+            'administrador' => array('view_validations_interalliances','view_validations_interchanges','view_validations_interactions','add_validations_interalliances','add_validations_interchanges','add_validations_interactions','edit_validations_interalliances','edit_validations_interchanges','edit_validations_interactions','delete_validations_interalliances','delete_validations_interchanges','delete_validations_interactions','view_assignments_interalliances','view_assignments_interchanges','view_assignments_interactions','add_assignments_interalliances','add_assignments_interchanges','add_assignments_interactions','edit_assignments_interalliances','edit_assignments_interchanges','edit_assignments_interactions','delete_assignments_interalliances','delete_assignments_interchanges','delete_assignments_interactions','add_campus','add_cities','add_countries','add_destination','add_faculties','add_institutions','add_interactions','add_interalliances','add_interin','add_interout','add_logs','add_emails','add_pasosalianzas','add_programs','add_roles','add_states','add_subjects','add_user','add_users','delete_campus','delete_cities','delete_countries','delete_destination','delete_faculties','delete_institutions','delete_interactions','delete_interalliances','delete_interin','delete_interout','delete_logs','delete_emails','delete_pasosalianzas','delete_programs','delete_roles','delete_states','delete_subjects','delete_user','delete_users','edit_campus','edit_cities','edit_countries','edit_destination','edit_faculties','edit_institutions','edit_interactions','edit_interalliances','edit_interin','edit_interout','edit_logs','edit_emails','edit_pasosalianzas','edit_programs','edit_roles','edit_states','edit_subjects','edit_user','edit_users','view_campus','view_cities','view_countries','view_destination','view_faculties','view_institutions','view_interactions','view_interalliances','view_interin','view_interout','view_logs','view_emails','view_pasosalianzas','view_programs','view_roles','view_states','view_subjects','view_user','view_users','view_origin','add_origin','edit_origin','delete_origin','view_emails_interactions','add_emails_interactions','edit_emails_interactions','delete_emails_interactions','view_emails_interchanges','add_emails_interchanges','edit_emails_interchanges','delete_emails_interchanges','view_emails_interalliances','add_emails_interalliances','edit_emails_interalliances','delete_emails_interalliances'),
             'aliado_iniciativa' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_states','view_user'),
-            'coordinador_externo' => array('add_campus','add_destination','add_faculties','add_interalliances','add_interin','add_mails','add_programs','add_subjects','add_user','delete_campus','delete_destination','delete_faculties','delete_interin','delete_programs','delete_subjects','delete_user','edit_campus','edit_destination','edit_faculties','edit_institutions','edit_interalliances','edit_interin','edit_programs','edit_subjects','edit_user','view_campus','view_cities','view_countries','view_destination','view_faculties','view_institutions','view_interactions','view_interalliances','view_interin','view_mails','view_programs','view_states','view_subjects','view_user','view_users'),
-            'coordinador_interno' => array('add_campus','add_faculties','add_institutions','add_interalliances','add_programs','add_subjects','add_user','delete_campus','delete_faculties','delete_institutions','delete_interalliances','delete_programs','delete_subjects','delete_user','edit_campus','edit_faculties','edit_institutions','edit_interalliances','edit_programs','edit_subjects','edit_user','view_assignments','view_campus','view_cities','view_countries','view_faculties','view_institutions','view_interalliances','view_mails','view_programs','view_states','view_subjects','view_user'),
-            'copia_oculta_email' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interalliances','view_interin','view_interout','view_mails','view_pasosalianzas','view_states','view_user'),
+            'coordinador_externo' => array('add_campus','add_destination','add_faculties','add_interalliances','add_interin','add_emails','add_programs','add_subjects','add_user','delete_campus','delete_destination','delete_faculties','delete_interin','delete_programs','delete_subjects','delete_user','edit_campus','edit_destination','edit_faculties','edit_institutions','edit_interalliances','edit_interin','edit_programs','edit_subjects','edit_user','view_campus','view_cities','view_countries','view_destination','view_faculties','view_institutions','view_interactions','view_interalliances','view_interin','view_emails','view_programs','view_states','view_subjects','view_user','view_users'),
+            'coordinador_interno' => array('add_campus','add_faculties','add_institutions','add_interalliances','add_programs','add_subjects','add_user','delete_campus','delete_faculties','delete_institutions','delete_interalliances','delete_programs','delete_subjects','delete_user','edit_campus','edit_faculties','edit_institutions','edit_interalliances','edit_programs','edit_subjects','edit_user','view_campus','view_cities','view_countries','view_faculties','view_institutions','view_interalliances','view_emails','view_programs','view_states','view_subjects','view_user','view_origin','add_origin','edit_origin','delete_origin'),
+            'copia_oculta_eemail' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interalliances','view_interin','view_interout','view_emails','view_pasosalianzas','view_states','view_user'),
             'creador_iniciativa' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_states','view_user'),
             'director_programa' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interalliances','view_interin','view_interout','view_states','view_user','view_users'),
             'estudiante' => array('add_interactions','add_interout','add_user','delete_interactions','delete_interout','delete_user','edit_interactions','edit_interout','edit_user','view_campus','view_cities','view_countries','view_faculties','view_institutions','view_interactions','view_interout','view_programs','view_states','view_subjects','view_user'),
-            'generar_documento' => array('add_pasosalianzas','add_user','add_validations','delete_user','edit_pasosalianzas','edit_user','edit_validations','view_pasosalianzas','view_user','view_validations'),
-            'particular' => array('add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interin','view_interout','view_states','view_user'),
-            'profesor' => array('add_interalliances','add_user','delete_user','edit_interalliances','edit_user','view_cities','view_countries','view_interalliances','view_mails','view_states','view_user'),
+            'generar_documento' => array('add_pasosalianzas','add_user','add_validations_interalliances','add_validations_interchanges','add_validations_interactions','delete_user','edit_pasosalianzas','edit_user','edit_validations_interalliances','edit_validations_interchanges','edit_validations_interactions','view_pasosalianzas','view_user','view_validations_interalliances','view_validations_interchanges','view_validations_interactions'),
+            'particular' => array('view_user','add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interin','view_interout','view_states'),
+            'profesor' => array('add_interalliances','add_user','delete_user','edit_interalliances','edit_user','view_cities','view_countries','view_interalliances','view_emails','view_states','view_user'),
             'representante_legal' => array('add_campus','add_destination','add_faculties','add_programs','add_subjects','add_user','delete_campus','delete_destination','delete_faculties','delete_programs','delete_subjects','delete_user','edit_campus','edit_destination','edit_faculties','edit_institutions','edit_programs','edit_subjects','edit_user','view_campus','view_cities','view_countries','view_destination','view_faculties','view_institutions','view_interactions','view_interalliances','view_interin','view_interout','view_programs','view_states','view_subjects','view_user'),
-            'validador' => array('add_pasosalianzas','add_user','add_validations','delete_pasosalianzas','delete_user','delete_validations','edit_pasosalianzas','edit_user','edit_validations','view_cities','view_countries','view_interactions','view_interalliances','view_interin','view_interout','view_mails','view_pasosalianzas','view_states','view_user','view_validations')
+            'validador' => array('add_pasosalianzas','add_user','add_validations_interalliances','add_validations_interchanges','add_validations_interactions','delete_pasosalianzas','delete_user','delete_validations_interalliances','delete_validations_interchanges','delete_validations_interactions','edit_pasosalianzas','edit_user','edit_validations_interalliances','edit_validations_interchanges','edit_validations_interactions','view_cities','view_countries','view_interactions','view_interalliances','view_interin','view_interout','view_emails','view_pasosalianzas','view_states','view_user','view_validations_interalliances','view_validations_interchanges','view_validations_interactions','view_assignments_interalliances','view_assignments_interchanges','view_assignments_interactions','view_emails_interactions','view_emails_interchanges','view_emails_interalliances'),
+            'contacto' => array('view_user','add_user','delete_user','edit_user','view_cities','view_countries','view_interactions','view_interin','view_interout','view_states'),
         );
 
 

@@ -25,7 +25,9 @@ class InstitucionController extends AppBaseController
 
     private $user;
     private $campusApp;
+    private $campusAppFound;
     private $peticion;
+    private $viewWith;
 
     public function __construct(InstitucionRepository $institucionRepo, Request $request)
     {
@@ -37,6 +39,7 @@ class InstitucionController extends AppBaseController
                     if (session('campusApp') == null) {
                         session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
                         session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
                     }
                     if (count($this->campusApp)) {
                         $this->campusApp = $this->campusApp->pluck('nombre','id');
@@ -44,9 +47,26 @@ class InstitucionController extends AppBaseController
                         $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                     }
                 }else{
-                    $this->campusApp = 0;
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
             }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                return redirect(route('home'));
+            }
+            if ( Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+            
+            $this->viewWith = ['campusApp' => $this->campusApp];
+
             return $next($request);
         });
 
@@ -57,6 +77,7 @@ class InstitucionController extends AppBaseController
         }else{
             $this->peticion = "normal";
         }
+
     }
 
     /**
@@ -70,8 +91,10 @@ class InstitucionController extends AppBaseController
         $this->institucionRepository->pushCriteria(new RequestCriteria($request));
         $institucions = $this->institucionRepository->all();
 
+        $this->viewWith = array_merge($this->viewWith,['institucions' => $institucions]);
+
         return view('admin.instituciones.index')
-            ->with('institucions', $institucions);
+            ->with($this->viewWith);
     }
 
     /**
@@ -119,7 +142,9 @@ class InstitucionController extends AppBaseController
             return redirect(route('admin.institutions.index'));
         }
 
-        return view('admin.instituciones.show')->with('institucion', $institucion);
+        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion]);
+
+        return view('admin.instituciones.show')->with($this->viewWith);
     }
 
     /**
@@ -139,7 +164,9 @@ class InstitucionController extends AppBaseController
             return redirect(route('admin.institutions.index'));
         }
 
-        return view('admin.instituciones.edit')->with('institucion', $institucion);
+        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion]);
+
+        return view('admin.instituciones.edit')->with($this->viewWith);
     }
 
     /**
@@ -206,9 +233,10 @@ class InstitucionController extends AppBaseController
             $institucion_id = $this->user->campus[0]->institucion->id;
         }
 
-        $modalidad_id = isset($request->modalidad_id) ? $request->modalidad_id : $request->id;
+        $pais_id = $request->pais_id ?? $request->id;
+        $modalidad_id = $request->modalidad_id ?? $request->inscripcion_modalidad ?? $request->val_extra;
         
-        $this->instituciones = $this->institucionRepository->listInstitutions($institucion_id,$modalidad_id);
+        $this->instituciones = $this->institucionRepository->listInstitutions($institucion_id,$pais_id,$modalidad_id);
         return $this->instituciones;
     }
 
@@ -220,14 +248,14 @@ class InstitucionController extends AppBaseController
      *
      * @return Response
      */
-    public function documents($institucion_id,$documento_id = '')
+    public function documents($institucion_id,$documento_id = '',Request $request)
     {
         $errors = 0;
         $errorsMsg = '';
         $okMsg = '';
         $this->user = Auth::user();
         $user_actual = $this->user->id;
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         $showData = '';
         $keyWords = '';
         
@@ -241,12 +269,11 @@ class InstitucionController extends AppBaseController
         $institucionId = $institucion->id;
         $route_default = route('admin.institutions.documents',$institucionId);
         
-        $view = 'print.show';
+        $view = 'files.show';
         $route_back = $route_default;
         $route_new = route('admin.institutions.documents.create',$institucionId);
 
         if ($documento_id != '') {
-
             $archivo_id = $documento_id;
 
             $archivo = \App\Models\Archivo::join('tipo_archivo','archivo.tipo_archivo_id','tipo_archivo.id')
@@ -257,9 +284,9 @@ class InstitucionController extends AppBaseController
 
             if ( count($archivo) ) {
                 if ( $archivo->tipo_archivo_nombre == 'PRE-FORMA') {
-                    $view = 'print.editor_word_drag_drop';
+                    $view = 'files.editor_word_drag_drop';
                 }else{
-                    $view = 'print.editor';
+                    $view = 'files.editor';
                 }
                 $tipo_archivo = $archivo->tipo_archivo_nombre;
 
@@ -315,14 +342,38 @@ class InstitucionController extends AppBaseController
         }else{
             $archivos = \App\Models\Archivo::join('documentos_institucion','archivo.id','documentos_institucion.archivo_id')
                 ->join('tipo_archivo','archivo.tipo_archivo_id','tipo_archivo.id')
-                ->select('archivo.id','archivo.nombre','archivo.path','tipo_archivo.id AS tipo_archivo_id','tipo_archivo.nombre AS tipo_archivo_nombre')
-                ->where('documentos_institucion.institucion_id',$institucionId)
-                ->get();
+                ->join('tipo_documento','documentos_institucion.tipo_documento_id','tipo_documento.id')
+                ->select('archivo.id','archivo.nombre','archivo.path','tipo_archivo.id AS tipo_archivo_id','tipo_archivo.nombre AS tipo_archivo_nombre','tipo_documento.nombre AS tipo_documento_nombre')
+                ->where('documentos_institucion.institucion_id',$institucionId);
+
+            $select_filter = ['all' => 'Todos','pre-formas' => 'Pre-formas','documentos' => 'Documentos'];
+            $filter = 'all';
+
+            if (isset($request['filter'])) {
+                if ($request['filter'] == 'all') {
+                    $filter = $request['filter'];
+                    //no se ejecutan acciones, se mostraran todos los documentos
+                }elseif($request['filter'] == 'pre-formas'){
+                    $filter = $request['filter'];
+                    $tipo_archivo = \App\Models\TipoArchivo::where('nombre','PRE-FORMA')->first();
+                    
+                    $archivos = $archivos->where('tipo_archivo.id',$tipo_archivo->id);
+                }elseif($request['filter'] == 'documentos'){
+                    $filter = $request['filter'];
+                    $tipo_archivo = \App\Models\TipoArchivo::where('nombre','DOCUMENTO')->first();
+
+                    $archivos = $archivos->where('tipo_archivo.id',$tipo_archivo->id);
+                }
+            }
+            
+            $archivos = $archivos->get();
+
             foreach ($archivos as $key => $value) {
                 $value->url_edit = route('admin.institutions.documents',[$institucionId,$value->id]);
             }
+            
             $route_back = route('admin.institutions.index');
-            $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'archivos' => $archivos, 'route_back' => $route_back, 'route_new' => $route_new, 'proceso' => 'Institución', 'menuApp' => 'Institutions', 'submenu1App' => 'Archivos']);
+            $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'archivos' => $archivos, 'institucionId' => $institucionId, 'filter' => $filter, 'select_filter' => $select_filter, 'route_back' => $route_back, 'route_new' => $route_new, 'proceso' => 'Institución', 'menuApp' => 'Institutions', 'submenu1App' => 'Archivos']);
         }
 
         
@@ -366,10 +417,10 @@ class InstitucionController extends AppBaseController
         $errors = 0;
         $errorsMsg = '';
         $okMsg = '';
-        $view = 'print.editor_word_drag_drop';
+        $view = 'files.editor_word_drag_drop';
         $this->user = Auth::user();
         $user_actual = $this->user->id;
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         $showData = '';
         $keyWords = '';
         
@@ -401,7 +452,7 @@ class InstitucionController extends AppBaseController
         $pre_forma = $tipo_documento->toArray();
         $pre_forma_id = array_search('PRE-FORMAS',$pre_forma);
 
-        $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'ruta_guardar' => $ruta_guardar, 'editar' => $editar, 'pre_forma_id' => $pre_forma_id, 'tipo_archivo' => '', 'tipo_documento' => $tipo_documento, 'route_back' => $route_back, 'keyWords' => $keyWords, 'showData' => $showData, 'proceso' => 'Institución', 'menuApp' => 'InterValidations', 'submenu1App' => 'Crear Documento']);
+        $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'ruta_guardar' => $ruta_guardar, 'editar' => $editar, 'pre_forma_id' => $pre_forma_id, 'tipo_archivo' => '', 'tipo_documento' => $tipo_documento, 'route_back' => $route_back, 'keyWords' => $keyWords, 'showData' => $showData, 'proceso' => 'Institución', 'menuApp' => 'InterAdmin', 'submenu1App' => 'Crear Documento']);
         
         //print_r($viewWith);
 
@@ -456,6 +507,9 @@ class InstitucionController extends AppBaseController
         $this->user = Auth::user();
 
         if ( $request->file('archivo_input') != null ) {
+            $this->validate($request, [
+                'archivo_input' => 'required|mimes:pdf,jpg,png,jpeg',
+            ]);
             $datos['nombre'] = str_replace(' ', '_', $request->file('archivo_input')->getClientOriginalName());
             $datos['archivo_formato'] = $request->file('archivo_input')->getClientOriginalExtension();
             $datos['archivo_MimeType'] = $request->file('archivo_input')->getClientMimeType();
@@ -469,12 +523,21 @@ class InstitucionController extends AppBaseController
         $datos['route'] = $route;
         $datos['route_error'] = $route_error;
         $datos['nombre'] = (isset($request['nombre']) ? $request['nombre'] : $datos['nombre']);
+        $datos['archivo_id'] = (isset($request['archivo_id']) ? $request['archivo_id'] : 0);;
         $datos['archivo_contenido'] = $request['archivo_contenido'];
         $datos['archivo_input'] = (isset($request['archivo_input']) ? $request['archivo_input'] : '');
         $datos['tipo_documento'] = $request['tipo_documento'];
+
+        $tipo_documento = \App\Models\TipoDocumento::where('id',$datos['tipo_documento'])
+                    ->select('id','nombre')->first();
+
         //unique se coloca si debe eliminar los demas archivos del mismo tipo, de lo contrario se omite
-        $datos['unique'] = '';
+        if ($tipo_documento->nombre != 'PRE-FORMAS') {
+            $datos['unique'] = true;
+        }
         
+        // print_r($request->all());
+        // return 1;
         
         $crearDocumento = $this->datosCrearDocumento($proceso,$datos);
         if (is_string($crearDocumento) ) {

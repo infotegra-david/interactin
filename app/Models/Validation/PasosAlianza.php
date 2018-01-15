@@ -27,6 +27,7 @@ class PasosAlianza extends Model
         'tipo_paso_id',
         'estado_id',
         'user_id',
+        'campus_id',
         'observacion',
         'alianza_id'
     ];
@@ -41,6 +42,7 @@ class PasosAlianza extends Model
         'tipo_paso_id' => 'integer',
         'estado_id' => 'integer',
         'user_id' => 'integer',
+        'campus_id' => 'integer',
         'observacion' => 'string',
         'alianza_id' => 'integer'
     ];
@@ -89,8 +91,8 @@ class PasosAlianza extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function mail()
+    public function email()
     {
-        return $this->belongsToMany('\App\Models\Mail','pasos_alianza_mail','pasos_alianza_id','mail_id');
+        return $this->belongsToMany('\App\Models\Email','pasos_alianza_email','pasos_alianza_id','email_id');
     }
 }

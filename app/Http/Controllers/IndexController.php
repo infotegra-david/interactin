@@ -39,12 +39,14 @@ class IndexController extends Controller
         $user = Auth::user();
 
         $campusAppSelect = \App\Models\Admin\Campus::join('user_campus','campus.id','user_campus.campus_id')
+                ->join('institucion','campus.institucion_id','institucion.id')
                 ->where('user_campus.user_id',$user->id)
                 ->where('user_campus.campus_id',$request['campusAppSelect'])
-                ->select('campus.id','campus.nombre')->first();
+                ->select('campus.id','campus.nombre','institucion.nombre AS institucion_nombre')->first();
         if (count($campusAppSelect)) {
             session(['campusApp' => $campusAppSelect->id ]);
             session(['campusAppNombre' => $campusAppSelect->nombre ]);
+            session(['institucionAppNombre' => $campusAppSelect->institucion_nombre]);
             
             return session('campusApp');
             

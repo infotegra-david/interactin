@@ -25,19 +25,21 @@ class Inscripcion extends Model
 
 
     public $fillable = [
+        'tipo',
         'user_id',
-        'fecha',
         'periodo_id',
-        'campus_id',
-        'modalidades_id',
+        'modalidad_id',
         'programa_origen_id',
+        'institucion_destino_id',
         'programa_destino_id',
         'fecha_inicio',
         'fecha_fin',
         'presupuesto_hospedaje',
         'presupuesto_alimentacion',
         'presupuesto_transporte',
-        'presupuesto_otros'
+        'presupuesto_otros',
+        'campus_id',
+        'estado_id',
     ];
 
     /**
@@ -47,19 +49,21 @@ class Inscripcion extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'tipo' => 'integer',
         'user_id' => 'integer',
-        'fecha' => 'date',
         'periodo_id' => 'integer',
-        'campus_id' => 'integer',
-        'modalidades_id' => 'integer',
+        'modalidad_id' => 'integer',
         'programa_origen_id' => 'integer',
+        'institucion_destino_id' => 'integer',
         'programa_destino_id' => 'integer',
         'fecha_inicio' => 'date',
         'fecha_fin' => 'date',
         'presupuesto_hospedaje' => 'integer',
         'presupuesto_alimentacion' => 'integer',
         'presupuesto_transporte' => 'integer',
-        'presupuesto_otros' => 'integer'
+        'presupuesto_otros' => 'integer',
+        'campus_id' => 'integer',
+        'estado_id' => 'integer',
     ];
 
     /**
@@ -107,7 +111,7 @@ class Inscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function documentosInscripcions()
+    public function documentosInscripcion()
     {
         return $this->hasMany(\App\Models\DocumentosInscripcion::class);
     }
@@ -115,7 +119,7 @@ class Inscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function evaluacions()
+    public function evaluacion()
     {
         return $this->hasMany(\App\Models\Evaluacion::class);
     }
@@ -123,7 +127,7 @@ class Inscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function financiacions()
+    public function financiacion()
     {
         return $this->hasMany(\App\Models\Financiacion::class);
     }
@@ -139,7 +143,7 @@ class Inscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function pasosInscripcions()
+    public function pasosInscripcion()
     {
         return $this->hasMany(\App\Models\PasosInscripcion::class);
     }
@@ -147,7 +151,7 @@ class Inscripcion extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function postulacions()
+    public function postulacion()
     {
         return $this->hasMany(\App\Models\Postulacion::class);
     }

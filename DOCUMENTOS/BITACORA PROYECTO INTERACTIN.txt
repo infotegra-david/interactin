@@ -1,5 +1,12 @@
+patricia suarez
+ejecutiva de florida bitsmarck
+codigo llamada 584
+
+Sandra - Lote jardines
+3103035444
+
 extension 240 secretarias de ortopedia 
-septiembre 15 3:20 pm con autorizazion por comopensar
+septiembre 15 3:20 pm con autorizazion por compensar
 
 ganzola@lasalle.edu.co
 
@@ -36,21 +43,36 @@ interactin
 		22deseptiembre
 
 
-credenciales servidor de la aplicacion
-	server: 52.10.3.78 demo
-	server: 52.32.255.71 prueba
-	user: interactin
-	pass: info2017tegra
+	credenciales amazon (interactin.com)
+		servidor
+			server: 52.10.3.78 demo
+			server: 52.32.255.71 prueba
+			user: interactin
+			pass: info2017tegra
+		mysql
+			server: 52.10.3.78
+			bd: interactin
+			user: interactin
+			pass: info2017tegra
 
-credenciales mysql de la aplicacion
-	server: 52.10.3.78
-	bd: interactin
-	user: interactin
-	pass: info2017tegra
+	credenciales servidor local (interactin.local || interactin.infotegra.com)
+		servidor
+			server: sftp://192.168.50.10
+			port: 1941
+			user: david
+			pass: Inter2018,actin
+		mysql
+			bd: interactin
+			user: interactinDB
+			pass: W62Pq6pFyDCs
+			port: 3306
 
-credenciales usuarios de interactin
-	user: interactin@usta.edu.co pass: inter2017actin
-	user: interactin@ausjal.edu.co pass: inter2017actin
+
+	credenciales usuarios de interactin
+		user: interactin@usta.edu.co pass: inter2017actin
+		user: interactin@ausjal.edu.co pass: inter2017actin
+
+
 
 - configurar el servidor para correr la aplicacion
 	- utitizar workbench para administrar la bd
@@ -58,7 +80,17 @@ credenciales usuarios de interactin
 	- formas de configurar la aplicacion:
 		- https://laravel.io/forum/03-06-2015-how-to-setup-laravel-5-in-shared-hosting
 
+	- instalar laravel 
+		composer create-project --prefer-dist laravel/laravel interactin "5.4.*"
 
+	- migrar todas las carpetas excepto la de vendor
+	- migrar el archivo composer.json
+	- quitar / comentar temporalmente las lineas de llamados a librerias externas del archivo config/app.php 
+	- ejecutar el comando 'composer update'
+	- colocar de nuevo las lineas de llamados a librerias externas del archivo config/app.php 
+	- darle permisos al usuario www-data a las carpetas correspondientes
+		sudo chgrp -R www-data storage bootstrap/cache
+	- configurar el archivo .env
 
 - se desplego la apllicacion en heroku:
 	http://interactin.herokuapp.com
@@ -80,6 +112,12 @@ credenciales usuarios de interactin
 	
 	php artisan migrate:generate
 
+	- generar las migraciones de tablas especificas de la base de datos
+		php artisan migrate:generate table1,table2,table3,table4,table5
+
+	NO ELIMINAR LA MIGRACION LLAMADA:
+		..._create_permission_tables
+
 	ELIMINAR LA MIGRACION PARA LAS TABLAS Y LAS LLAVES FORANEAS PARA: 
 		migrations
 		ModelHasPermissions
@@ -99,7 +137,7 @@ credenciales usuarios de interactin
 	php artisan iseed alianza,alianza_aplicaciones,alianza_facultad,alianza_institucion,alianza_modalidades,alianza_programa,alianza_user,aplicaciones,archivo,asignatura,calificacion,campus,ciudad,clase_documento,datos_personales,departamento,documentos_alianza,documentos_iniciativa,documentos_inscripcion,documentos_institucion,documentos_oportunidad,equivalente,estado,evaluacion,facultad,financiacion,formato,fuente_financiacion,idiomas,iniciativa,iniciativa_actor,inscripcion,inscripcion_asignatura,institucion,mail,mail_archivo,matricula,migrations,modalidades,model_has_permissions,model_has_roles,multimedia,nivel,oportunidad,oportunidad_actor,oportunidad_modalidades,pagina,pais,pasos_alianza,pasos_alianza_mail,pasos_iniciativa,pasos_iniciativa_mail,pasos_inscripcion,pasos_inscripcion_mail,password_resets,periodo,permissions,persona_contacto,postulacion,programa,rol_iniciativa,role_has_permissions,roles,seccion,tipo_actor,tipo_alianza,tipo_archivo,tipo_documento,tipo_facultad,tipo_idioma,tipo_institucion,tipo_paso,tipo_tramite,user_campus,user_tipo_paso,user_tipo_paso_mail,users
 
 	ELIMINAR EL SEMBRADOR PARA LAS TABLAS 
-		migrationsro
+		migrations
 		ModelHasPermissions
 		ModelHasRoles
 		Permissions
@@ -609,6 +647,9 @@ TAREAS PENDIENTES
 	- configurar el test de la aplicacion (composer test) separandolo de los parametros iniciales y obligatorios de la aplicacion
 
 CORRECCIONES 
+
+	SE DESHABILITO LA FUNCION DE GOOGLE ANALYTICS, DE GOOGLE TRANSLATE Y LAS FUENTES DE GOOGLE POR LENTITUD AL NO TENER INTERNET
+
 	- (solucionado) verificar el codigo del email al coordinador externo
 	- (solucionado) quitar la validacion para la alianza activa del registro
 	- (solucionado) agregar las recomendaciones del coordinador externo a la vista de la alianza
@@ -625,7 +666,7 @@ CORRECCIONES
 			- (solucionado) luego abrir la copia guardada al elegir la misma pre-forma y tener la opcion para cargar la pre-forma original
 		- (solucionado) quitar la columna de estado
 		- agregar filtros para: ver las mias, todas, segun el estado, 
-		- estado de las alianzas (vencidas, activas, en proceso)
+		- (solucionado) estado de las alianzas (vencidas, activas, en proceso)
 		- (solucionado) la columna de pdf permitira ver o cargar el documento final por parte del ultimo validador (sin redirigir, simplemente lo carga y por debajo se registra/actualiza la validacion)
 			- (solucionado) habra un boton con la misma funcion en la vista de impresion de las pre-formas
 				- tambien la opcion de ir a mis alianzas
@@ -661,7 +702,7 @@ CORRECCIONES
 
 		- (solucionado) en el paso 1, los campos para un nuevo coordinador no se ocultan
 
-		- arreglar el envio de emails desde interactin.com 
+		- (solucionado) arreglar el envio de emails desde interactin.com 
 
 		- (solucionado) colocar un texto descriptivo en el paso 4 para indicar al usuario que debe hacer
 			ejemplo: por favor verificar o corregir los siguientes datos de su institucion para subscribir la presente alianza
@@ -700,41 +741,193 @@ CORRECCIONES
 
 
 		- (solucionado) agregar regla que para validar que la alianza tenga completados los 6 pasos y este aceptada
-		- agregar filtro a 'Alianzas' que aparezcan ordenadas de forma descendiente e inicialmente solo las que pertenezcan a cada usuario (coordinador o validador)
-			- tener la opcion de ver todas las alianzas 
-		- agregar la opcion de marcar o no todos los documentos en el paso 1
+		- (solucionado) agregar filtro a 'Alianzas' que aparezcan ordenadas de forma descendiente e inicialmente solo las que pertenezcan a cada usuario (coordinador o validador)
+			- (solucionado) tener la opcion de ver todas las alianzas 
+		- (solucionado) agregar la opcion de marcar o no todos los documentos en el paso 1
 		- (solucionado) ampliar el numero de caracteres para el objetivo de la alianza
-		- corregir error en el paso 2 al buscar el coordinador externo en el caso de no existir, tambien guarda el pre-registro del email con el nombre de la institucion que no se encuentra
+		- (solucionado) corregir error en el paso 2 al buscar el coordinador externo en el caso de no existir, tambien guarda el pre-registro del email con el nombre de la institucion que no se encuentra
 
 		- (solucionado) ordenar los paises, departamentos y ciudades alfabeticamente y quitar los que no tengan ciudad
-		- en el email enviado 
-			- el mensaje antes del boton que sea mas diciente o resaltado y el boton este en el header y footer del mensaje
-			- crear una contraseña y enviarsela al correo al coor externo mencionando que si desea ingresar lo haga con tales credenciales
-		- configurar el funcionamiento del numero verde en 'alianzas' para el coordinador externo
-		- el progreso se calcula a partir de los pasos registrados y las intervenciones del coor externo junto a los validadores
-		- los iconos en la columna con el nombre (temporal) 'validadores' seran del coor interno, coor externo y validadores
+		- (solucionado) en el email enviado 
+			- (solucionado) el mensaje antes del boton que sea mas diciente o resaltado y el boton este en el header y footer del mensaje
+			- (solucionado) crear una contraseña y enviarsela al correo al coor externo mencionando que si desea ingresar lo haga con tales credenciales
+		- (solucionado) configurar el funcionamiento del numero verde en 'alianzas' para el coordinador externo
+		- (solucionado) el progreso se calcula a partir de los pasos registrados y las intervenciones del coor externo junto a los validadores
+		- (solucionado) los iconos en la columna con el nombre (temporal) 'validadores' seran del coor interno, coor externo y validadores
 		- restringir el acceso a los coordinadores que no deberian poder editar las alianzas en los pasos que no les corresponde
-			- asegurar que no ingresen a la ruta incorrecta (un coor ext no deberia poder editar los 3 primeros pasos)
-				- se pueden identificar por la institucion a la que pertenecen
-			- cuando el coor ext cambia al coor ext de la alianza que le llego no deberia eliminar al anterior
-				- se debe enviar un nuevo email al nuevo coordinador 
-			- permitir ocultar las alianzas de la lista, un filtro para las rechazadas
-			- quitar la opcion de cambiar el coor externo 
+			- (solucionado) asegurar que no ingresen a la ruta incorrecta (un coor ext no deberia poder editar los 3 primeros pasos)
+				- (solucionado) se pueden identificar por la institucion a la que pertenecen
+			- (solucionado) quitar la opcion de cambiar el coor externo, esto elimina lo siguiente:
+				- cuando el coor ext cambia al coor ext de la alianza que le llego no deberia eliminar al anterior
+					- se debe enviar un nuevo email al nuevo coordinador 
+			- (solucionado) permitir ocultar las alianzas de la lista, un filtro para las rechazadas
 			- el proceso de creacion de la alianza en un flujo lineal, entonces no se debe permitir ver las opciones ni el acceso a la edicion de lo ya registrado segun sea el caso
 				- para los validadores si aceptan o rechazan: 
 					- no mostrar la opcion de realizar validacion en la lista de alianzas
 					- no permitir editar o actualizar la validacion 
-					- lo anterior sera efectivo hasta que el flujo regurese a él 
-				- para los coordinadores:
-					- no se puede editar si ya esta en validacion hasta que el flujo regrese a ellos
+					- lo anterior sera efectivo hasta que el flujo regrese a él 
+				- (solucionado) para los coordinadores:
+					- (solucionado) no se puede editar si ya esta en validacion hasta que el flujo regrese a ellos
 
-				- cambiar o eliminar el registro ya sea de validacion o de el email 
+				- (solucionado) cambiar o eliminar el registro ya sea de validacion o de el email 
 
 		- preguntar, ¿cuando le llega la alianza al coor externo, el la puede delegar o colocar a nombre de otro o no se necesita?
 
+	- resultado por parte de leonardo
+		- (solucionado) boton para aclopar el menu al lado del menu y no al otro extremo
+		- (solucionado) icono de la configuracion visual de la plantilla que no gire (parece que estuviera cargando)
+		- (solucionado) los selects de catidad y periodo dejarlos por defecto en 1 meses para que sea mas diciente
+		- (solucionado) la letra de la pre-visualizacion del email que sea mas clara, sin sombra y negra
+		- el mensaje que queda despues de enviar el 3 paso no es claro (se envio el email a ... ?????)
+		- (solucionado) no se esta enviando el password al email de los usuarios nuevos
+		- obligar a que cambie la contraseña al iniciar sesion
+		- no esta validando que sea requerido el campo de observacion en la aceptacion de la alianza
+		- (solucionado) el boton de la vista del docuemnto del representante tiene fallo, sale un scroll
+		- problema de seguridad, los validadores pueden acceder por url a editar las asignaciones
+		- (solucionado) en la validacion el boton de 'Realizar despues' sugiere que la informacion sera guardada para luego continuar: cambiar el nombre o permitir que guarde
+		- (solucionado) en la validacion, impresion del documento, el boton de atras muestra un aviso de advertencia de que si no guarda se pierden los cambios
+		- cambiar el estado por defecto del usuario a 0 y validar los que esten inactivos 0 ó activos 1 
+
+	- resultado de la reunion 1 con todos
+		- preguntar sobre ¿Que diferencias existen entre los tipos de tramites de las alianzas?
+		- (solucionado) en caso de error de los datos ingresados, marcar cada campo correspondiente con color rojo
+		- (solucionado) en el paso 3 mostrar el boton de editar al final de la informacion de cada paso
+			- (solucionado) el boton de continuar no ejecuta la misma accion que el de enviar 
+		- crear el administrador de e-mails individuales y generales
+		- (solucionado) Nombre del boton 'Continuar' cambiarlo por Guardar y continuar
+		- (solucionado) colocar los datos en dos columnas unicamente para la vista y el email de la alianza
+		- (solucionado) colocar la opcion de atras o cancelar en los formularios de edicion de los pasos
+		- (solucionado) cambiar el nombre de los titulos de 'interna' a 'solicitante'
+		- (solucionado) solucionar problema al crear un paso e irse a la lista de alianzas
+		- (solucionado) mostrar en la aplicacion a que universidad pertenece el usuario
+		- (solucionado) desde el paso 2 (o 1 si esta editandose) mostrar el id de la alianza 
+		- (solucionado) solucionar el problema del porcentaje, no esta funionando
+		- la asignacion de los validadores va es por cada campus de la insttucion
+			- la opcion de asignar los validadores irá dentro del menu de cada modulo
+				- la interfaz puede ser: filtro por campus, fitro de proceso [InterAlliance, InterAction, InterChange], lista de los validadores actuales, botones con flecha para cambiar el orden y registro boton de nuevo
+					- ajustar la edicion individual, que al seleccionar el paso se cargue un select con el orden de los que existen concatenado con el correo y un elemento mas
+						- al enviar los datos, mover hacia adelante los demas validadores para colocar el que se esta modificando
+					- en la edicion en grupo guardar los cambios al final y validar que no esten dos en el mismo paso y el mismo # de orden
+		- (solucionado) error al modificar la pre-forma
+			- (solucionado) ajustar la vista de la imagen al ancho del formulario
+		- (solucionado) modificar el administrador de documentos de la institucion
+		- modificar el nav y el menu del usuario para adaptarse a responsive y tener disponibles siempre todas las opciones 
+
+	- resultado de la reunion 2 con adriana
+		- (solucionado) El # de la alianza no aparece en la creacion
+		- (solucionado) assignments: colocar el nombre del modulo (proceso) que se esta editando 
+			- para interalliances quitar la opcion de pasos
+		- arreglar los formularios de interadmin
+			- arreglar el crud de localizacion
+				- arreglar la vista de paises (de todos), la opcion de ver individual no funciona
+			- modificar la interfaz de los roles
+				- lista de roles -> lista de opcion (puede ser por el nombre del modulo a partir del menu) -> carga los permisos correspondientes seleccionando los que esten asignados
+		- interalliances
+			- map: hacer funcionar el filtro por la lista de periodos 
+			- revizar el porcentaje, no esta funcionando bien o tenia datos erroneos
+			- los tooltips hacerlos mas amables
+				- paso 1, msg de la lista de documentos es muy denso
+			- (solucionado) paso 2, lista de coord. ext. el placeholder aparece dos veces
+			- permitir modificar el texto del mensaje en la pre-visualizacion 
+			- paso 5 verificar error al registrar los datos del representante de la alianza 
+			- los selects dinamicos deberan tener un mensaje de que seleccione primero [el campo anterior]
+
+		- todos los procesos grandes va atados a un campus directamente y las validaciones solo las pueden hacer los asociados a dicho campus
+
+		- la tabla postulacion parece no tener una funcion real, verificar y eliminarla 
 
 	- atar el usuario al name y password, y permitir cambiar el correo sin tener problemas 
 		- ejemplo: un solo usuario y la posiblidad de que cambie el email si es otra persona de la misma institucion 
+
+	- resultado de la reunion 3 con Ing. Jaime
+		- al enviar las solicitudes o emails de cada proceso validar si todos los pasos estan diligenciados
+		- interalliance
+
+			- el progreso se mide por las veces que el proceso pasa a otro usuario
+			- cambiar el mensaje despues de la aceptacion de la alianza
+				- en un modal (que oscurezca la pantalla) que tenga un boton que lo envie a las alianzas, con el mensaje: 'sus datos fueron enviados correctamente' 
+			- el texto de pasos registrados va con el proceso y de la mano con el progreso
+			- agregar la observacion por parte del ultimo validador
+			- en el email enviado poner en negrilla la observacion y un interlineado
+			- CAMBIAR EL ESTADO DE la aceptacion de la alianza por parte del coorc. externo para que el coor. interno pueda modificar la informacion
+			- cambiar el estado del envio del email por parte del coord interno para que el coor. interno pueda modificar la informacion
+			- registrar un log de las decisiones en los procesos (alianza, iniciativa, inscripcion, etc) es decir en las de pasos_[proceso]
+				- se puede agregar un campo de activo o actual que determine el registro que se toma para las reglas del proceso 
+			- verificar el proceso de rechazo, tiene errores
+			- los emails a los validadores no muestran en nombre del validador, aparece {user_NAME}
+			- map
+				- mostrar el periodo en el que esta, seleccionar por defecto el periodo a partir de la fecha actual
+				- imprimir en pdf 
+					- nombre pais 
+					- tipo de alianza
+				- imprimir en excel
+					- en filas 
+					- nombre pais 
+					- tipo de alianza
+			- assignments
+				- solo debe permitir editar informacion de acuerdo al campus que este seleccionado
+			- validation
+				- cambiar el texto del boton 'mas informacion' por 'ver informacion'
+				- agregar el texto delante del validador que puede imprimir el documento
+				- para el validador que imprime el documento agregar un boton de crear pre-forma y enviarlo a la creacion de las pre-formas generales de la institucion y al terminar regresarlo a donde estaba
+					- debe tener permiso para crear pre-formas generales de la institucion
+				- cambiar el color del aviso para el boton de impresion que sea mas diciente
+		- conectar el proyecto a un openldap preconfigurado
+			- hacer una copia dentro del sistema
+		- interchange
+			- registrar movilidad
+				- si es un estudiante cargar los datos que existan en el formulario
+			- cambiar nombre 'codigo institucional' por 'codigo estudiantil'
+			- colocar limites minimos al promedio o porcentaje y el mensaje que mostrara en tal caso  y que en algun lado se pueda administrar esos datos por parte de un funcionario de la institucion
+		- en la pantalla de inicio despues de enviar los datos de login, si no se obtiene el campus al que pertenece, debe permitir elegir a cual campus esta vinculado
+		- los usuaarios puede cambiar el campus siempre y cuando no hubieran iniciado algun proceso
+		- 
+		- admin institucion 
+			- lista de los tipos de documentos 
+		- arreglar que no se vea montado el header con el resto del formulario
+		- arreglar problema nombre de institucion en header
+		- verificar si al cambiar de ciudad la institucion externa el usuario externo queda asociado a ese nuevo campus
+
+	- resultado de la reunion 4 con Ing. Jaime
+		- interchange
+			- establecer un limite de inscripciones permitidas por estudiante por institucion local
+				- validar si las fechas se cruzan con otras inscripciones o que el sistema anule las demas inscripciones en proceso si se aprueba una 
+			- cambiar el texto y la funcionalidad del boton de 'Ver Inscripcion' por 'Continuar' y lo envia al formulario de inscripcion
+			- en la validacion ocultar la lista de pasos a validar
+
+
+	- resultado de la reunion 5 con Ing. Jaime
+		- en un excel (u otro) hacer un mapa partiendo del menu de la aplicacion incluyendo los procesos que tiene que hacer el sistema y marcando en verde las tareas realizadas
+			- agregar las tareas paralelas que se tienen que hacer, ejm: tablas comunes, idioma, etc
+			- actualizar el project 
+
+	- resultado de la reunion 6 con Ing. Jaime
+		- interchange
+			- las reglas como de los limites para el campo estudiante_promedio en interout no deberian estar setiadas, debe haber como administrarlas
+			- en el paso 3 el periodo debe cargar las modalidades que esten activas en ese periodo
+			- en los pasos de enviar los datos cargar inmediatamente el destino o colocar una division con un mensaje de que lo va a redirigir
+			- revizar porque no esta registrando el paso 8 de datos de contacto
+			- revizar porque sale error en el servidor al cargar archivos (parece que no le carga el nombre)
+			- revizar porque no muestra las imagenes en el pdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	- roles
 		- super administrador
@@ -823,7 +1016,157 @@ CORRECCIONES
 		- (solucionado) cambiar 'Alianza 13, registro de validación' por Desición:
 	- revizar los procesos para ajusatarlos a los cambios realizados, ejemplo: ciclos en datos que ahora son unico registro
 
+
+	- intervalidation -> procesos
+		- buscar si es el turno de validacion 
+
+
 OTROS APUNTES:
+
+prueba para nuevo desarrollador
+	- hacer un crud
+		- conectarse a la bd
+		
+
+
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+
+
+
+
+//PARA LOS CONTROLADORES
+//PARA LOS CONTROLADORES
+//PARA LOS CONTROLADORES
+//PARA LOS CONTROLADORES
+//PARA LOS CONTROLADORES
+//PARA LOS CONTROLADORES
+
+
+
+//antes del construct
+private $viewWith;
+
+//alguna de las dos al final del construct
+$this->viewWith = ['campusApp' => $this->campusApp, 'route_split' => $this->route_split];
+$this->viewWith = ['campusApp' => $this->campusApp];
+
+//en los metodos
+$this->viewWith = array_merge($this->viewWith,['' => $]);
+
+
+->with($this->viewWith);
+
+
+
+
+
+
+private $user;
+private $campusAppFound;
+
+
+
+
+//dentro de la llamada al middleware en el construct
+
+
+
+			if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                return redirect(route('home'));
+            }
+            if ( Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = ['campusApp' => $this->campusApp];
+
+            
+
+            return $next($request);
+
+
+
+
+
+//en el caso de querer 
+$campusApp = $this->campusAppFound;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+// -----------------------------------
+
+
+
+
 		#1, http://www.codebeautifier.com te valdrá para el css, o también puedes usar esta maravilla, que tiene una configuración algo más personalizada. Para el js prueba http://jsbeautifier.org/
 
 		#2, Si quieres simplemente ofuscar, http://javascriptobfuscator.com/ te lo deja horripilante. Si también quieres minimizar el .js, prueba http://dean.edwards.name/packer/ . 
@@ -907,3 +1250,10 @@ Crear la funcionalidad de los permisos usando los gates de laravel
 
 	- 
 
+
+
+El proceso a probar es el de subscribir una alianza y trata de lo siguiente:
+
+El coordinador interno tiene la facultad de iniciar el tramite de una nueva alianza con otra institucion, para ello ingresa a la opcion de menu 'InterAlliance -> Subscribir alianza' la cual le solicita unos datos que estan separados en tres pasos, al final envia la peticion al correo del coordinador externo que registro en el formulario y este ultimo ingresa a la aplicacion para verificar/modificar los datos que le corresponde y aceptar o no la peticion de alianza con la institucion externa
+
+En el caso de ser aceptada, pasa a un proceso de validacion por parte de tres usuarios (validador1,validador2 y validador3) quienes pueden aprobar o rechazar la revision, en el caso del ultimo validador, este puede rechazar la alianza o imprimir un documento llamado pre-forma el cual trae los datos de la alianza en cuestion para ser firmado por los directivos de la institucion externa, posteriormente se digitaliza el documento y se carga mediante la opcion de 'Cargar Documento' que se encuentra en la tabla de todas las alianzas a la cual se puede acceder por medio de la opcion de menu 'InterAlliance -> Alianzas', una vez realizado el cargue del documento la alianza pasara a estar activa y terminara alli el proceso de creacion de una alianza.

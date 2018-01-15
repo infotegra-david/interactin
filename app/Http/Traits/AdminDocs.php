@@ -473,7 +473,8 @@ trait AdminDocs{
                         goto end;
                     }
 
-
+                    //se movio mas abajo para determinar si se cambia el nombre del archivo almacenado en el caso que el nombre sea diferente
+                    /*
                     // if ($datos['archivo_contenido'] !== '' || $datos['archivo_input'] !== '') {
                         // $MimeType = $request->file('archivo_documentos')->getClientMimeType();
                         if ($tipo_documento->nombre == 'PRE-FORMAS') {
@@ -487,12 +488,13 @@ trait AdminDocs{
                         }
 
                     // }
+                    */
                 }
 
             //busca el archivo anterior y lo elimina
                 $archivoProceso = '';
                 
-                //busca si existe el archivo, es decir para actualizar el archivo
+                //busca si existe el archivo para actualizarlo
                 if (isset($datos['archivo_id'])) {
                         $archivoProceso = $tablaAsociarArchivo->join('tipo_documento',$nombreTablaAsociarArchivo.'.tipo_documento_id','tipo_documento.id')
                                 ->join('archivo',$nombreTablaAsociarArchivo.'.archivo_id','archivo.id')
@@ -509,6 +511,7 @@ trait AdminDocs{
                 }
                 $listaArchivos = [];
 
+                //busca el registro de los archivos almacenados y los elimina
                 if (count($archivoProceso)) {
                     foreach ($archivoProceso as $key => $archivo) {
                         //guardara el ultimo id, nombre y path
@@ -530,10 +533,30 @@ trait AdminDocs{
                     }
                 }
 
-                $nombre = ($nombre != 'nombre_default' ? $nombre : $nombre_orig);
-                $path = ($path != '' ? $path : $path_orig);
-                
+                //almacena el nuevo archivo en el path determinado definiendo si cambia o mantiene el nombre del archivo
+                if (!in_array($datos['archivo_contenido'], ['',null]) || !in_array($datos['archivo_input'], ['',null]) ) {
+                    // if ($datos['archivo_contenido'] !== '' || $datos['archivo_input'] !== '') {
+                        // $MimeType = $request->file('archivo_documentos')->getClientMimeType();
+                        $nombre_archivo = ($nombre != $nombre_orig ? $nombre_archivo : substr($path_orig,strrpos($path_orig,"/")));
 
+                        if ($tipo_documento->nombre == 'PRE-FORMAS') {
+                            $path .= '/'.$nombre_archivo;
+                            Storage::disk('public')->put($path, $datos['archivo_contenido']);
+
+                        }else{
+                            $path = Storage::disk('public')->putFileAs(
+                                $path, $datos['archivo_input'], $nombre_archivo
+                            );
+                        }
+
+                    // }
+                }
+
+
+
+                $nombre = ($nombre != 'nombre_default' ? ($nombre != $nombre_orig ? $nombre : $nombre_orig) : $nombre_orig);
+                $path = ($nombre != $nombre_orig ? ($path != '' ? $path : $path_orig) : $path_orig );
+                
                 $tipo_archivo = \App\Models\TipoArchivo::where('nombre',$tipo_archivo_nombre)->select('id')->first();
 
                 $formato = \App\Models\Formato::firstOrCreate(

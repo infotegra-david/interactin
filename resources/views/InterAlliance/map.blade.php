@@ -43,8 +43,7 @@
 	//follow the tree in inc/config.ui.php
 
 	$page_nav = 1;
-	$menu="InterAlliance";
-	$submenu1="InterAllianceMap";
+	$page_nav_route[ "InterAlliance" ]["sub"][ "InterAllianceMap" ]["active"] = true;
 	//$submenu2='';
 	?>
 
@@ -161,7 +160,7 @@
 											<div class="sparkline display-inline" data-sparkline-type='pie' data-sparkline-piecolor='["#E979BB", "#57889C"]' data-sparkline-offset="90" data-sparkline-piesize="23px">
 												25,75
 											</div>
-											<div class="btn-group display-inline pull-right text-align-left hidden-tablet">
+											<div class="btn-group display-inline pull-right text-align-left hide-tablet">
 												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 													<i class="fa fa-cog fa-lg"></i>
 												</button>
@@ -219,8 +218,8 @@
 		<!-- SPARKLINES -->
 	{{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
 	{{ Html::script('js/smartwidgets/jarvis.widget.min.js') }}
-	{{-- Html::script('/js/plugin/datatables/jquery.dataTables.min.js') --}}
-	{{-- Html::script('/js/plugin/datatables/dataTables.bootstrap.min.js') --}}
+	{{ Html::script('/js/plugin/datatables/jquery.dataTables.min.js') }}
+	{{ Html::script('/js/plugin/datatables/dataTables.bootstrap.min.js') }}
 
 
 	<script>
@@ -273,9 +272,9 @@
 
 			// clears the variable if left blank
 		    var table = $('#lista_paises').DataTable( {
-		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>"+
+		    	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hide-xs-down'l>r>"+
 					"t"+
-					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hide-xs-down'i><'col-xs-12 col-sm-6'p>>",
 		        "bDestroy": true,
 		        "iDisplayLength": 15,
 		        "oLanguage": {

@@ -21,6 +21,10 @@
 				@endif
 
 			</ul>
+			
+			<div class="div_buton_help">
+				<i id="buton_help" class="fa fa-info-circle text-info" data-toggle="collapse" data-target="#collapseExample"></i>
+			</div>
 			<div class="clearfix"></div>
 		</div>
 		<div class="actions menu hide">
@@ -31,13 +35,29 @@
 				Siguiente<i class="fa fa-arrow-right"></i>
 			</button>
 		</div>
+		
 		<!--div class="tab-content"-->
+		<div class="collapse" id="collapseExample" >
+            <div class="help well">
+                <h5>¿Como subscribir una Alianza?</h5>
+               <ul>
+                    <li>El proceso tiene una secuencia de pasos.</li>
+                    <li>De click en el botón “Continuar” al terminar cada paso.</li>
+                    <hr/>
+                    <li>Revise y corrija la información de los datos de su institución (la institución contraparte).</li>
+                    <li>Ingrese los datos del representante legal de su institución.</li>
+                    <li>Revise los datos que ha ingresado.</li>
+                    <li>Si todo esta correcto, apruebe la solicitud de alianza.</li>
+                    <li>La subscripcion entrara en un proceso de validación para finalmente estar activa.</li>
+                </ul>     
+            </div>
+        </div>
 		<div class="step-content" id="Registro_content" >
 			@if( $editar_paso === false || $editar_paso == 4 )
 				<div class="step-pane {{ ( ($editar_paso === false || $editar_paso == 4 ) ? 'active' : '' ) }}" tipo=" {{ ( ($editar_paso === false || $editar_paso == 4 ) ? 'active' : '' ) }}"data-step="4">
 					{!! Form::model($alliance, ['route' => ['interalliances.store'], 'method' => 'post', 'id' => 'Registro_paso4', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : ''), 'results' => 'Registro_results']) !!}
 						<br>
-						<h3><strong>Paso 4</strong> - {{ $paso_titulo[4] }}</h3>
+						<h3><strong>Paso 4</strong> - {{ $paso_titulo[4] }} <span class="{{ !isset($alianzaId) ? 'hide' : '' }} span-proceso-id">- Alianza #<b>{{ $alianzaId ?? '' }}</b></span></h3>
 							{{ Form::hidden('paso', '4') }}
 							{{ Form::hidden('atoken', $atoken) }}
 							{{ Form::hidden('alianzaId', $alianzaId) }}
@@ -53,7 +73,7 @@
 
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group" >
+									<div class="input-group {{ ($errors->has('tipo_institucion_destino') ? 'has-error' : '') }}" >
 									
 										<span class="input-group-addon"><i class="fa fa-sitemap fa-md fa-fw"></i></span>
 										{{ Form::select('tipo_institucion_destino', $tipo_institucion_destino->prepend('Seleccione el tipo de institucion', ''), old('tipo_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de institucion' ]) }}
@@ -63,7 +83,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('nombre_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
 										{{ Form::text('nombre_institucion_destino', old('nombre_institucion_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el nombre de la Institución' ]) }}
@@ -75,7 +95,7 @@
 
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group" >
+									<div class="input-group {{ ($errors->has('direccion_institucion_destino') ? 'has-error' : '') }}" >
 									
 										<span class="input-group-addon"><i class="fa fa-map-o fa-md fa-fw"></i></span>
 										{{ Form::text('direccion_institucion_destino', old('direccion_institucion_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese la dirección del campus principal' ]) }}
@@ -87,7 +107,7 @@
 						<!--telefono -->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('telefono_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-phone fa-md fa-fw"></i></span>
 										{{ Form::text('telefono_institucion_destino', old('telefono_institucion_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el teléfono del campus principal' ]) }}
@@ -97,7 +117,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('codigo_postal_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-map-marker fa-md fa-fw"></i></span>
 										{{ Form::text('codigo_postal_institucion_destino', old('codigo_postal_institucion_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el código postal del campus principal', 'data-mask' => '999999', 'data-mask-placeholder' => 'X' ]) }}
@@ -108,7 +128,7 @@
 						<!--pais y ciudad -->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group" >
+									<div class="input-group {{ ($errors->has('pais_institucion_destino') ? 'has-error' : '') }}" >
 									
 										<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
 										{{ Form::select('pais_institucion_destino', $pais_institucion_destino->prepend('Seleccione el país', ''), null, ['class' => 'form-control input-md', 'target' => 'departamento_institucion_destino', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país' ]) }}
@@ -119,7 +139,7 @@
 
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('departamento_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
 										{{ Form::select('departamento_institucion_destino', $departamento_institucion_destino, old('departamento_institucion_destino'), ['class' => 'form-control input-md', 'target' => 'ciudad_institucion_destino', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento/estado' ]) }}
@@ -130,7 +150,7 @@
 
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('ciudad_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
 										{{ Form::select('ciudad_institucion_destino', $ciudad_institucion_destino, old('ciudad_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la ciudad' ]) }}
@@ -148,7 +168,7 @@
 						<!-- lista profesores y coordinadores-->
 							<div class="col-sm-6 col-md-6 hide">
 								<div class="form-group">
-									<div class="input-group" >
+									<div class="input-group {{ ($errors->has('coordinador_destino') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
 										{{ Form::hidden('coordinador_destino', $alliance['coordinador_destino']) }}
 
@@ -162,7 +182,7 @@
 						<!--nombre y cargo -->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('nombre_coordinador_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
 										{{ Form::text('nombre_coordinador_destino', old('nombre_coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el nombre del Coordinador Externo', (isset($alliance['coordinador_origen_activo']) && $alliance['coordinador_origen_activo'] == 0 ? 'disabled' :'' )]) }}
 									</div>
@@ -170,7 +190,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('cargo_coordinador_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-briefcase fa-md fa-fw"></i></span>
 										{{ Form::text('cargo_coordinador_destino', old('cargo_coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el cargo del Coordinador Externo', (isset($alliance['coordinador_origen_activo']) && $alliance['coordinador_origen_activo'] == 0 ? 'disabled' :'' )]) }}
 									</div>
@@ -180,7 +200,7 @@
 						<!--email y telefonos coordinador externo -->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group" >
+									<div class="input-group {{ ($errors->has('telefono_coordinador_destino') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-phone fa-md fa-fw"></i></span>
 										{{ Form::text('telefono_coordinador_destino', old('telefono_coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el teléfono del Coordinador Externo', (isset($alliance['coordinador_origen_activo']) && $alliance['coordinador_origen_activo'] == 0 ? 'disabled' :'' )]) }}
 										<span class="input-group-addon" rel="popover-hover" data-content="Escriba el número telefónico general de la institución contraparte (con indicativo de país y ciudad si corresponde)." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
@@ -190,7 +210,7 @@
 						<!--email -->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('email_coordinador_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-envelope fa-md fa-fw"></i></span>
 										{{ Form::text('email_coordinador_destino', old('email_coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el email del Coordinador Externo', 'title' => 'Ingrese el email del Coordinador Externo', (isset($alliance['coordinador_origen_activo']) && $alliance['coordinador_origen_activo'] == 0 ? 'disabled' :'' )]) }}
 									</div>
@@ -205,7 +225,7 @@
 				<div class="step-pane {{ ( $editar_paso == 5 ? 'active' : '' ) }}" data-step="5">
 					{!! Form::model($alliance, ['route' => ['interalliances.store'], 'method' => 'post', 'id' => 'Registro_paso5','files' => true, 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : ''), 'results' => 'Registro_results' ]) !!}
 						<br>
-						<h3><strong>Paso 5</strong> - {{ $paso_titulo[5] }}</h3>
+						<h3><strong>Paso 5</strong> - {{ $paso_titulo[5] }} <span class="{{ !isset($alianzaId) ? 'hide' : '' }} span-proceso-id">- Alianza #<b>{{ $alianzaId ?? '' }}</b></span></h3>
 						{{ Form::hidden('paso', '5') }}
 						{{ Form::hidden('atoken', $atoken) }}
 						{{ Form::hidden('alianzaId', $alianzaId) }}
@@ -222,7 +242,7 @@
 							<!--Nombre del Representante Legal y Lugar de Nacimiento del Representante Legal  -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_nombre') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
 												{{ Form::text('repre_nombre', old('repre_nombre'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el nombre del Representante Legal', 'title' => 'Ingrese el nombre del Representante Autorizado para Subscribir la Alianza' ]) }}
@@ -232,10 +252,10 @@
 								</div>
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_cargo') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-briefcase fa-md fa-fw"></i></span>
-												{{ Form::text('repre_cargo', old('repre_cargo'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el cargo' ]) }}
+												{{ Form::text('repre_cargo', old('repre_cargo'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el cargo', 'title' => 'Ingrese el cargo' ]) }}
 										
 										</div>
 									</div>
@@ -244,10 +264,10 @@
 							<!--telefono -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_telefono') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-phone fa-md fa-fw"></i></span>
-												{{ Form::text('repre_telefono', old('repre_telefono'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el teléfono y extensión' ]) }}
+												{{ Form::text('repre_telefono', old('repre_telefono'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el teléfono y extensión', 'title' => 'Ingrese el teléfono y extensión' ]) }}
 										
 										</div>
 									</div>
@@ -256,7 +276,7 @@
 							<!--email -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_email') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-envelope fa-md fa-fw"></i></span>
 												{{ Form::text('repre_email', old('repre_email'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el email Del Representante', 'title' => 'Ingrese el email Del Representante' ]) }}
@@ -270,10 +290,10 @@
 							<!--pais  -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_pais_nacimiento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-												{{ Form::select('repre_pais_nacimiento', $repre_pais_nacimiento->prepend('Seleccione el país de nacimiento del Representante', ''), null, ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el país de nacimiento del Representante'  ]) }}
+												{{ Form::select('repre_pais_nacimiento', $repre_pais_nacimiento->prepend('Seleccione el país de nacimiento del Representante', ''), null, ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el país de nacimiento del Representante', 'title' => 'Seleccione el país de nacimiento del Representante'  ]) }}
 										
 										</div>
 									</div>
@@ -283,30 +303,30 @@
 							<!--tipo de Documento y Número de Documento  -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_tipo_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-id-card fa-md fa-fw"></i></span>
-												{{ Form::select('repre_tipo_documento', $repre_tipo_documento->prepend('Seleccione el tipo de documento del Representante', ''), old('repre_tipo_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de documento del Representante' ]) }}
+												{{ Form::select('repre_tipo_documento', $repre_tipo_documento->prepend('Seleccione el tipo de documento del Representante', ''), old('repre_tipo_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de documento del Representante', 'title' => 'Seleccione el tipo de documento del Representante' ]) }}
 										
 										</div>
 									</div>
 								</div>
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_numero_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-hashtag fa-md fa-fw"></i></span>
-												{{ Form::text('repre_numero_documento', old('repre_numero_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el número de documento del Representante' ]) }}
+												{{ Form::text('repre_numero_documento', old('repre_numero_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese el número de documento del Representante', 'title' => 'Ingrese el número de documento del Representante' ]) }}
 										
 										</div>
 									</div>
 								</div>
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_fecha_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocus' => '(this.type="date")', 'onblur' => '(this.type="text")', 'id' => 'date' ]) }}
+												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocus' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
 												<span class="input-group-addon" rel="tooltip" data-original-title="Ingrese la fecha de expedición del documento del Representante." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 										
 										</div>
@@ -316,10 +336,10 @@
 							<!--pais y ciudad -->
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_pais_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-												{{ Form::select('repre_pais_exped_documento', $repre_pais_exped_documento->prepend('Seleccione el país de expedición del documento', ''), old('repre_pais_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_departamento_exped_documento', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país de expedición del documento'  ]) }}
+												{{ Form::select('repre_pais_exped_documento', $repre_pais_exped_documento->prepend('Seleccione el país de expedición del documento', ''), old('repre_pais_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_departamento_exped_documento', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país de expedición del documento', 'title' => 'Seleccione el país de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -327,10 +347,10 @@
 
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_departamento_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-												{{ Form::select('repre_departamento_exped_documento', ( $repre_departamento_exped_documento ?? array() ), old('repre_departamento_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_ciudad_exped_documento', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento/estado de expedición del documento'  ]) }}
+												{{ Form::select('repre_departamento_exped_documento', ( $repre_departamento_exped_documento ?? array() ), old('repre_departamento_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_ciudad_exped_documento', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento/estado de expedición del documento', 'title' => 'Seleccione el departamento/estado de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -338,10 +358,10 @@
 
 								<div class="col-sm-6 col-md-6">
 									<div class="form-group">
-										<div class="input-group">
+										<div class="input-group {{ ($errors->has('repre_ciudad_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-												{{ Form::select('repre_ciudad_exped_documento', ( $repre_ciudad_exped_documento ?? array() ), old('repre_ciudad_exped_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la cudad de expedición del documento'  ]) }}
+												{{ Form::select('repre_ciudad_exped_documento', ( $repre_ciudad_exped_documento ?? array() ), old('repre_ciudad_exped_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la cudad de expedición del documento', 'title' => 'Seleccione la cudad de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -357,7 +377,7 @@
 						<div class="row checkbox_show" id="aceptar_alianza">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<div class="input-group">
+									<div class="input-group {{ ($errors->has('archivo_input') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-file-pdf-o fa-md fa-fw"></i></span>
 										{{ Form::file('archivo_input', ['class' => 'form-control input-md', 'placeholder' => 'Cargue el archivo de soporte del representante autorizado' ]) }}
 										<span class="input-group-addon" rel="tooltip" data-original-title="Cargue el archivo de soporte del representante autorizado." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
@@ -374,7 +394,7 @@
 				<div class="step-pane {{ ( $editar_paso == 6 ? 'active' : '' ) }}" data-step="6">
 					{!! Form::model($alliance, ['route' => ['interalliances.store'], 'method' => 'post', 'id' => 'Registro_paso6', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : ''), 'results' => 'Registro_results']) !!}
 						<br>
-						<h3><strong>Paso 6</strong> - {{ $paso_titulo[6] }}</h3>
+						<h3><strong>Paso 6</strong> - {{ $paso_titulo[6] }} <span class="{{ !isset($alianzaId) ? 'hide' : '' }} span-proceso-id">- Alianza #<b>{{ $alianzaId ?? '' }}</b></span></h3>
 						<br>
 						<div class="para_ver_datos">
 							{{ Form::hidden('paso', '6') }}
@@ -384,20 +404,20 @@
 							{{ Form::hidden('tipoRuta', $tipoRuta) }}
 							{{ Form::hidden('modificar', '1') }}
 						</div>
+						{{ Form::hidden('enviar', true) }}
 
 						<br>
-						<h1 class="text-center text-success"><strong><i class="fa fa-check fa-md"></i> Completado</strong></h1>
+						<h1 class="text-center text-success"><strong><i class="fa fa-envelope-o fa-md"></i> revisualización del e-mail.</strong></h1>
 						<br>
 						<div class="text-center">
 							<div class="form-group">
-								<h3 class="text-center">Previsualización del e-mail.</h3>
 								<div class="form-group">
-									<p>Revise los datos que ha ingresado para poder enviar el registro, elija la opción <b>Ver los datos</b> </p>
+									<p class="h3">Revise los datos que ha ingresado para poder enviar el registro, elija la opción <b>Ver los datos</b> </p>
 								</div>
 								<hr>
 
 
-			                    {!! Form::button('<i class="fa fa-list-alt"></i> Ver los datos', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'ver_registro', 'id' => 'ver_registro', 'url' => route('interalliances.mail') ]) !!}
+			                    {!! Form::button('<i class="fa fa-list-alt"></i> Ver los datos', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'ver_registro', 'id' => 'ver_registro', 'url' => route('interalliances.email') ]) !!}
 			                    <br><br>
 								<div id="ver_datos" class="ver_datos">
 									
@@ -428,7 +448,7 @@
 				                </div>
 					        <!--observaciones-->
 				                <div class="form-group">
-				                    <div class="input-group">
+				                    <div class="input-group {{ ($errors->has('observacion_aceptar_alianza') ? 'has-error' : '') }}">
 				                        <span class="input-group-addon"><i class="fa fa-paragraph fa-md fa-fw"></i></span>
 				                        {{ Form::textarea('observacion_aceptar_alianza', old('observacion_aceptar_alianza'), ['class' => 'form-control input-md', 'rows' => '3', 'placeholder' => 'Observaciones']) }}
 				                    </div>
@@ -441,7 +461,7 @@
 					                </div>
 					            </div>
 								<br>
-								<div class="text-center hide" id="datos_email_enviar" >
+								<div class="text-center " id="datos_email_enviar" >
 
 									<div class="form-group">
 										<div class="">
@@ -451,9 +471,9 @@
 									<br>
 									<div class="form-group">
 										<div class="full">
-										{!! Form::button('<i class="fa fa-pencil-square-o"></i> Modificar', ['type' => 'button', 'class' => 'btn btn-lg btn-info', 'name' => 'modificar_registro', 'id' => 'modificar_registro', 'url' => route('interalliances.mail') ]) !!}
+										{!! Form::button('<i class="fa fa-pencil-square-o"></i> Modificar', ['type' => 'button', 'class' => 'btn btn-lg btn-info', 'name' => 'modificar_registro', 'id' => 'modificar_registro', 'url' => route('interalliances.email') ]) !!}
 										&nbsp;&nbsp;&nbsp;
-										 {!! Form::button('<i class="fa fa-external-link"></i> Enviar solicitud', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'enviar_registro', 'id' => 'enviar_registro', 'url' => route('interalliances.mail') ]) !!}
+										 {!! Form::button('<i class="fa fa-external-link"></i> Enviar solicitud', ['type' => 'button', 'class' => 'btn btn-lg btn-success', 'name' => 'enviar_registro', 'id' => 'enviar_registro', 'url' => route('interalliances.email') ]) !!}
 										</div>
 										<span class="input-group-addon" rel="popover-hover" data-original-title="Enviar el pre-registro" data-content="En caso de que desee modificar alguna informacion de la solicitud de trámite de la alianza más adelante, elija la opción <b>Modificar</b>. Por el otro lado, si el formulario ya está debidamente diligenciado y desea dar inicio al proceso de solicitud de trámite de la alianza, elija la opción <b>Enviar solicitud</b>." data-placement="top" data-html="true"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
@@ -511,7 +531,7 @@
 		//se enviaron las funciones de mostrarContenido, CambiarContenidoSelect, formEnviar y EnviarDatosAjax al script my_functions.js
 
 		
-
+		/*
 		$('#ver_registro').on('click', function () {
 			//console.log('entro #ver_registro');
 			var route = $(this).attr('url');
@@ -548,20 +568,20 @@
 			alert(thisForm);
 			return 1;
 			exit;
-			/*
-			var route = $(this).attr('url');
-			var token = $('#'+ thisForm).find('input[name="_token"]').val();
+			
+			// var route = $(this).attr('url');
+			// var token = $('#'+ thisForm).find('input[name="_token"]').val();
 
-			var inputData = "paso="+$('#'+ thisForm ).find('input[name="paso"]').val();
-			inputData = inputData+"&alianzaId="+$('#'+ thisForm ).find('input[name="alianzaId"]').val();
-			inputData = inputData+"&aceptar_alianza="+$('#'+ thisForm ).find('input[name="aceptar_alianza"]').val();
-			inputData = inputData+"&enviar="+$('#'+ thisForm ).find('input[name="enviar"]').val();
-			inputData = inputData+"&tokenmail="+$('#'+ thisForm ).find('input[name="tokenmail"]').val();
-			//var inputData =  $('#'+ thisForm ).find('input, textarea, select').serialize();
-			//console.log(inputData);
-			var results = '#'+ thisForm +' div#ver_datos';
-			var accion = 'vista';
-			*/
+			// var inputData = "paso="+$('#'+ thisForm ).find('input[name="paso"]').val();
+			// inputData = inputData+"&alianzaId="+$('#'+ thisForm ).find('input[name="alianzaId"]').val();
+			// inputData = inputData+"&aceptar_alianza="+$('#'+ thisForm ).find('input[name="aceptar_alianza"]').val();
+			// inputData = inputData+"&enviar="+$('#'+ thisForm ).find('input[name="enviar"]').val();
+			// inputData = inputData+"&tokenemail="+$('#'+ thisForm ).find('input[name="tokenemail"]').val();
+			// //var inputData =  $('#'+ thisForm ).find('input, textarea, select').serialize();
+			// //console.log(inputData);
+			// var results = '#'+ thisForm +' div#ver_datos';
+			// var accion = 'vista';
+			
 			var results = '#' + $('#'+ thisForm).attr('results') + ' #show-msg';
 
 			//$('.article_registro').find('input, textarea, button, select').removeAttr('disabled');
@@ -586,11 +606,11 @@
 						});
 						clearInterval(intervalCounter);
 
-						/*
-						setTimeout(function(){
-						  location.reload();
-						}, 2000);
-						*/
+						
+						// setTimeout(function(){
+						//   location.reload();
+						// }, 2000);
+						
 					};
 	            });
 			//};
@@ -608,7 +628,7 @@
 			var inputData = "paso="+$('#'+ thisForm ).find('input[name="paso"]').val();
 			inputData = inputData+"&alianzaId="+$('#'+ thisForm ).find('input[name="alianzaId"]').val();
 			inputData = inputData+"&enviar=1";
-			inputData = inputData+"&tokenmail="+$('#'+ thisForm ).find('input[name="tokenmail"]').val();
+			inputData = inputData+"&tokenemail="+$('#'+ thisForm ).find('input[name="tokenemail"]').val();
 			inputData = inputData+"&aceptar_alianza="+$('#'+ thisForm +' input[name="aceptar_alianza"]:checked').val();
 			inputData = inputData+"&coordinador_destino="+$('#'+ thisForm ).find('input[name="coordinador_destino"]').val();
 			//var inputData =  $('#'+ thisForm ).find('input, textarea, select').serialize();
@@ -632,11 +652,11 @@
 						  iconSmall: "fa fa-check bounce animated"
 						});
 						clearInterval(intervalCounter);
-						/*
-						setTimeout(function(){
-						  location.reload();
-						}, 2000);
-						*/
+						
+						// setTimeout(function(){
+						//   location.reload();
+						// }, 2000);
+						
 					};
 	            });
 			};
@@ -666,7 +686,7 @@
 				//envia los datos del rechazo por e-mail
 					
  					nInterval = setInterval(function(){
- 						if ( $('#'+ thisForm ).find('input[name="tokenmail"]').size() > 0 ) {
+ 						if ( $('#'+ thisForm ).find('input[name="tokenemail"]').size() > 0 ) {
  							//enviar_aceptar(route,thisForm);
  							stopInterval();
  						}
@@ -691,6 +711,7 @@
 
 			//
 		});
+		*/
 
 			  
 		

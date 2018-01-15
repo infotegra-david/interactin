@@ -3,7 +3,7 @@
 
 @component('mail::panel')
 
-{!! $dataMail->content !!}
+{!! $dataEmail->content !!}
 
 @endcomponent
 

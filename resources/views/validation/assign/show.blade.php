@@ -1,5 +1,38 @@
 @extends('layouts.app')
+@section('head_vars')
 
+    <?php
+
+    $nameMenu = ['interalliances' => 'InterAlliance','interchanges' => 'InterChange','interactions' => 'InterAction'];
+
+    $route_sp = substr($route_split, 0,strpos($route_split, "."));
+
+    /*---------------- PHP Custom Scripts ---------
+
+    YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
+    E.G. $page_title = "Custom Title" */
+
+    $pagetitle = $nameMenu[$route_sp]. " - Vista de validador asignado";
+
+    /* ---------------- END PHP Custom Scripts ------------- */
+
+    //include header
+    //you can add your custom css in $page_css array.
+    //$your_style = 'bootstrap-select.min.css,your_style.css';
+    $your_style = 'your_style.css';
+
+    $your_script = 'js/my_functions.js';
+    //include left panel (navigation)
+    //follow the tree in inc/config.ui.php
+
+    $page_nav = 1;
+    
+    $page_nav_route[ $nameMenu[$route_sp] ]["sub"][ "Assignments" ]["active"] = true;
+    //$submenu2='';
+    
+    ?>
+
+@endsection
 @section('content')
     <section class="content-header">
         <h1>
@@ -11,8 +44,8 @@
             <div class="box-body">
                 <div class="row" style="padding-left: 20px">
                     @include('validation.assign.show_fields')
-                    <a href="{!! route('intervalidation.assignments.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
-                    {!! Form::open(['route' => ['intervalidation.assignments.destroy', $userPaso->id], 'method' => 'delete']) !!}
+                    <a href="{!! route($route_split.'.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
+                    {!! Form::open(['route' => [$route_split.'.destroy', $userPaso->id], 'method' => 'delete']) !!}
                 
                         {!! Form::button('<i class="glyphicon glyphicon-trash"></i> Eliminar', ['type' => 'submit', 'class' => 'btn btn-danger', 'onclick' => "return confirm('Esta seguro que desea eliminar el registro?')"]) !!}
                     {!! Form::close() !!}

@@ -31,6 +31,7 @@ class Alianza extends Model
         'estado',
         'token',
         'fecha_inicio',
+        'campus_id',
     ];
 
     /**
@@ -47,6 +48,7 @@ class Alianza extends Model
         'estado' => 'boolean',
         'token' => 'string',
         'fecha_inicio' => 'date',
+        'campus_id' => 'integer',
         'created_at' => 'date',
         'updated_at' => 'date',
     ];

@@ -1,7 +1,7 @@
 @extends( 'emails.layouts.ver' )
 
 <?php
-    $content = json_decode($dataMail[0]->content, true);
+    $content = json_decode($dataEmail[0]->content, true);
     //print_r($content);
 ?>
 
@@ -24,7 +24,7 @@
 
 @endsection
 
-@section('mail_content')
+@section('email_content')
     {!! $content[0]['footer'] !!}
 @endsection
 

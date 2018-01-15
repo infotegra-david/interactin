@@ -6,13 +6,6 @@
 
     <style type="text/css">
         
-        #particles-js {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
 
         html, body {
             /*background-color: #fff;*/
@@ -100,7 +93,7 @@
 
                     <section>
                         <label class="checkbox">
-                            <input type="checkbox" name="remember" checked="">
+                            <input type="checkbox" name="remember">
                             <i></i>Manter la sesión
                         </label>
                     </section>

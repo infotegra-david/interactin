@@ -152,4 +152,22 @@ class FacultadController extends AppBaseController
 
         return redirect(route('admin.faculties.index'));
     }
+
+
+
+
+
+    /**
+     * Lista los registros segun el id pasado por parametro.
+     *
+     * @param  int 
+     *
+     * @return Response
+     */
+    public function listFaculties(Request $request)
+    {
+        $campus_id = $request->id;
+        $facultades = $this->facultadRepository->listFaculties($campus_id);
+        return response()->json($facultades);
+    }
 }

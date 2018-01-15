@@ -22,6 +22,8 @@ trait Authorizable
         'create' => 'add',
         'store' => 'add',
         'destroy' => 'delete',
+        'storeUpdate' => 'add',
+        'lists' => 'view', 
         /*interalliance*/
         'map' => 'view',
         'subscribe' => 'add',
@@ -31,8 +33,8 @@ trait Authorizable
         /*localizacion*/
         'listStates' => 'view',
         'listCities' => 'view',
-        /* metodo sendMail*/
-        'sendMail' => 'add'
+        /* metodo sendEmail*/
+        'sendEmail' => 'add'
     ];
 
     /**

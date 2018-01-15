@@ -29,30 +29,32 @@ use App\Models\Admin\Country;
 use DB;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Traits\Mails;
+use App\Http\Traits\Emails;
 use App\Http\Traits\Validador;
 use App\Http\Traits\AdminDocs;
+use App\Http\Traits\Formats;
 use PDF;
 
 //use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
 
 
 class InterAllianceController extends AppBaseController
 {
     use Authorizable;
-    use Mails;
+    use Emails;
     use Validador;
     use AdminDocs;
+    use Formats;
     /** @var  AlianzaRepository */
     private $alianzaRepository;
 
     private $user;
     private $campusApp;
+    private $campusAppFound;
     private $tipoPaso;
     private $paso_titulo;
-    private $userCampus;
     private $institucion;
     private $facultad;
     private $coordinador_origen;
@@ -63,6 +65,7 @@ class InterAllianceController extends AppBaseController
     private $pais;
     private $peticion;
     private $tipoRuta;
+    private $viewWith = [];
 
 
 
@@ -76,6 +79,7 @@ class InterAllianceController extends AppBaseController
                     if (session('campusApp') == null) {
                         session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
                         session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
                     }
                     if (count($this->campusApp)) {
                         $this->campusApp = $this->campusApp->pluck('nombre','id');
@@ -86,9 +90,29 @@ class InterAllianceController extends AppBaseController
                     $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
             }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp');
+            }else{
+                if (Route::currentRouteName() != 'interalliances.destination' && Auth::user() !== NULL) {
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+            if (Route::currentRouteName() != 'interalliances.destination' && Auth::user() !== NULL) {
+                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                    return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+
             return $next($request);
         });
-
 
         $this->alianzaRepository = $alianzaRepo;
         $this->tipoPaso = $tipoPasoModel;
@@ -107,13 +131,18 @@ class InterAllianceController extends AppBaseController
             $this->peticion = "normal";
         }
 
-        $this->paso_titulo = $this->tipoPaso->where('nombre','like','%_alianza')->select('titulo',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))->pluck('titulo','orden');
+        $this->paso_titulo = $this->tipoPaso->where('nombre','like','%_interalliance')->select('titulo',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))->pluck('titulo','orden');
 
         $name = Route::currentRouteName();
 
         //$action = Route::currentRouteAction();
 
         $this->tipoRuta = $name;
+
+        if (!isset($this->user->id)) {
+            $this->user = Auth::user();
+        }
+
     }
 
     /**
@@ -127,10 +156,10 @@ class InterAllianceController extends AppBaseController
     {
         //verificar si es necesario notificar acerca de los movimientos en el paso
     }
-    public function crearPaso($paso,$estado,$alianzaId,$userId,$observacion = '')
+    public function crearPaso($paso,$estado,$alianzaId,$userId,$campus_id,$observacion = '')
     {
         //$userId = $this->user->id;
-        $tipo_paso = $this->tipoPaso->where('nombre','paso'.$paso.'_alianza')->pluck('id')->first();
+        $tipo_paso = $this->tipoPaso->where('nombre','paso'.$paso.'_interalliance')->pluck('id')->first();
         $estado = \App\Models\Estado::where('nombre',$estado)->pluck('id')->first();
 
         //¿siempre se crea un nuevo paso o se actualiza si existe?
@@ -146,10 +175,11 @@ class InterAllianceController extends AppBaseController
                 $dataPaso['estado_id'] = $estado;
                 $dataPaso['alianza_id'] = $alianzaId;
                 $dataPaso['user_id'] = $userId;
+                $dataPaso['campus_id'] = $campus_id;
                 $dataPaso['observacion'] = $observacion;
 
                 $pasoAlianza = \App\Models\Validation\PasosAlianza::updateOrCreate(
-                    ['tipo_paso_id' => $tipo_paso, 'alianza_id' => $alianzaId, 'user_id' => $userId],
+                    ['tipo_paso_id' => $tipo_paso, 'alianza_id' => $alianzaId, 'user_id' => $userId, 'campus_id' => $campus_id],
                     ['estado_id' => $estado, 'observacion' => $observacion]
                 );
 
@@ -176,8 +206,11 @@ class InterAllianceController extends AppBaseController
     public function index(Request $request)
     {
         
-        $this->user = Auth::user();
-        $thisUserRoles = DB::table('model_has_roles')->where('model_id',$this->user->id)->pluck('role_id')->toArray();
+        if (!isset($this->user->id)) {
+            $this->user = Auth::user();
+        }
+        // $thisUserRoles = DB::table('model_has_roles')->where('model_id',$this->user->id)->pluck('role_id')->toArray();
+        $thisUserRoles = $this->user->getRoleNames()->toArray();
 
         //obtener los datos de los coordinadores de la alianza
         $rolesUsuarios = Role::whereIn('name',['coordinador_interno','coordinador_externo','copia_oculta_email'])->select('id','name')->get()->toArray();
@@ -199,23 +232,100 @@ class InterAllianceController extends AppBaseController
 
         $roleCopiaEmails = $roleCopiaEmails[$keyRoleCopiaEmail]['id'];
 
+
+        //obtener todos los estados
+        $estadosData = \App\Models\Estado::select('id','uso','nombre')->get()->toArray();
+        //filtra las validaciones que aprobaron o activaron la alianza
+        $estadoValidacionActiva = array_filter($estadosData, function($var){
+            return ($var['uso'] == 'VALIDATOR' && $var['nombre'] == 'ACTIVA');
+        });
+        $estadoAlianzaActiva = array_filter($estadosData, function($var){
+            return ($var['uso'] == 'PROCESS' && $var['nombre'] == 'ACTIVA');
+        });
+        $estadoRechazadoDeclinado = array_filter($estadosData, function($var){
+            return ($var['nombre'] == 'RECHAZADO' || $var['nombre'] == 'DECLINADO');
+        });
+        reset($estadoAlianzaActiva);
+        reset($estadoValidacionActiva);
+        // reset($estadoRechazadoDeclinado);
+        $keyEstadoAlianza = key($estadoAlianzaActiva);
+        $keyEstadoValidacion = key($estadoValidacionActiva);
+        // $keyEstadoRechazadoDeclinado = key($estadoRechazadoDeclinado);
         
+        $campusApp = $this->campusAppFound;
 
-        $alianzas = \App\Models\Alianza::orderByDesc('updated_at')->get()->toArray();
+        //array con los filtros a mostrar
+        $select_filter = ['pendings' => 'Pendientes','participate' => 'Participo','not_rejected' => 'Sin rechazar','rejected' => 'Rechazadas','all' => 'Todas'];
+        $filter = 'pendings';
 
-        if( session('campusApp') != null ){
-            $campusAppId = session('campusApp');
-            $campusApp = \App\Models\Admin\Campus::find($campusAppId);
-            if( !count($campusApp) ){
-                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+        //realizar los filtros para listar las alianzas
+        $alianzas = \App\Models\Alianza::orderByDesc('alianza.updated_at')
+            ->groupBy('alianza.id');
 
-                return redirect(route('home'));
+        $esValidador = array_search('validador', $thisUserRoles);
+        $esCoordInterno = array_search('coordinador_interno', $thisUserRoles);
+        $esCoordExterno = array_search('coordinador_externo', $thisUserRoles);
+
+        if ($esCoordExterno !== false){
+            $alianza_campus_id = ['alianza.campus_id','<>',0];
+        }else{
+            $alianza_campus_id = ['alianza.campus_id',$campusApp->id];
+        }
+
+        if (isset($request['filter'])) {
+            if ($request['filter'] == 'all') {
+                $filter = $request['filter'];
+                $alianza_campus_id = ['alianza.campus_id','<>',0];
+                //no se ejecutan acciones, se mostraran todas las alianzas
+            }elseif($request['filter'] == 'pendings' || $request['filter'] == 'participate'){
+                $filter = $request['filter'];
+
+                if ($esCoordInterno !== false || $esCoordExterno !== false) {
+                    
+                    $alianzas = $alianzas->join('alianza_user','alianza.id','alianza_user.alianza_id')
+                                ->where('alianza_user.user_id',$this->user->id);
+
+                    if($request['filter'] == 'pendings'){
+                        $alianzas = $alianzas->where('alianza.estado_id','<>',$estadoAlianzaActiva[$keyEstadoAlianza]['id']);
+                    }
+
+                }elseif ($esValidador !== false) {
+                    
+                }
+            }elseif($request['filter'] == 'not_rejected' || $request['filter'] == 'rejected'){
+                $filter = $request['filter'];
+
+                $alianzasRechazadasDeclinadas = \App\Models\Validation\PasosAlianza::whereIn('estado_id',array_column($estadoRechazadoDeclinado, 'id'))->groupBy('alianza_id')->pluck('alianza_id');
+
+                if($request['filter'] == 'not_rejected'){
+                // if ($esValidador !== false) {
+                    
+                // }elseif ($esCoordInterno !== false || $esCoordExterno !== false) {
+                    $alianzas = $alianzas->whereNotIn('id',$alianzasRechazadasDeclinadas);
+                // }
+                }elseif($request['filter'] == 'rejected'){
+                // if ($esValidador !== false) {
+                    
+                // }elseif ($esCoordInterno !== false || $esCoordExterno !== false) {
+                    $alianzas = $alianzas->whereIn('id',$alianzasRechazadasDeclinadas);
+                // }
+                }
             }
         }else{
-            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-            return redirect(route('home'));
+            //por defecto los filtra por los pendientes del usuario
+            
+            if ($esCoordInterno !== false || $esCoordExterno !== false) {
+                $alianzas = $alianzas->join('alianza_user','alianza.id','alianza_user.alianza_id')
+                            ->where('alianza_user.user_id',$this->user->id);
+            }elseif ($esValidador !== false) {
+                
+            }
         }
+
+        $alianzas = $alianzas->where([$alianza_campus_id]);
+
+        $alianzas = $alianzas->select('alianza.*')->get()->toArray();
+
         $institucionId = $campusApp->institucion->id;
 
         //nombre institucion destino
@@ -228,6 +338,7 @@ class InterAllianceController extends AppBaseController
             ->get()->toArray();
 
         if (count($institucionesData)) {
+
             $campusData = \App\Models\Admin\Institucion::select('institucion.id AS institucion_id','campus.ciudad_id AS campus_ciudad_id')
                 ->join('campus','institucion.id','campus.institucion_id')
                 ->where('campus.principal',1)
@@ -237,14 +348,14 @@ class InterAllianceController extends AppBaseController
 
             $ciudadData = \App\Models\Admin\City::select('ciudad.id AS ciudad_id','ciudad.departamento_id AS ciudad_departamento_id')
                 ->whereIn('ciudad.id',array_column($campusData, 'campus_ciudad_id'))
-                ->groupBy('ciudad.departamento_id')
+                ->groupBy('ciudad.id')
                 ->get()->toArray();
 
             //pais institucion destino
             $paisesData = \App\Models\Admin\Country::select('departamento.id AS departamento_id','pais.id AS pais_id','pais.nombre AS pais_nombre')
                 ->join('departamento','pais.id','departamento.pais_id')
                 ->whereIn('departamento.id',array_column($ciudadData, 'ciudad_departamento_id'))
-                ->groupBy('pais.id')
+                ->groupBy('departamento.id')
                 ->get()->toArray();
 
             //asociar los datos del pais a la ciudad
@@ -293,18 +404,6 @@ class InterAllianceController extends AppBaseController
                 $alianzas[$keyalianzas]['institucion']['tipo_institucion_nombre'] = '';
             }
         }
-        $estadosData = \App\Models\Estado::select('id','uso','nombre')->get()->toArray();
-        //filtra las validaciones que aprobaron o activaron la alianza
-        $estadoValidacionActiva = array_filter($estadosData, function($var){
-            return ($var['uso'] == 'VALIDATOR' && $var['nombre'] == 'ACTIVA');
-        });
-        $estadoAlianzaActiva = array_filter($estadosData, function($var){
-            return ($var['uso'] == 'PROCESS' && $var['nombre'] == 'ACTIVA');
-        });
-        reset($estadoAlianzaActiva);
-        reset($estadoValidacionActiva);
-        $keyEstadoAlianza = key($estadoAlianzaActiva);
-        $keyEstadoValidacion = key($estadoValidacionActiva);
 
         //documentos de las alianzas
         $tipo_documento_id = \App\Models\TipoDocumento::where('nombre','DOCUMENTOS FINALES ALIANZA')->pluck('id');
@@ -360,6 +459,9 @@ class InterAllianceController extends AppBaseController
             //convertir la duracion para poderla sumar a la fecha de actualizacion
             $duracion = str_replace("MESES", "month", $alianzas[$keyalianzas]['duracion']);
             $duracion = str_replace("AÑOS", "year", $duracion);
+            //cambiar el texto de la duracion 
+            $alianzas[$keyalianzas]['duracion'] = str_replace("MESES", "Mes(es)", $alianzas[$keyalianzas]['duracion']);
+            $alianzas[$keyalianzas]['duracion'] = str_replace("AÑOS", "Año(s)", $alianzas[$keyalianzas]['duracion']);
             
             $alianzas[$keyalianzas]['fecha_final'] = '????-??-??';
             $alianzas[$keyalianzas]['tiempo_restante'] = '?';
@@ -384,31 +486,47 @@ class InterAllianceController extends AppBaseController
                 $alianzas[$keyalianzas]['tiempo_restante'] = $this->get_format($diff);
             }
         }
-
         //calcular los datos de pasos y validaciones
         if (count($alianzas)) {
             //(# validadores aprobado * 100) / # validadores total 
             // $estadosData = \App\Models\Estado::where('uso','VALIDATOR')->select('id','nombre')->get()->toArray();
             // $estadoAprobadoId = array_search('APROBADO', array_column($estadosData, 'nombre') );
-            $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza')->select('id','nombre','titulo')->get()->toArray();
+            $tipos_pasos = $this->tipoPaso->where([['nombre','like','%_interalliance']])->select('id','nombre','titulo')->get()->toArray();
             
-            $totalValidadores = \App\Models\Validation\UserPaso::select('users.id', 'users.name', 'users.email', 'user_tipo_paso.titulo')
+            $totalValidadores = \App\Models\Validation\UserPaso::select('users.id', 'users.name', 'users.email', 'user_tipo_paso.titulo', 'user_tipo_paso.campus_id')
                         ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
                         ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                         ->whereIn('user_tipo_paso.tipo_paso_id',array_column($tipos_pasos, 'id') )
                         ->where('model_has_roles.role_id','<>',$roleCopiaEmails )
+                        ->whereIn('user_tipo_paso.campus_id',array_column($alianzas, 'campus_id'))
                         ->groupBy('user_tipo_paso.id')
                         ->get()->toArray();
-            
+        // print_r($alianzas);
+
+            $unique_campus_id = array_unique(array_column($alianzas,'campus_id'));
+            $totalValidadoresXAlianza = [];
+
             if (count($totalValidadores)) {
+                foreach ($unique_campus_id as $key => $value) {
+                    $totalValidadoresXAlianza[$value] = array_filter($totalValidadores, function($var) use ($value){
+                        return ($var['campus_id'] == $value);
+                    });
+                }
+                reset($totalValidadoresXAlianza);
+                // print_r($totalValidadoresXAlianza);
+            }
 
                 $pasosAlianzaData = \App\Models\Validation\PasosAlianza::select('pasos_alianza.id','pasos_alianza.alianza_id AS alianza_id','pasos_alianza.user_id AS user_id','pasos_alianza.tipo_paso_id AS tipo_paso_id','pasos_alianza.observacion','pasos_alianza.estado_id AS estado_id','estado.nombre AS estado_nombre','estado.uso AS estado_uso')
                     ->join('estado','pasos_alianza.estado_id','estado.id')
                     ->join('alianza','pasos_alianza.alianza_id','alianza.id')
                     ->whereIn('alianza.id',array_column($alianzas, 'id'))
                     ->whereIn('pasos_alianza.tipo_paso_id',array_column($tipos_pasos, 'id'))
-                    ->orderBy('pasos_alianza.tipo_paso_id','asc');
+                    ->orderBy('pasos_alianza.alianza_id','asc')
+                    ->orderBy('pasos_alianza.tipo_paso_id','asc')
+                    ->orderBy('pasos_alianza.created_at','asc');
                     //->whereIn('pasos_alianza.estado_id',array_column($estadosData, 'id'))
+                    // no va en este caso porque no muestra las validaciones de los coordinadores externos
+                    // ->where('pasos_alianza.campus_id',$campusAppId)
 
                 // echo $pasosAlianzaData->toSql();
                 // print_r( $pasosAlianzaData->getBindings() );
@@ -422,24 +540,31 @@ class InterAllianceController extends AppBaseController
                     $numero_paso[$tipo_paso['id']] = ['orden' => str_replace("_","",substr($tipo_paso['nombre'],strpos($tipo_paso['nombre'],"paso")+4,2)), 'titulo' => $tipo_paso['titulo']];
                 }
                 
+                $keys_numero_paso = array_keys($numero_paso);
                 
                 // nombre validadores aprobado
                 //asociar los datos de los validadores a la alianza
                 $numeroValidadoresData = 0;
                 foreach ($alianzas as $keyalianzas => $alianza) {
+                    $campus_id_alianza = $alianzas[$keyalianzas]['campus_id'];
+
+                    $totalValidadoresXA = ($totalValidadoresXAlianza[$campus_id_alianza] ?? []);
+
                     $alianzas[$keyalianzas]['pasos_registrados'] = 0;
                     $alianzas[$keyalianzas]['total_pasos'] = count($tipos_pasos);
                     $alianzas[$keyalianzas]['validaciones'] = array();
                     $alianzas[$keyalianzas]['estado_actual'] = '';
-                    
+                    //esta variable es usada para señalar cuales alianzas van a estar resaltadas debido a que son tareas pendientes del usuario
+                    $task_pending = '';
+                    $yaValido = 0;
                     foreach ($pasosAlianzaData as $keypasosAlianzaData => $pasoAlianza) {
                         if ($alianza['id'] == $pasoAlianza['alianza_id']) {
                             if ($pasoAlianza['estado_uso'] == 'USER' || $pasoAlianza['estado_uso'] == 'EXTERNAL') {
                                 //agregar a los coordinadores a la lista de validaciones
                                 
-                                if( $pasoAlianza['user_id'] == $CoordinadoresExternosId[$alianza['id']] ){
+                                if( isset($CoordinadoresExternosId[$alianza['id']]) && $pasoAlianza['user_id'] == $CoordinadoresExternosId[$alianza['id']] ){
                                     $pasoAlianza['validador_titulo'] = 'Coordinador Externo';
-                                }elseif( $pasoAlianza['user_id'] == $CoordinadoresInternosId[$alianza['id']] ){
+                                }elseif( isset($CoordinadoresInternosId[$alianza['id']]) && $pasoAlianza['user_id'] == $CoordinadoresInternosId[$alianza['id']] ){
                                     $pasoAlianza['validador_titulo'] = 'Coordinador Interno';
                                 }else{
                                     $pasoAlianza['validador_titulo'] = 'Otro usuario';
@@ -458,18 +583,62 @@ class InterAllianceController extends AppBaseController
                                     $alianzas[$keyalianzas]['validacion_coor_ext'] = $pasoAlianza['estado_nombre'].': '.$pasoAlianza['observacion'];
                                 }
                             }elseif($pasoAlianza['estado_uso'] == 'VALIDATOR') {
-                                $keyValidador = array_search($pasoAlianza['user_id'], array_column($totalValidadores, 'id'));
-                                $pasoAlianza['validador_titulo'] = $totalValidadores[$keyValidador]['titulo'];
+                                if (count($totalValidadoresXA) >= 1) {
+                                    $keyValidador = array_search($pasoAlianza['user_id'], array_column($totalValidadoresXA, 'id'));
+                                    $pasoAlianza['validador_titulo'] = $totalValidadoresXA[$keyValidador]['titulo'];
+                                    
+                                }else{
+                                    $pasoAlianza['validador_titulo'] = 'VALIDADOR INDEFINIDO';
+                                }
                                 $alianzas[$keyalianzas]['validaciones'][$pasoAlianza['id']] = $pasoAlianza;
+                            }
+                            //asigna el nombre de la clase css para resaltar las alianzas que son tareas pendientes para el usuario
+                            if ($pasoAlianza['user_id'] == $this->user->id) {
+                                if ($pasoAlianza['estado_uso'] == 'VALIDATOR' && in_array($pasoAlianza['estado_nombre'], ['EN REVISIÓN','GENERAR DOCUMENTO','RECHAZADO'])) {
+                                    $task_pending = 'task_pending';
+                                }elseif( $pasoAlianza['estado_uso'] != 'VALIDATOR' && $alianzas[$keyalianzas]['estado_id'] != $estadoAlianzaActiva[$keyEstadoAlianza]['id'] ){
+                                    $task_pending = 'task_pending';
+                                }else{
+                                    $task_pending = '';
+                                }
+                                $yaValido = 1;
+                            }elseif( $alianzas[$keyalianzas]['estado_id'] != $estadoAlianzaActiva[$keyEstadoAlianza]['id'] ){
+                                if (count($totalValidadoresXA) >= 1) {
+                                    $keyEsValidador = array_search($this->user->id, array_column($totalValidadoresXA, 'id'));
+                                }else{
+                                    $keyEsValidador = false;
+                                }
+                                // es validador pero no ha validado
+                                if( $keyEsValidador !== false && $pasoAlianza['estado_nombre'] == 'DECLINADO' ){
+                                    $task_pending = '';
+                                }elseif ( $keyEsValidador !== false && $yaValido == 0) {
+                                    $task_pending = 'task_pending';
+                                }elseif(  isset($CoordinadoresExternosId[$alianza['id']]) && isset($CoordinadoresInternosId[$alianza['id']]) ){
+                                    if( $this->user->id == $CoordinadoresExternosId[$alianza['id']] || $this->user->id == $CoordinadoresInternosId[$alianza['id']] ){
+                                        $task_pending = 'task_pending';
+                                    }
+                                }
+
                             }
                         }
                     }
-                    $keyEsValidador = array_search($this->user->id, array_column($totalValidadores, 'id'));
+
+                    //agrega el elemento task_pending al array de cada alianza para saber si resaltarlo o no
+                    $alianzas[$keyalianzas]['task_pending'] = $task_pending;
+                        
+                    if (count($totalValidadoresXA) >= 1) {
+                        $keyEsValidador = array_search($this->user->id, array_column($totalValidadoresXA, 'id'));
+                    }else{
+                        $keyEsValidador = false;
+                    }
+
                     if ($keyEsValidador !== false && $alianzas[$keyalianzas]['estado_id'] != $estadoAlianzaActiva[$keyEstadoAlianza]['id']) {
                         $alianzas[$keyalianzas]['validador'] = true;
-                    }elseif( $this->user->id == $CoordinadoresExternosId[$alianza['id']] || array_search($roleCoordinadorExterno[$keyRoleCoorExt]['id'], $thisUserRoles) !== false ){
+                    // }elseif( $this->user->id == $CoordinadoresExternosId[$alianza['id']] || array_search($roleCoordinadorExterno[$keyRoleCoorExt]['id'], $thisUserRoles) !== false ){
+                    }elseif( isset($CoordinadoresExternosId[$alianza['id']]) && $this->user->id == $CoordinadoresExternosId[$alianza['id']] ){
                         $alianzas[$keyalianzas]['coordinador_externo'] = true;
-                    }elseif( $this->user->id == $CoordinadoresInternosId[$alianza['id']] || array_search($roleCoordinadorInterno[$keyRoleCoorInt]['id'], $thisUserRoles) !== false ){
+                    // }elseif( $this->user->id == $CoordinadoresInternosId[$alianza['id']] || array_search($roleCoordinadorInterno[$keyRoleCoorInt]['id'], $thisUserRoles) !== false ){
+                    }elseif( isset($CoordinadoresInternosId[$alianza['id']]) &&  $this->user->id == $CoordinadoresInternosId[$alianza['id']] ){
                         $alianzas[$keyalianzas]['coordinador_interno'] = true;
                     }
                     
@@ -481,11 +650,13 @@ class InterAllianceController extends AppBaseController
                         return ($var['estado_nombre'] == 'APROBADO' || $var['estado_nombre'] == 'ACTIVA');
                     });
         // print_r($alianzas[$keyalianzas]['validaciones']);
-        // print_r($validacionesAprobadas);
+        // print_r($validacionesAprobadas); 
                     if ($alianzas[$keyalianzas]['pasos_registrados'] < $alianzas[$keyalianzas]['total_pasos']) {
                         
-                        $pasos_registrados = intval( $alianzas[$keyalianzas]['pasos_registrados'] )+1;
-                        $alianzas[$keyalianzas]['estado_actual'] = 'Pendiente por continuar en el paso '. $pasos_registrados . ' "'. $numero_paso[$pasos_registrados]['titulo'] .'"';
+                        $paso_siguiente = intval( $alianzas[$keyalianzas]['pasos_registrados'] )+1;
+                        $keyPasoSig = array_search($paso_siguiente, array_column($numero_paso, 'orden'));
+
+                        $alianzas[$keyalianzas]['estado_actual'] = 'Pendiente por continuar en el paso '. $paso_siguiente . ' "'. $numero_paso[$keys_numero_paso[$keyPasoSig]]['titulo'] .'"';
                         
                         // $alianzas[$keyalianzas]['estado_actual'] = 'Pendiente por continuar en el paso '. $alianzas[$keyalianzas]['pasos_registrados']+1;
                     }else{
@@ -499,26 +670,38 @@ class InterAllianceController extends AppBaseController
                                 $alianzas[$keyalianzas]['estado_id'] = $estadoValidacionActiva[$keyEstadoValidacion]['id'];
                                 unset($alianzas[$keyalianzas]['archivo']);
                             }
-                            $keyTotalValidadores = array_search($ultimaValidacion['user_id'], array_column($totalValidadores, 'id'));
-                            $alianzas[$keyalianzas]['estado_actual'] = $ultimaValidacion['estado_nombre'].' por '.$totalValidadores[$keyTotalValidadores]['titulo'];
+
+                            if (count($totalValidadoresXA) >= 1) {
+                                $keyTotalValidadores = array_search($ultimaValidacion['user_id'], array_column($totalValidadoresXA, 'id'));
+                                $alianzas[$keyalianzas]['estado_actual'] = $ultimaValidacion['estado_nombre'].' por '.$totalValidadoresXA[$keyTotalValidadores]['titulo'].': '.$ultimaValidacion['observacion'];
+                            }else{
+                                $alianzas[$keyalianzas]['estado_actual'] = $ultimaValidacion['estado_nombre'].' por VALIDADOR INDEFINIDO';
+                            }
+                            
                         }else{
-                            $alianzas[$keyalianzas]['estado_actual'] = 'Pendiente por validacion.';
+                            $alianzas[$keyalianzas]['estado_actual'] = 'Pendiente por validación.';
                         }
                     }
                     
                     $progresoActual = intval($alianzas[$keyalianzas]['pasos_registrados']);
                     $progresoActual += count($validacionesAprobadas);
+
                     $progresoTotal = intval($alianzas[$keyalianzas]['total_pasos']);
-                    $progresoTotal += count($totalValidadores);
+                    $progresoTotal += count($totalValidadoresXA);
+
+                    $alianzas[$keyalianzas]['pasos_registrados'] = $progresoActual;
+                    $alianzas[$keyalianzas]['total_pasos'] = $progresoTotal;
 
                     $alianzas[$keyalianzas]['progreso'] = intval( ($progresoActual * 100 ) / $progresoTotal );
                 }
-            }
+            // }
         }
 
-        //print_r($alianzas);
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'alianzas' => $alianzas, 'filter' => $filter, 'select_filter' => $select_filter]);
+        
+        // print_r($alianzas);
         return view('InterAlliance.index')
-            ->with(['campusApp' => $this->campusApp, 'peticion' => $this->peticion, 'alianzas' => $alianzas]);
+            ->with($this->viewWith);
     }
     /**
      * Display a listing of the resource.
@@ -529,20 +712,7 @@ class InterAllianceController extends AppBaseController
     {
         //$RouteName = Route::currentRouteName();
         //echo session('campusApp');
-        if( session('campusApp') != null ){
-            $campusAppId = session('campusApp');
-        }else{
-            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-            return redirect(route('interalliances.index'));
-        }
-
-        $campusApp = \App\Models\Admin\Campus::find($campusAppId);
-        if( !count($campusApp) ){
-            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-            return redirect(route('interalliances.index'));
-        }
+        $campusApp = $this->campusAppFound;
                 
         //print_r($this->paso_titulo);
         $institucionId = $campusApp->institucion->id;
@@ -598,8 +768,10 @@ class InterAllianceController extends AppBaseController
         // print_r($paisesAlianzas);
         // echo '<br> -------------------------------- <br>';
 
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'paisesAlianzas' => $paisesAlianzas]);
+
         return view('InterAlliance.map')
-            ->with(['campusApp' => $this->campusApp, 'peticion' => $this->peticion, 'paisesAlianzas' => $paisesAlianzas]);
+            ->with($this->viewWith);
     }
 
     /**
@@ -621,10 +793,10 @@ class InterAllianceController extends AppBaseController
      */
     public function destination(Request $request, $id_o_token)
     {
-        $buscarAlianza = \App\Models\Alianza::where('token',$id_o_token)->select('id','token')->first();
+        $buscarAlianza = \App\Models\Alianza::where('token',(string) $id_o_token)->select('id','token')->first();
 
         if ( !count($buscarAlianza) ) { 
-            $buscarAlianza = $this->alianzaRepository->findWithoutFail($id_o_token);
+            $buscarAlianza = \App\Models\Alianza::find($id_o_token);
         }
 
         if ( count($buscarAlianza) > 0 ) { 
@@ -636,10 +808,13 @@ class InterAllianceController extends AppBaseController
                         Flash::error('La autenticación es incorrecta.');
 
                         return redirect(route('login'));
+                    }else{
+                        //se recarga la pagina porque no carga los campus a los que pertenezca e usuario
+                        return redirect(route('interalliances.destination',$id_o_token));
                     }
                 }else{
-                    $viewWith = ['tipoRuta' => $this->tipoRuta, 'peticion' => 'normal', 'route' => route('interalliances.destination',$id_o_token)];
-                    return view('auth.login')
+                    $viewWith = array_merge($this->viewWith,['tipoRuta' => $this->tipoRuta, 'peticion' => 'normal', 'open_login' => true, 'route' => route('interalliances.destination',$id_o_token)]);
+                    return view('index')
                     ->with($viewWith);
                 }
             }
@@ -657,15 +832,16 @@ class InterAllianceController extends AppBaseController
             */
             $this->user = Auth::user();
 
-            $viewWith = [];
+            $viewWith = $this->viewWith;
             $alliance = [];
             //$existeRepresentante = false;
             $alianzaId = $buscarAlianza->id;
 
-
             //solicita los datos de la alianza
-            $datosAlianza = $this->show($alianzaId, 'local');
             //$datosAlianza = $this->datosAlianza($alianzaId,'destination','ver',0);
+            $datosAlianza = $this->show($alianzaId, 'local');
+            // print_r($datosAlianza);
+            // return 1;
 
             $keyCoordExterno = $datosAlianza['keyCoordExterno'];
 
@@ -690,7 +866,7 @@ class InterAllianceController extends AppBaseController
             if ( $this->user->hasAllRoles($role) ) {
                 $viewWith = array_merge($viewWith, ['ruta' => 'destination']);
             }
-            $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta,'peticion' => 'normal']);
+            $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta,'peticion' => 'normal','editar' => false,'editar_destination' => $datosAlianza['editar']]);
 
             return view('InterAlliance.show')
             ->with($viewWith);
@@ -715,7 +891,7 @@ class InterAllianceController extends AppBaseController
             //VERIFICAR EL ROL DE coordinador_externo 
             if ( $this->user->hasAllRoles($role) ) {
                 //echo $alianzaId;
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 if ( $alianzaId != '' ){
                     return redirect(route('interalliances.destination',$alianzaId));
                 }else{
@@ -728,32 +904,20 @@ class InterAllianceController extends AppBaseController
         }
 
         //$RouteName = Route::currentRouteName();
-        //echo session('campusApp');
-        if( session('campusApp') != null ){
-            $campusAppId = session('campusApp');
-        }else{
-            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-            return redirect(route('interalliances.index'));
-        }
-
-        $campusApp = \App\Models\Admin\Campus::find($campusAppId);
-        if( !count($campusApp) ){
-            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-            return redirect(route('interalliances.index'));
-        }
+        
+        $campusApp = $this->campusAppFound;
+    
                 
         //print_r($this->paso_titulo);
         $institucionId = $campusApp->institucion->id;
         
         //falta conocer a que campus pertenece el usuario y asi asociar todo a ese mismo campus
-        //$userCampus = $campusApp->id mpus_id;
-        $this->userCampus = $campusApp->id;
-        $institucion_destino_todos = $this->institucion->where('id','!=',$this->userCampus)->select('nombre','id');
+        
+        
+        $institucion_destino_todos = $this->institucion->where('id','!=',$institucionId)->select('nombre','id');
         $institucion_destino = $this->institucion->select(DB::raw("'Otra' AS nombre, '999999' AS id"))->union($institucion_destino_todos)->pluck('nombre','id');;
         //agregar el campo 'Otro' para que agreguen una nueva unidad (facultad)
-        $facultad_origen_todos = $this->facultad->select('nombre','id');
+        $facultad_origen_todos = $this->facultad->where('campus_id',$campusApp->id)->select('nombre','id');
         $facultad_origen = $this->facultad->select(DB::raw("'Otra' AS nombre, '999999' AS id"))->union($facultad_origen_todos)->pluck('nombre','id');
         
         //-------------------------------
@@ -767,17 +931,17 @@ class InterAllianceController extends AppBaseController
         $separado_por_comas = implode(", ", array_column($datos['to'], 'email'));
         //$separado_por_comas = implode(", ", $datos['to']);
         echo join('<br>', array_map(
-            function ($first, $last) { return "The Name: $first The e-mail: $last"; },
+            function ($first, $last) { return "The Name: $first The email: $last"; },
             array_column($datos['to'], 'name'),
             array_column($datos['to'], 'email')
         ));
         //print_r($separado_por_comas);
-        $dataMail['to'] = [];
+        $dataEmail['to'] = [];
         foreach ($datos['to'] as $to) {
-            array_push($dataMail['to'],array('email' => $to['email'], 'name' => $to['name'] ) );
+            array_push($dataEmail['to'],array('email' => $to['email'], 'name' => $to['name'] ) );
         }
-        $dataMail['to'] = json_encode($dataMail['to']);
-        print_r($dataMail['to']);
+        $dataEmail['to'] = json_encode($dataEmail['to']);
+        print_r($dataEmail['to']);
         */
         //-------------------------------
         //-------------------------------
@@ -789,7 +953,7 @@ class InterAllianceController extends AppBaseController
         
         $coordinador_origen_todos = $this->coordinador_origen
                     ->join('user_campus', 'users.id', '=', 'user_campus.user_id')
-                    ->where('user_campus.campus_id',$this->userCampus)->role(['coordinador_interno','profesor'])->select(DB::raw('concat(users.name," (",users.email,")")'),'users.id');
+                    ->where('user_campus.campus_id',$campusApp->id)->role(['coordinador_interno','profesor'])->select(DB::raw('concat(users.name," (",users.email,")")'),'users.id');
         $coordinador_origen = $this->coordinador_origen->select(DB::raw("'Otro' AS name, '999999' AS id"))->union($coordinador_origen_todos)->pluck('name','id');
         
         //muestra los usuarios con el rol de profesores y coordinador_externo de campus de instituciones diferentes al del usuario que esta llenando el formulario
@@ -802,7 +966,7 @@ class InterAllianceController extends AppBaseController
 
 
         
-        $tipo_documento_id = \App\Models\TipoDocumento::where('nombre','<>','PRE-FORMAS')->pluck('id');
+        $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')->where([['tipo_documento.nombre','<>','PRE-FORMAS'],['clase_documento.nombre','INSTITUCION']])->select('tipo_documento.id')->pluck('id');
         $IdDocumentosInstitucion =  \App\Models\Admin\DocumentosInstitucion::where('institucion_id',$institucionId)->whereIn('tipo_documento_id',$tipo_documento_id)->pluck('archivo_id')->toArray();
         $enviar_documentos =  \App\Models\Archivo::whereIn('id',$IdDocumentosInstitucion)->select('nombre','id','path')->get()->toArray();
 
@@ -819,7 +983,7 @@ class InterAllianceController extends AppBaseController
         }
         //$alliance = ['coordinador_origen' => $this->user->id];
 
-        $viewWith = ['campusApp' => $this->campusApp, 'alliance' => $alliance, 'tipoRuta' => $this->tipoRuta, 'paso_titulo' => $this->paso_titulo, 'institucion_destino' => $institucion_destino, 'facultad_origen' => $facultad_origen, 'programa_origen' => $programa_origen, 'coordinador_origen' => $coordinador_origen, 'coordinador_destino' => $coordinador_destino, 'tipo_alianza' => $tipo_alianza, 'aplicaciones' => $aplicaciones, 'tipo_tramite' => $tipo_tramite, 'tipo_institucion_destino' => $tipo_institucion_destino, 'pais_institucion_destino' => $pais_institucion_destino, 'departamento_institucion_destino' => $departamento_institucion_destino, 'ciudad_institucion_destino' => $ciudad_institucion_destino, 'enviar_documentos' => $enviar_documentos, 'nombre' => 'alianza', 'paso' => '1','peticion' => $this->peticion ?? 'normal'];
+        $viewWith = array_merge($this->viewWith,['alliance' => $alliance, 'tipoRuta' => $this->tipoRuta, 'paso_titulo' => $this->paso_titulo, 'institucion_destino' => $institucion_destino, 'facultad_origen' => $facultad_origen, 'programa_origen' => $programa_origen, 'coordinador_origen' => $coordinador_origen, 'coordinador_destino' => $coordinador_destino, 'tipo_alianza' => $tipo_alianza, 'aplicaciones' => $aplicaciones, 'tipo_tramite' => $tipo_tramite, 'tipo_institucion_destino' => $tipo_institucion_destino, 'pais_institucion_destino' => $pais_institucion_destino, 'departamento_institucion_destino' => $departamento_institucion_destino, 'ciudad_institucion_destino' => $ciudad_institucion_destino, 'enviar_documentos' => $enviar_documentos, 'nombre' => 'alianza', 'paso' => '1','peticion' => $this->peticion ?? 'normal']);
 
         if ( $alianzaId != '' ) {
             $viewWith = array_merge($viewWith,['alianzaId' => $alianzaId]);
@@ -912,7 +1076,7 @@ class InterAllianceController extends AppBaseController
         $paso = 0;
         $paso_id = 0;
         $redirect_url = '';
-
+        $alianza_campus_id = 0;
 
         //verificar la existencia de la alianza
         if ($id != '') {
@@ -932,6 +1096,7 @@ class InterAllianceController extends AppBaseController
                 array_push($errorsMsg, 'No se encontro la alianza.');
                 goto end;
             }
+            $alianza_campus_id = $alianza->campus_id;
         }
         $estadoActiva = \App\Models\Estado::where([['uso','PROCESS'],['nombre','ACTIVA']])->first();
         if ($alianzaId != 0 && $alianza->estado_id == $estadoActiva->id ) {
@@ -941,19 +1106,10 @@ class InterAllianceController extends AppBaseController
         }
 
         //verificar la existencia del id del campus, que el usuario haya seleccionado el campus que quiere usar
-        if (isset($request['campusApp'])) {
-            $campusAppId = $request['campusApp'];
-        }elseif( session('campusApp') != null ){
-            $campusAppId = session('campusApp');
-        }else{
-            $errors += 1;
-            array_push($errorsMsg, 'No se encuentra el campus, seleccione el campus que va a usar.');
-            goto end;
-        }
+        
+        $campusApp = $this->campusAppFound;
 
-        $campusApp = \App\Models\Admin\Campus::find($campusAppId);
-
-        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_alianza')->select('titulo',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))->pluck('titulo','orden');
+        $tipos_pasos = $this->tipoPaso->where('nombre','like','%_interalliance')->select('titulo',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))->pluck('titulo','orden');
         /*
         echo '<hr>';
         
@@ -969,10 +1125,10 @@ class InterAllianceController extends AppBaseController
 
         $buscarCoordinadores = 0;
         $buscarInstituciones = 0;
-        $keyDataCoorInt = 0;
-        $keyDataCoorExt = 0;
-        $keybuscarInstInt = 0;
-        $keybuscarInstExt = 0;
+        $keyDataCoorInt = false;
+        $keyDataCoorExt = false;
+        $keybuscarInstInt = false;
+        $keybuscarInstExt = false;
 
         if ( isset($request['modificar']) && $request['paso'] ) {
             $crearTipo = 'actualizar';
@@ -1038,6 +1194,8 @@ class InterAllianceController extends AppBaseController
                 if (count($buscarCoordinadores)) {
                     $keyDataCoorInt = array_search($roleCoordinadorInternoId, array_column($buscarCoordinadores, 'role_id'));
                     $keyDataCoorExt = array_search($roleCoordinadorExternoId, array_column($buscarCoordinadores, 'role_id'));
+
+                    $coordinadorOrigenId = $buscarCoordinadores[$keyDataCoorInt]['user_id'];
                 }
 
                 $buscarInstituciones = \App\Models\Admin\Institucion::join('alianza_institucion', 'alianza_institucion.institucion_id', '=', 'institucion.id')
@@ -1051,8 +1209,12 @@ class InterAllianceController extends AppBaseController
                 $buscarInstituciones = $buscarInstituciones->get()->toArray();
 
                 if (count($buscarInstituciones)) {
-                    $keybuscarInstInt = array_search($buscarCoordinadores[$keyDataCoorInt]['user_id'], array_column($buscarInstituciones, 'user_id'));
-                    $keybuscarInstExt = array_search($buscarCoordinadores[$keyDataCoorExt]['user_id'], array_column($buscarInstituciones, 'user_id'));
+                    if ($keyDataCoorInt !== false) {
+                        $keybuscarInstInt = array_search($buscarCoordinadores[$keyDataCoorInt]['user_id'], array_column($buscarInstituciones, 'user_id'));
+                    }
+                    if ($keyDataCoorExt !== false) {
+                        $keybuscarInstExt = array_search($buscarCoordinadores[$keyDataCoorExt]['user_id'], array_column($buscarInstituciones, 'user_id'));
+                    }
                 }
 
             }
@@ -1079,7 +1241,7 @@ class InterAllianceController extends AppBaseController
             }
             
             //en el caso de que escojan la opcion Otro
-            if ( isset($request['facultad_origen']) && array_search('999999', $request['facultad_origen']) ) {
+            if ( isset($request['facultad_origen']) && array_search('999999', $request['facultad_origen']) !== false ) {
                 $reglas = array_merge($reglas, [
                 'facultad_origen_otro' => 'required',
                 ] );
@@ -1132,7 +1294,7 @@ class InterAllianceController extends AppBaseController
                 'nombre_institucion_destino' => 'required|max:100',
                 'direccion_institucion_destino' => 'required|max:150',
                 'telefono_institucion_destino' => 'required|max:45',
-                'codigo_postal_institucion_destino' => 'required|max:10',
+                'codigo_postal_institucion_destino' => 'required|integer|max:999999999999',
                 'ciudad_institucion_destino' => 'required',
                 ] );
             //}
@@ -1203,7 +1365,7 @@ class InterAllianceController extends AppBaseController
                     'repre_pais_nacimiento' => 'required',
                     'repre_tipo_documento' => 'required',
                     'repre_numero_documento' => 'required|max:45',
-                    'repre_fecha_exped_documento' => 'required',
+                    'repre_fecha_exped_documento' => 'required|date',
                     'repre_ciudad_exped_documento' => 'required',
                 ] );
                 if ( isset($request['modificar']) ) {
@@ -1221,14 +1383,15 @@ class InterAllianceController extends AppBaseController
           if ( $request['paso'] == '6' ) {
             $reglas = array_merge($reglas, [
                 'aceptar_alianza' => 'required',
+                'observacion_aceptar_alianza' => 'required|max:191',
                 //'existeRepresentante' => 'required',
             ] );
                 //en el caso de que escojan la opcion SI
-            if ( $request['aceptar_alianza'] != 'SI' ) {
-                $reglas = array_merge($reglas, [
-                'observacion_aceptar_alianza' => 'required|max:191',
-                ] );
-            }
+            // if ( $request['aceptar_alianza'] != 'SI' ) {
+            //     $reglas = array_merge($reglas, [
+            //     'observacion_aceptar_alianza' => 'required|max:191',
+            //     ] );
+            // }
 
           }
         }else{
@@ -1309,7 +1472,7 @@ class InterAllianceController extends AppBaseController
                         $crearUsuarioTipo = 'actualizar';
                         $dataUser['id']= $request['coordinadorOrigenId'];
                     }
-                    $dataUser['activo']= 1;
+                    $dataUser['activo']= 0;
                     // crear password
                     $passwordCoordinadorOrigen = str_random(12);
                     //no sera encriptado hasta que se envie el email
@@ -1400,6 +1563,7 @@ class InterAllianceController extends AppBaseController
             //$dataAlianza['estado']= 0; //inactivo
             $dataAlianza['token']= md5(hash("md2",(string)microtime())).hash("md2",(string)microtime());
 
+            $dataAlianza['campus_id']= $campusApp->id;
             //valida si existe el id de la alianza, lo que quiere decir que se va a actualizar
             if ( $alianzaId != 0 && isset($request['modificar']) ) {
                 $dataAlianza['id'] = $alianzaId;
@@ -1424,14 +1588,13 @@ class InterAllianceController extends AppBaseController
             //facultad_origen[], facultad_origen_otro
             //si existe facultad_origen_otro entonces crear el nuevo registro en la facultad y que sea de tipo unidad
                 
-                if ( array_search('999999', $input['facultad_origen']) ) {
+                if ( array_search('999999', $input['facultad_origen'] ) !== false ) {
                     
                     $tipo_facultad = 'UNIDAD';
                     $datafacultad['nombre'] = $input['facultad_origen_otro'];
                     $datafacultad['campus_id'] = $campusApp->id;
-                    $otrasfacultades = $input['facultad_origen'];
 
-                    $crearFacultad = $this->crearFacultad('origen',$datafacultad,$tipo_facultad,$otrasfacultades,$alianza);
+                    $crearFacultad = $this->crearFacultad('origen',$datafacultad,$tipo_facultad,$input['facultad_origen'],$alianza);
 
                     if ( $crearFacultad === 'error_facultad' ) {
                         $errors += 1;
@@ -1471,13 +1634,15 @@ class InterAllianceController extends AppBaseController
             }
 
             if ( isset($request['modificar']) ) {
-            //quitar la asociacion del coordinador anterior con la alianza
-                if ($buscarCoordinadores[$keyDataCoorInt]['user_id'] != $coordinadorOrigenId) {
-                    $alianza->user()->detach($buscarCoordinadores[$keyDataCoorInt]['user_id']);
-                }
-            //quitar la asociacion de la institucion anterior con la alianza
-                if ($buscarInstituciones[$keybuscarInstInt]['institucion_id'] != $campusApp->institucion->id) {
-                    $alianza->institucion()->detach($buscarInstituciones[$keybuscarInstInt]['institucion_id']);
+                if ($keybuscarInstInt !== false ){
+                    //quitar la asociacion del coordinador anterior con la alianza
+                    if ($buscarCoordinadores[$keyDataCoorInt]['user_id'] != $coordinadorOrigenId) {
+                        $alianza->user()->detach($buscarCoordinadores[$keyDataCoorInt]['user_id']);
+                    }
+                    //quitar la asociacion de la institucion anterior con la alianza
+                    if ($buscarInstituciones[$keybuscarInstInt]['institucion_id'] != $campusApp->institucion->id) {
+                        $alianza->institucion()->detach($buscarInstituciones[$keybuscarInstInt]['institucion_id']);
+                    }
                 }
             }
             
@@ -1486,7 +1651,7 @@ class InterAllianceController extends AppBaseController
             //GUARDAR EL PASO 1
             $tipo_paso_id = 0;
 
-            $crearPaso = $this->crearPaso($request['paso'],$estadoPaso,$alianzaId,$coordinadorOrigenId);
+            $crearPaso = $this->crearPaso($request['paso'],$estadoPaso,$alianzaId,$coordinadorOrigenId,$campusApp->id);
             if ( !$crearPaso ){
                 $errors += 1;
                 array_push($errorsMsg, 'No se puede actualizar el paso \''.$tipos_pasos[$request['paso']].'\' de la alianza.');
@@ -1498,52 +1663,53 @@ class InterAllianceController extends AppBaseController
 
             //GUARDAR EL PASO 3
             $estadoPaso3 = 'INCOMPLETO';
-            $tipo_paso = $this->tipoPaso->where('nombre','paso3_alianza')->pluck('id')->first();
+            $tipo_paso = $this->tipoPaso->where('nombre','paso3_interalliance')->pluck('id')->first();
             if ( isset($request['modificar']) ) {
                 
-                $dataMail = DB::table('pasos_alianza')
-                    ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                    ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
+                $dataEmail = DB::table('pasos_alianza')
+                    ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                    ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                     ->where('pasos_alianza.alianza_id',$alianzaId )
                     ->where('pasos_alianza.tipo_paso_id',$tipo_paso )
-                    ->select('pasos_alianza.id AS pasos_alianza_id','mail.id')
-                    ->orderBy('mail.created_at','desc');
-                //echo $dataMail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
-                $dataMail = $dataMail->get();
+                    ->select('pasos_alianza.id AS pasos_alianza_id','email.id')
+                    ->orderBy('email.created_at','desc');
+                //echo $dataEmail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
+                $dataEmail = $dataEmail->get();
                                 
                 $crearPaso = true;
 
             }else{
-                $crearPaso = $this->crearPaso('3',$estadoPaso3,$alianzaId,$coordinadorOrigenId);
+                $crearPaso = $this->crearPaso('3',$estadoPaso3,$alianzaId,$coordinadorOrigenId,$campusApp->id);
                 
                 $idPaso = $crearPaso->id;
             }
 
 
             if ( $crearPaso ){
-                $mail_id = 0;
-                $crearTipoMail = $crearTipo;
+                $email_id = 0;
+                $crearTipoEmail = $crearTipo;
                 if ( isset($request['modificar']) ) {
-                    if ( count($dataMail) ) {
-                        $mail_id = $dataMail[0]->id;
-                        $idPaso = $dataMail[0]->pasos_alianza_id;
+                    if ( count($dataEmail) ) {
+                        $email_id = $dataEmail[0]->id;
+                        $idPaso = $dataEmail[0]->pasos_alianza_id;
                     }else{
-                        $crearPaso = $this->crearPaso('3',$estadoPaso3,$alianzaId,$coordinadorOrigenId);
+                        $crearPaso = $this->crearPaso('3',$estadoPaso3,$alianzaId,$coordinadorOrigenId,$campusApp->id);
                 
                         $idPaso = $crearPaso->id;
-                        $crearTipoMail = 'nuevo';
+                        $crearTipoEmail = 'nuevo';
                     }
                 }
                 
-            //CREAR EL REGISTRO DEL MAIL
+            //CREAR EL REGISTRO DEL EMAIL
 
                 //solo se creara el registro y se asociaran los archivos adjuntos
-                $tipo_mail = 'alianza';
-                $datos['crearTipo'] = $crearTipoMail;
+                $tipo_email = 'alianza';
+                $datos['crearTipo'] = $crearTipoEmail;
                 $datos['estadoPaso'] = $estadoPaso3;
-                $datos['id'] = $mail_id;
+                $datos['id'] = $email_id;
                 $datos['user_id'] = $coordinadorOrigenId;
-                $datos['paso'] = $idPaso;
+                $datos['paso'] = $idPaso; 
+                $datos['paso_proceso_id'] = $idPaso;
                 $datos['to'][0] = '';
                 $datos['cc'][0] = '';
                 $datos['bcc'][0] = '';
@@ -1559,30 +1725,30 @@ class InterAllianceController extends AppBaseController
 
                 
 
-                //$crearMail = $this->crearMail($paso,$to,$cc,$bcc,$subject,$content,$archivosAdjuntos);
-                $crearMail = $this->crearMail($tipo_mail,$datos);
+                //$crearEmail = $this->crearEmail($paso,$to,$cc,$bcc,$subject,$content,$archivosAdjuntos);
+                $crearEmail = $this->crearEmail($tipo_email,$datos);
                 
-                if ( $crearMail === 'error_mail' ) {
+                if ( $crearEmail === 'error_email' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el pre-registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el pre-registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
-                }elseif ( $crearMail === 'error_paso' ) {
+                }elseif ( $crearEmail === 'error_paso' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el pre-registro del mail.');
+                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el pre-registro del email.');
                     goto end;
-                }elseif ( $crearMail == 'error_user' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail == 'error_user' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el pre-registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador externo.');
+                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el pre-registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador externo.');
                     goto end;
-                }elseif ( $crearMail == 'error_tipo_mail' || $crearMail == 'error_crear_tipo' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail == 'error_tipo_email' || $crearEmail == 'error_crear_tipo' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el pre-registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
+                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el pre-registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
                     goto end;
-                }elseif ( $crearMail === false ) {
+                }elseif ( $crearEmail === false ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el pre-registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el pre-registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
                 }
 
@@ -1608,7 +1774,7 @@ class InterAllianceController extends AppBaseController
 
         if ( isset($request['paso']) && $request['paso'] == '2' ) {
 
-            $institucionOrigen = $buscarInstituciones[$keybuscarInstInt];
+            // $institucionOrigen = $buscarInstituciones[$keybuscarInstInt];
             
             /*
             $institucionOrigen = DB::table('institucion')
@@ -1618,9 +1784,16 @@ class InterAllianceController extends AppBaseController
             */
             if ( $alianzaId == 0 ){
                 
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No se encuentra la alianza.');
+                goto end;
+            }
+            if ( $coordinadorOrigenId == 0 ){
+                
+                //return '<hr> El email no se encuentra, No existe la alianza.';
+                $errors += 1;
+                array_push($errorsMsg, 'No se encuentra el coordinador solicitante.');
                 goto end;
             }
 
@@ -1728,11 +1901,14 @@ class InterAllianceController extends AppBaseController
             $dataDatosPersonalesDestino = [];
             $crearUsuarioTipo = $crearTipo;
             if ( $input['coordinador_destino'] == '999999' ) {
-                if ( !isset($request['modificar']) ) {
+                // if ( !isset($request['modificar']) ) {
+                if ( $keyDataCoorExt === false ) {
+                    $this->validate($request, ['email_coordinador_destino' => 'required|email|max:191|unique:users,email']);
+        
                     $crearUsuarioTipo = 'nuevo';
                 }
-                $dataUser['id']= $buscarCoordinadores[$keyDataCoorExt]['user_id'];
-                $dataUser['activo']= 1;
+                $dataUser['id']= ($keyDataCoorExt !== false ? $buscarCoordinadores[$keyDataCoorExt]['user_id'] : 0);
+                $dataUser['activo']= 0;
                 // crear password
                 $passwordCoordinadorDestino = str_random(12);
                 //no sera encriptado hasta que se envie el email
@@ -1752,11 +1928,11 @@ class InterAllianceController extends AppBaseController
                 //$dataCoordinador['name']= strtok($input['email_coordinador_destino'], '@');
                 $dataUser['name']= $input['nombre_coordinador_destino'];
                 $dataUser['email']= $input['email_coordinador_destino'];
+
                 //datos personales del usuario
                 $dataDatosPersonalesDestino['telefono']= $input['telefono_coordinador_destino'];
                 $dataDatosPersonalesDestino['cargo']= $input['cargo_coordinador_destino'];
             }
-
                 $crearUsuario = $this->crearUsuario($crearUsuarioTipo,$dataUser,'coordinador_externo',$campusId,$dataDatosPersonalesDestino,$alianza);
                 // Create the user
                 if ( $crearUsuario === 'error_usuario' ) {
@@ -1783,34 +1959,34 @@ class InterAllianceController extends AppBaseController
 
             
 
-            if ( $input['coordinador_destino'] != '999999' ) {
+            // if ( $input['coordinador_destino'] != '999999' ) {
 
-                $coordinadorDestino = $this->asociarUsuario('coordinador',$input['coordinador_destino'],'coordinador_externo',$campusId,$alianza);
+            //     $coordinadorDestino = $this->asociarUsuario('coordinador',$input['coordinador_destino'],'coordinador_externo',$campusId,$alianza);
                 
-                if ( $coordinadorDestino === 'error_usuario' || $coordinadorDestino === false  ) {
-                    $errors += 1;
-                    array_push($errorsMsg, 'No se encontro el coordinador del destino.');
-                    goto end;
-                }elseif( $coordinadorDestino != false ){
-                    $coordinadorDestinoId = $coordinadorDestino->id;
-                }
+            //     if ( $coordinadorDestino === 'error_usuario' || $coordinadorDestino === false  ) {
+            //         $errors += 1;
+            //         array_push($errorsMsg, 'No se encontro el coordinador del destino.');
+            //         goto end;
+            //     }elseif( $coordinadorDestino != false ){
+            //         $coordinadorDestinoId = $coordinadorDestino->id;
+            //     }
 
-            };
+            // };
 
             if ( isset($request['modificar']) ) {
             //quitar la asociacion del coordinador anterior con la alianza
-                if ( isset($buscarCoordinadores[$keyDataCoorExt]['user_id']) && $buscarCoordinadores[$keyDataCoorExt]['user_id'] != $coordinadorDestinoId) {
+                if ( $keyDataCoorExt !== false && isset($buscarCoordinadores[$keyDataCoorExt]['user_id']) && $buscarCoordinadores[$keyDataCoorExt]['user_id'] != $coordinadorDestinoId) {
                     $alianza->user()->detach($buscarCoordinadores[$keyDataCoorExt]['user_id']);
                 }
             //quitar la asociacion de la institucion anterior con la alianza
-                if ( isset($buscarInstituciones[$keybuscarInstExt]['institucion_id']) &&$buscarInstituciones[$keybuscarInstExt]['institucion_id'] != $institucionDestino) {
+                if ( $keybuscarInstExt !== false && isset($buscarInstituciones[$keybuscarInstExt]['institucion_id']) && $buscarInstituciones[$keybuscarInstExt]['institucion_id'] != $institucionDestino) {
                     $alianza->institucion()->detach($buscarInstituciones[$keybuscarInstExt]['institucion_id']);
                 }
             }
 
             //GUARDAR EL PASO 2
             $tipo_paso_id = 0;
-            $crearPaso = $this->crearPaso($request['paso'],$estadoPaso,$alianzaId,$coordinadorDestinoId);
+            $crearPaso = $this->crearPaso($request['paso'],$estadoPaso,$alianzaId,$coordinadorOrigenId,$campusApp->id);
             if ( !$crearPaso ){
                 $errors += 1;
                 array_push($errorsMsg, 'No se puede actualizar el paso \''.$tipos_pasos[$request['paso']].'\' de la alianza.');
@@ -1821,21 +1997,21 @@ class InterAllianceController extends AppBaseController
             }
 
 
-            $dataMail = '';
+            $dataEmail = '';
             $idPaso = 0;
             //GUARDAR EL PASO 3
-            $tipo_paso = $this->tipoPaso->where('nombre','paso3_alianza')->pluck('id')->first();
+            $tipo_paso = $this->tipoPaso->where('nombre','paso3_interalliance')->pluck('id')->first();
             // if ( isset($request['modificar']) ) {
                 
-                $dataMail = DB::table('pasos_alianza')
-                    ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                    ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
+                $dataEmail = DB::table('pasos_alianza')
+                    ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                    ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                     ->where('pasos_alianza.alianza_id',$alianzaId )
                     ->where('pasos_alianza.tipo_paso_id',$tipo_paso )
-                    ->select('pasos_alianza.id AS pasos_alianza_id','mail.id')
-                    ->orderBy('mail.created_at','desc');
-                //echo $dataMail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
-                $dataMail = $dataMail->get();
+                    ->select('pasos_alianza.id AS pasos_alianza_id','email.id')
+                    ->orderBy('email.created_at','desc');
+                //echo $dataEmail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
+                $dataEmail = $dataEmail->get();
                                 
                 $crearPaso = true;
 
@@ -1846,23 +2022,23 @@ class InterAllianceController extends AppBaseController
             // }
 
 
-            if ( count($dataMail) ){
-                $mail_id = 0;
-                //$crearTipoMail = $crearTipo;
-                $crearTipoMail = 'actualizar';
+            if ( count($dataEmail) ){
+                $email_id = 0;
+                //$crearTipoEmail = $crearTipo;
+                $crearTipoEmail = 'actualizar';
                 // if ( isset($request['modificar']) ) {
-                //     if ( count($dataMail) ) {
-                        $mail_id = $dataMail[0]->id;
-                        $idPaso = $dataMail[0]->pasos_alianza_id;
+                //     if ( count($dataEmail) ) {
+                        $email_id = $dataEmail[0]->id;
+                        $idPaso = $dataEmail[0]->pasos_alianza_id;
                 //     }else{
                 //         $crearPaso = $this->crearPaso('3',$estadoPaso,$alianzaId);
                 
                 //         $idPaso = $crearPaso->id;
-                //         $crearTipoMail = 'nuevo';
+                //         $crearTipoEmail = 'nuevo';
                 //     }
                 // }
                 
-            //CREAR EL REGISTRO DEL MAIL PARA EL PASO 3
+            //CREAR EL REGISTRO DEL eMAIL PARA EL PASO 3
                 $estadoPaso3 = 'INCOMPLETO';
                 
                 
@@ -1871,21 +2047,22 @@ class InterAllianceController extends AppBaseController
                     ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                     ->where('user_tipo_paso.tipo_paso_id',$tipo_paso )
                     ->where('model_has_roles.role_id',$roleCopiaEmailsId )
-                    ->select('users.name', 'users.email')->first();
+                    ->select('users.id', 'users.name', 'users.email')->first();
 
-                $tipo_mail = 'alianza';
-                $datos['crearTipo'] = $crearTipoMail;
+                $tipo_email = 'alianza';
+                $datos['crearTipo'] = $crearTipoEmail;
                 $datos['estadoPaso'] = $estadoPaso3;
-                $datos['id'] = $mail_id;
+                $datos['id'] = $email_id;
                 $datos['user_id'] = $coordinadorDestinoId;
                 $datos['paso'] = $idPaso;
+                $datos['paso_proceso_id'] = $idPaso;
                 $datos['to'][0] = $coordinadorDestino;
                 $datos['cc'][0] = '';
                 $datos['bcc'][0] = $copia_oculta_email;
                 $datos['subject'] = 'Institución '.ucwords(strtolower( $buscarInstituciones[$keybuscarInstInt]['nombre'] ) ) .' - Solicitud de nueva alianza';
 
                 //solicita los datos de la alianza
-                $datosContent = $this->datosAlianza($alianzaId,'crearMail','nuevo'); 
+                $datosContent = $this->datosAlianza($alianzaId,'crearEmail','nuevo'); 
 
                 $dataUsers = $datosContent['dataUsers'];
                 $keyCoordExterno = $datosContent['keyCoordExterno'];
@@ -1893,36 +2070,41 @@ class InterAllianceController extends AppBaseController
 
                 $msj_header_text = 'Respetado '.ucwords(strtolower( $dataUsers[$keyCoordExterno]['coordinador_nombres'] )).' le queremos informar que la institución '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['nombre'] )) .' de '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['ciudad']['pais_nombre'] )) .' '.' quiere realizar una alianza con su institución. <br><br> El coordinador '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_nombres'] )) .' '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_apellidos'] )) .' ha iniciado el proceso y ha diligenciado la información de las instituciones de origen y destino de la alianza la cual se presenta a continuación:';
 
-                $datos['content'] = '[{"header":"'.$msj_header_text.'", "footer":"Necesitamos su aprobación para continuar con el proceso, puede revisar los datos de su institución y aceptar la propuesta de alianza en el sitio de InterActin. <br> <br> <span class=\'hide_pass\'>Puede acceder con el usuario: '.$dataUsers[$keyCoordExterno]['coordinador_email'].' <br> Su contraseña temporal es: '.$dataUsers[$keyCoordExterno]['usuario_password'].'</span>"}]';
+                $datosContent = '';
+                if ( $dataUsers[$keyCoordExterno]['usuario_activo'] == 0 ) {
+                    $datosContent = ' <br> <br> <span class=\'hide_pass\'>Puede acceder con el usuario: '.$dataUsers[$keyCoordExterno]['coordinador_email'].' <br> Su contraseña temporal es: '.$dataUsers[$keyCoordExterno]['usuario_password'].'</span>';
+                }
+
+                $datos['content'] = '[{"header":"'.$msj_header_text.'", "footer":"Necesitamos su aprobación para continuar con el proceso, puede revisar los datos de su institución y aceptar la propuesta de alianza en el sitio de InterActin.'.$datosContent.'"}]';
                 $datos['archivosAdjuntos'] = '';
                 // if ( isset($input['enviar_documentos']) ) {
                 //     $datos['archivosAdjuntos'] = $input['enviar_documentos'];
                 // }
 
-                //$crearMail = $this->crearMail($paso,$to,$cc,$bcc,$subject,$content,$archivosAdjuntos);
-                $crearMail = $this->crearMail($tipo_mail,$datos);
+                //$crearEmail = $this->crearEmail($paso,$to,$cc,$bcc,$subject,$content,$archivosAdjuntos);
+                $crearEmail = $this->crearEmail($tipo_email,$datos);
 
-                if ( $crearMail === 'error_mail' ) {
+                if ( $crearEmail === 'error_email' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el pre-registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el pre-registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
-                }elseif ( $crearMail === 'error_paso' ) {
+                }elseif ( $crearEmail === 'error_paso' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el pre-registro del mail.');
+                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el pre-registro del email.');
                     goto end;
-                }elseif ( $crearMail === 'error_user' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail === 'error_user' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el pre-registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador externo.');
+                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el pre-registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador externo.');
                     goto end;
-                }elseif ( $crearMail === 'error_tipo_mail' || $crearMail === 'error_crear_tipo' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail === 'error_tipo_email' || $crearEmail === 'error_crear_tipo' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el pre-registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
+                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el pre-registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
                     goto end;
-                }elseif ( $crearMail === false ) {
+                }elseif ( $crearEmail === false ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el pre-registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el pre-registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
                 }
 
@@ -1950,7 +2132,7 @@ class InterAllianceController extends AppBaseController
 
             if ( $alianzaId == 0 ){
                 
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No se encuentra la alianza.');
                 goto end;
@@ -1958,13 +2140,13 @@ class InterAllianceController extends AppBaseController
             //ENVIAR EL EMAIL DEL PASO 3
             $request['origen_peticion'] = 'local';
 
-            $enviarmail = $this->mail( $request );
-            if (isset($enviarmail['errors'])) {
+            $enviaremail = $this->email( $request );
+            if (isset($enviaremail['errors'])) {
                 $errors += 1;
-                $errorsMsg = array_merge($errorsMsg, $enviarmail['returnMsg']);
+                $errorsMsg = array_merge($errorsMsg, $enviaremail['returnMsg']);
                 goto end;
             }else{
-                array_push($okMsg,$enviarmail);
+                array_push($okMsg,$enviaremail);
             }
 
             //obtener el id del usuario, en este caso del coordinador interno
@@ -1981,7 +2163,7 @@ class InterAllianceController extends AppBaseController
 
             //GUARDAR EL PASO 3
             $tipo_paso_id = 0;
-            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$coordinadorOrigenId);
+            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$coordinadorOrigenId,$campusApp->id);
             if ( !$crearPaso ){
                 $errors += 1;
                 array_push($errorsMsg, 'No se puede actualizar el paso \''.$tipos_pasos[$request['paso']].'\' de la alianza.');
@@ -1996,6 +2178,8 @@ class InterAllianceController extends AppBaseController
                 $redirect_url = route('interalliances.show',$alianzaId);
                 array_push($okMsg,' <input type="hidden" class="" name="redirect_url" id="redirect_url" value="'.$redirect_url.'">');
             }
+
+            array_push($okMsg, 'Será notificado cuando haya una respuesta. <br>');
 
         }
 
@@ -2014,7 +2198,7 @@ class InterAllianceController extends AppBaseController
 
             if ( $alianzaId == 0 ){
                 
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No se encuentra la alianza.');
                 goto end;
@@ -2026,7 +2210,7 @@ class InterAllianceController extends AppBaseController
             //     goto end;
             // }
             
-            $verificarToken = \App\Models\Alianza::where('token',$request['atoken'])->select('id','token')->first();
+            $verificarToken = \App\Models\Alianza::where('token',(string) $request['atoken'])->select('id','token')->first();
 
             if ( count($verificarToken) > 0 ) {
 
@@ -2105,7 +2289,7 @@ class InterAllianceController extends AppBaseController
                     //[el nombre del email], email_coordinador_destino, [generar un password]
                     $crearUsuarioTipo = 'nuevo';
                     if ( $input['coordinador_destino'] == '999999' ) {
-                        $dataUser['activo']= 1;
+                        $dataUser['activo']= 0;
                         // crear password
                         $passwordCoordinadorDestino = str_random(12);
                         //no sera encriptado hasta que se envie el email
@@ -2249,7 +2433,7 @@ class InterAllianceController extends AppBaseController
             //GUARDAR EL PASO 4
 
             $tipo_paso_id = 0;
-            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$coordinadorDestinoId);
+            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$coordinadorDestinoId,$campusApp->id);
             if ( !$crearPaso ){
                 $errors += 1;
                 array_push($errorsMsg, 'No se puede actualizar el paso \''.$tipos_pasos[$request['paso']].'\' de la alianza.');
@@ -2280,14 +2464,14 @@ class InterAllianceController extends AppBaseController
 
             if ( $alianzaId == 0 ){
                 
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No se encuentra la alianza.');
                 goto end;
             }
             
             
-            $verificarToken = \App\Models\Alianza::where('token',$request['atoken'])->select('id','token')->first();
+            $verificarToken = \App\Models\Alianza::where('token',(string) $request['atoken'])->select('id','token')->first();
 
             if ( count($verificarToken) > 0 ) {
 
@@ -2351,25 +2535,41 @@ class InterAllianceController extends AppBaseController
                 
 
             // actualizar los datos de la institucion en caso de no existir el representante
+                $rules = [];
                 $crearUsuarioTipo = 'nuevo';
+                $institucionId = $buscarUserExterno->institucion_id;
+                $tipo_documento = \App\Models\TipoDocumento::where('nombre','REPRESENTACIÓN LEGAL')->pluck('id')->first();
+
                 if ( count($buscarRepresentante) > 0 ) {
                     $existeRepresentante = true;
                     $dataUser['id']= $buscarRepresentante->id;
                     $crearUsuarioTipo = 'actualizar';
 
+                    $existeDocumento = \App\Models\Admin\DocumentosInstitucion::where([['institucion_id',$institucionId],['tipo_documento_id',$tipo_documento]] )
+                        ->select('archivo_id');
+                    //echo $existeDocumento->toSql();
+                    $existeDocumento = $existeDocumento->first();
+
+                    if (empty($existeDocumento)) {
+                        $rules['archivo_input'] = 'required|mimes:pdf,jpg,png,jpeg';
+                    }
+
                 }else{
-                    $this->validate($request, [
-                        'archivo_input'       => 'required|mimes:pdf,jpg,png,jpeg',
+                    $rules = [
                         'repre_email' => 'required|email|max:191|unique:users,email',
-                    ]);
+                        'archivo_input' => 'required|mimes:pdf,jpg,png,jpeg',
+                    ];
                 }
+
+                $this->validate($request, $rules);
+
                 //datos del usuario
                     $dataUser['name']= $input['repre_nombre'];
                     $dataUser['email']= $input['repre_email'];
 
                     if ($crearUsuarioTipo == 'nuevo') {
-                        //actualmente es el valor para determinar que el usuario esta inactivo: 1
-                        $dataUser['activo']= 1;
+                        //actualmente es el valor para determinar que el usuario esta inactivo: 0
+                        $dataUser['activo']= 0;
                     }
                     // crear password
                     $passwordCoordinadorOrigen = str_random(12);
@@ -2408,7 +2608,7 @@ class InterAllianceController extends AppBaseController
             //cargar el archivo de soporte
                     if ( $request->file('archivo_input') ) {
             
-                        $request['tipo_documento'] = \App\Models\TipoDocumento::where('nombre','REPRESENTACIÓN LEGAL')->pluck('id')->first();
+                        $request['tipo_documento'] = $tipo_documento;
                         $request['archivo_contenido'] = '';
                         $request['peticion'] = 'local';
                         
@@ -2470,7 +2670,7 @@ class InterAllianceController extends AppBaseController
             //GUARDAR EL PASO 5
 
             $tipo_paso_id = 0;
-            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$buscarUserExterno->id);
+            $crearPaso = $this->crearPaso($request['paso'],'PENDIENTE POR REVISIÓN',$alianzaId,$buscarUserExterno->id,$campusApp->id);
             if ( !$crearPaso ){
                 $errors += 1;
                 array_push($errorsMsg, 'No se puede actualizar el paso \''.$tipos_pasos[$request['paso']].'\' de la alianza.');
@@ -2504,7 +2704,7 @@ class InterAllianceController extends AppBaseController
             $role = Role::where('name','coordinador_externo')->get();
             //ASIGNAR EL ROL DE coordinador_interno 
             if ( !$this->user->hasAllRoles($role) ) {
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No tiene permiso para aceptar la alianza.');
                 goto end;
@@ -2515,15 +2715,15 @@ class InterAllianceController extends AppBaseController
 
             if ( $alianzaId == 0 ){
                 
-                //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+                //return '<hr> El email no se encuentra, No existe la alianza.';
                 $errors += 1;
                 array_push($errorsMsg, 'No se encuentra la alianza.');
                 goto end;
             }
             $request['alianzaId'] = $alianzaId;
             $request['validar_estado'] = true;
-            $request['origen_peticion'] == 'local';
-            $validarEstadoMail = $this->mail($request);
+            $request['origen_peticion'] = 'local';
+            $validarEstadoEmail = $this->email($request);
 
             //se buscan a los coordinadores de la alianza y se ordenan por el alianza_user.id de forma ascendente suponiendo que se creo primero el registro del coordinador interno que el externo
             $coordinadores = DB::table('users')
@@ -2541,20 +2741,23 @@ class InterAllianceController extends AppBaseController
             $coordinadorDestino = $buscarCoordinadores[$keyDataCoorExt];
             $coordinadorDestinoId = $buscarCoordinadores[$keyDataCoorExt]['user_id'];
 
-            $tipo_paso = $this->tipoPaso->where('nombre','paso'.$request['paso'].'_alianza')->pluck('id')->first();
+            $tipo_paso = $this->tipoPaso->where('nombre','paso'.$request['paso'].'_interalliance')
+                ->select('id', 'nombre', DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
+
             $estadoPaso = 'ACEPTADO';
-            //print_r($validarEstadoMail);
+            // print_r($validarEstadoEmail);
             if ( $input['aceptar_alianza'] == 'SI' ) {
 
                 if (!isset($input['observacion_aceptar_alianza'])) {
                     $input['observacion_aceptar_alianza'] = '';
                 }
 
-                if (count($validarEstadoMail)) {
-                    //if ($validarEstadoMail->estado_nombre == 'ACEPTADO' && $validarEstadoMail->paso_observacion == $input['observacion_aceptar_alianza']) {
-                    if ( isset($validarEstadoMail->estado_nombre) && $validarEstadoMail->estado_nombre == 'ACEPTADO' && $validarEstadoMail->estado == 1 ) {
+                if (count($validarEstadoEmail) && !is_string($validarEstadoEmail)) {
+                    //if ($validarEstadoEmail->estado_nombre == 'ACEPTADO' && $validarEstadoEmail->paso_observacion == $input['observacion_aceptar_alianza']) {
+                    if ( isset($validarEstadoEmail->estado_nombre) && $validarEstadoEmail->estado_nombre == 'ACEPTADO' && $validarEstadoEmail->estado == 1 ) {
                         $errors += 1;
-                        array_push($errorsMsg, 'El e-mail ya fue enviado. <br> La notificación de la aceptación ya fue emitida.');
+                        array_push($errorsMsg, 'El email ya fue enviado. <br> La notificación de la aceptación ya fue emitida.');
                         goto end;
                     }
                 }
@@ -2604,7 +2807,7 @@ class InterAllianceController extends AppBaseController
 
                 }
         
-                $crearPaso = $this->crearPaso($request['paso'],'ACEPTADO',$alianzaId,$coordinadorDestinoId,$input['observacion_aceptar_alianza']);
+                $crearPaso = $this->crearPaso($request['paso'],'ACEPTADO',$alianzaId,$coordinadorDestinoId,$campusApp->id,$input['observacion_aceptar_alianza']);
                 $estadoPaso = 'ACEPTADO';
                 if ( !$crearPaso ){
                     $errors += 1;
@@ -2616,34 +2819,35 @@ class InterAllianceController extends AppBaseController
                 //array_push($okMsg,'<input type="hidden" class="dato_adicional" name="aceptar_alianza" value="'.$input['aceptar_alianza'].'">');
             }elseif ( $input['aceptar_alianza'] == 'NO' ) {
 
-                if (count($validarEstadoMail)) {
-                    //if ($validarEstadoMail->estado_nombre == 'DECLINADO' && $validarEstadoMail->paso_observacion == $input['observacion_aceptar_alianza']) {
-                    if ($validarEstadoMail->estado_nombre == 'DECLINADO') {
+                if (count($validarEstadoEmail) && !is_string($validarEstadoEmail) ) {
+
+                    //if ($validarEstadoEmail->estado_nombre == 'DECLINADO' && $validarEstadoEmail->paso_observacion == $input['observacion_aceptar_alianza']) {
+                    if ($validarEstadoEmail->estado_nombre == 'DECLINADO' && $validarEstadoEmail->estado == 1) {
                         $errors += 1;
-                        array_push($errorsMsg, 'El e-mail ya fue enviado. <br> La notificación del rechazo ya fue emitida.');
+                        array_push($errorsMsg, 'El email ya fue enviado. <br> La notificación del rechazo ya fue emitida.');
                         goto end;
                     }
                 }
-                $dataMail = '';
+                $dataEmail = '';
                 
                 /*
                 if ( isset($request['modificar']) ) {
                     
-                    $dataMail = DB::table('pasos_alianza')
-                        ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                        ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
+                    $dataEmail = DB::table('pasos_alianza')
+                        ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                        ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                         ->where('pasos_alianza.alianza_id',$alianzaId )
                         ->where('pasos_alianza.tipo_paso_id',$tipo_paso )
-                        ->select('pasos_alianza.id AS pasos_alianza_id','mail.id')
-                        ->orderBy('mail.created_at','desc');
-                    //echo $dataMail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
-                    $dataMail = $dataMail->get();
+                        ->select('pasos_alianza.id AS pasos_alianza_id','email.id')
+                        ->orderBy('email.created_at','desc');
+                    //echo $dataEmail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
+                    $dataEmail = $dataEmail->get();
                         
                     $crearPaso = true;
 
                 }else{
                 */
-                $crearPaso = $this->crearPaso($request['paso'],'DECLINADO',$alianzaId,$coordinadorDestinoId,$input['observacion_aceptar_alianza']);
+                $crearPaso = $this->crearPaso($request['paso'],'DECLINADO',$alianzaId,$coordinadorDestinoId,$campusApp->id,$input['observacion_aceptar_alianza']);
                 $estadoPaso = 'DECLINADO';
                 $idPaso = $crearPaso->id;
                 /*
@@ -2662,8 +2866,8 @@ class InterAllianceController extends AppBaseController
 
 
             if ( $crearPaso ){
-                $mail_id = 0;
-                $mailDatos = [];
+                $email_id = 0;
+                $emailDatos = [];
                 $datos = [];
                 $text_subject = 'Aceptación de';
                 $text_msj_header = 'aceptado';
@@ -2674,55 +2878,58 @@ class InterAllianceController extends AppBaseController
                     $text_content = 'rechazamos';
                 }
 
-                $tipo_paso_id = $crearPaso->tipo_paso_id;
+                $crearPaso_tipo_paso = $this->tipoPaso->where('id',$crearPaso->tipo_paso_id)
+                ->select('id', 'nombre', DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
                 /*
                 if ( isset($request['modificar']) ) {
-                    if ( count($dataMail) ) {
-                        $mail_id = $dataMail[0]->id;
-                        $idPaso = $dataMail[0]->pasos_alianza_id;
+                    if ( count($dataEmail) ) {
+                        $email_id = $dataEmail[0]->id;
+                        $idPaso = $dataEmail[0]->pasos_alianza_id;
                         $crearTipo = 'actualizar';
                     }
                 }
                 */
-            //CREAR EL REGISTRO DEL MAIL
+            //CREAR EL REGISTRO DEL eMAIL
 
                 
 
-                $tipo_mail = 'alianza';
-                if ($mail_id != 0) {
-                    $datos['id'] = $mail_id;
+                $tipo_email = 'alianza';
+                if ($email_id != 0) {
+                    $datos['id'] = $email_id;
                 }
                 //buscar el email del usuario asignado para recibir una copia oculta de los emails
                 $copia_oculta_email = \App\Models\Validation\UserPaso::join('users', 'user_tipo_paso.user_id', '=', 'users.id')
                     ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                    ->where('user_tipo_paso.tipo_paso_id',$tipo_paso )
+                    ->whereIn('user_tipo_paso.tipo_paso_id', array_column($tipo_paso, 'id') )
                     ->where('model_has_roles.role_id',$roleCopiaEmailsId )
-                    ->select('users.name', 'users.email')->first();
+                    ->select('users.id', 'users.name', 'users.email')->first();
 
                 $crearTipo = 'nuevo';
 
                 $datos['crearTipo'] = $crearTipo;
                 $datos['user_id'] = $coordinadorDestinoId;
                 $datos['paso'] = $crearPaso->id;
+                $datos['paso_proceso_id'] = $crearPaso->id;
                 $datos['to'][0] = (object) $coordinadorOrigen;
                 $datos['cc'][0] = '';
                 $datos['bcc'][0] = $copia_oculta_email;
                 $datos['subject'] = ucwords(strtolower( $buscarInstituciones[$keybuscarInstInt]['nombre'] )) .' - '.$text_subject.' la Solicitud de nueva alianza';
 
                 //valida si existe el registro del email con el mismo usuario remitente y lo actualiza en lugar de crear mas registros
-                $pasosAlianza_mail_id = \App\Models\Validation\PasosAlianza::join('pasos_alianza_mail','pasos_alianza.id','pasos_alianza_mail.pasos_alianza_id')
+                $pasosAlianza_email_id = \App\Models\Validation\PasosAlianza::join('pasos_alianza_email','pasos_alianza.id','pasos_alianza_email.pasos_alianza_id')
                             ->where('pasos_alianza.id',$crearPaso->id)
-                            ->where('pasos_alianza_mail.user_id',$coordinadorDestinoId)
-                            ->select('pasos_alianza_mail.mail_id')->pluck('mail_id');
-                //agrega el id del mail y cambiar el tipo de creacion
-                if ( count($pasosAlianza_mail_id) ) {
-                    $datos['id'] = $pasosAlianza_mail_id;
+                            ->where('pasos_alianza_email.user_id',$coordinadorDestinoId)
+                            ->select('pasos_alianza_email.email_id')->pluck('email_id');
+                //agrega el id del email y cambiar el tipo de creacion
+                if ( count($pasosAlianza_email_id) ) {
+                    $datos['id'] = $pasosAlianza_email_id;
                     $crearTipo = 'actualizar';
                 }
                 $datos['estadoPaso'] = $estadoPaso;
 
                 //solicita los datos de la alianza
-                $datosAlianza = $this->datosAlianza($alianzaId,'mail','ver',$tipo_paso_id);
+                $datosAlianza = $this->datosAlianza($alianzaId,'email','ver',$crearPaso_tipo_paso);
 
                 $dataUsers = $datosAlianza['dataUsers'];
                 $keyCoordExterno = $datosAlianza['keyCoordExterno'];
@@ -2738,88 +2945,100 @@ class InterAllianceController extends AppBaseController
                     $datos['archivosAdjuntos'] = $archivoAdjunto;
                 }
             //crear el registro del email
-                $crearMail = $this->crearMail($tipo_mail,$datos);
+                $crearEmail = $this->crearEmail($tipo_email,$datos);
 
-                if ( $crearMail === 'error_mail' ) {
+                if ( $crearEmail === 'error_email' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
-                }elseif ( $crearMail === 'error_paso' ) {
+                }elseif ( $crearEmail === 'error_paso' ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el registro del mail.');
+                    array_push($errorsMsg, 'No se encontro el paso de la alianza para crear el el registro del email.');
                     goto end;
-                }elseif ( $crearMail === 'error_user' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail === 'error_user' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador interno.');
+                    array_push($returnMsg, 'No se encuentra el usuario, no se puede crear el registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador interno.');
                     goto end;
-                }elseif ( $crearMail === 'error_tipo_mail' || $crearMail === 'error_crear_tipo' ) {
-                    $retorno = $crearMail;
+                }elseif ( $crearEmail === 'error_tipo_email' || $crearEmail === 'error_crear_tipo' ) {
+                    $retorno = $crearEmail;
                     $errors += 1;
-                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el registro del e-mail de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
+                    array_push($returnMsg, 'Error al especificar el tipo del email a enviar, no se puede crear el registro del email de notificación del paso \''.$tipos_pasos[3].'\' para el coordinador.');
                     goto end;
-                }elseif ( is_string($crearMail) || $crearMail === false ) {
+                }elseif ( is_string($crearEmail) || $crearEmail === false ) {
                     $errors += 1;
-                    array_push($errorsMsg, 'No se puede crear el registro del mail del paso \''.$tipos_pasos[3].'\' de la alianza.');
+                    array_push($errorsMsg, 'No se puede crear el registro del email del paso \''.$tipos_pasos[3].'\' de la alianza.');
                     goto end;
                 }
             //enviar el email registrado
-                $tipo_mail = 'alianza';
-                $dataEnviarMail['origen_peticion'] = 'local';
-                $dataEnviarMail['enviar'] = true;
-                $dataEnviarMail['tokenmail'] = $crearMail->tokenmail;
-                $dataEnviarMail['dataMail'][0] = $crearMail;
+                $tipo_email = 'alianza';
+                $dataEnviarEmail['origen_peticion'] = 'local';
+                $dataEnviarEmail['enviar'] = true;
+                $dataEnviarEmail['tokenemail'] = $crearEmail->tokenemail;
+                $dataEnviarEmail['dataEmail'][0] = $crearEmail;
 
                 //requiere el nombre del estado
                 $dataEstado = DB::table('estado')
                     ->where('id',$crearPaso->estado_id )
                     ->select('estado.nombre AS estado_nombre')
                     ->first();
-                //agrega elementos a los datos del email, se esta reemplazando el uso de la funcion mail()
-                $crearMail->pasos_alianza_id = $crearPaso->id;
-                $crearMail->paso_observacion = $crearPaso->observacion;
-                $crearMail->estado_nombre = $dataEstado->estado_nombre;
+                //agrega elementos a los datos del email, se esta reemplazando el uso de la funcion email()
+                $crearEmail->pasos_alianza_id = $crearPaso->id;
+                $crearEmail->paso_observacion = $crearPaso->observacion;
+                $crearEmail->estado_nombre = $dataEstado->estado_nombre;
 
 
 
                 //se combinan los datos de la alianza a los datos a enviar en el email
-                $dataEnviarMail = array_merge($dataEnviarMail,$datosAlianza);
+                $dataEnviarEmail = array_merge($dataEnviarEmail,$datosAlianza);
                 
                 // $datosAlianzaKeys = array_keys($datosAlianza);
                 // //print_r($datosAlianza['dataAlianza']);
                 // foreach ($datosAlianzaKeys as $key) {
                 //     //echo '$key:'.$key.' <br>';
-                //     $dataEnviarMail[$key] = $datosAlianza[$key];
+                //     $dataEnviarEmail[$key] = $datosAlianza[$key];
                 // }
         
 
                 //no es necesario enviarlo
-                $dataEnviarMail['tipo_paso_id'] = $tipo_paso_id;
-                $dataEnviarMail['alianzaId'] = $alianzaId;
+                $dataEnviarEmail['tipo_paso_id'] = $crearPaso_tipo_paso[0]['id'];
+                $dataEnviarEmail['alianzaId'] = $alianzaId;
         
    
-                $enviarMail = $this->enviarMail($tipo_mail, $dataEnviarMail);
+                $enviarEmail = $this->enviarEmail($tipo_email, $dataEnviarEmail);
 
-                if (is_array($enviarMail) && isset($enviarMail['errors'])) {
+                if (is_array($enviarEmail) && isset($enviarEmail['errors'])) {
                     $errors += 1;
-                    $errorsMsg = array_merge($errorsMsg, $enviarMail['returnMsg']);
+                    $errorsMsg = array_merge($errorsMsg, $enviarEmail['returnMsg']);
                     goto end;
                 }else{
-                    array_push($okMsg,$enviarMail);
+                    array_push($okMsg,$enviarEmail);
                 }
 
                 //Auth::logout();
+                
+                array_push($okMsg,'La respuesta de la peticion de alianza fue registrada correctamente. <br>');
 
                 if ($input['aceptar_alianza'] == 'NO') {
 
                     //actualzar el estado a 1 (en proceso)
-                    $estadoActiva = \App\Models\Estado::where([['uso','PROCESS'],['nombre','EN PROCESO']])->select('id','uso','nombre')->first();
-                    $alianza->estado_id = $estadoActiva->id;
+                    $estadoEnproceso = \App\Models\Estado::where([['uso','PROCESS'],['nombre','EN PROCESO']])->select('id','uso','nombre')->first();
+                    $alianza->estado_id = $estadoEnproceso->id;
                     $alianza->save();
 
-                    array_push($okMsg,'La respuesta de la peticion de alianza fue registrada correctamente. <br>');
+
+                    //cambiar el estado de los emails diferentes al actual
+                    $pasosAlianza_email_id = \App\Models\Validation\PasosAlianza::join('pasos_alianza_email','pasos_alianza.id','pasos_alianza_email.pasos_alianza_id')
+                            ->where('pasos_alianza.alianza_id',$alianzaId)
+                            ->where('pasos_alianza.id','<>',$crearPaso->id)
+                            ->select('pasos_alianza_email.email_id')->pluck('email_id');
+
+                    $cambio_estado_emails = \App\Models\Email::whereIn('id', $pasosAlianza_email_id)
+                        ->update(['estado' => 0]);
+
+
                     if ($this->peticion != 'ajax') {
-                        array_push($okMsg,'<input type="hidden" class="dato_adicional" name="aceptar_alianza" value="'.$input['aceptar_alianza'].'"> <input type="hidden" class="dato_adicional" name="tokenmail" id="tokenmail" value="'.$crearMail->tokenmail.'"> <input type="hidden" class="dato_adicional" name="noNext" id="noNext" value="1">');
+                        array_push($okMsg,'<input type="hidden" class="dato_adicional" name="aceptar_alianza" value="'.$input['aceptar_alianza'].'"> <input type="hidden" class="dato_adicional" name="tokenemail" id="tokenemail" value="'.$crearEmail->tokenemail.'"> <input type="hidden" class="dato_adicional" name="noNext" id="noNext" value="1">');
                     }
 
                     $paso = 6;
@@ -2832,21 +3051,21 @@ class InterAllianceController extends AppBaseController
                 goto end;
             }
 
-            //se hace la colsulta que hara nuevamente la funcion mail() porque no se obtienen los datos 
+            //se hace la colsulta que hara nuevamente la funcion email() porque no se obtienen los datos 
             
 
             /*
-            ya no se tiene que enviar, entes se creaba el registro del mail de rechazo en el paso 4, sino, se creaba el registro del mail de aceptacion en el paso 5 y se enviaba el mail de aceptacion el en paso 6 (aqui) pero ya no es necesario porque ya todo quedo en este mismo paso y ya se ejecuto
+            ya no se tiene que enviar, entes se creaba el registro del email de rechazo en el paso 4, sino, se creaba el registro del email de aceptacion en el paso 5 y se enviaba el email de aceptacion el en paso 6 (aqui) pero ya no es necesario porque ya todo quedo en este mismo paso y ya se ejecuto
             //ENVIAR EL EMAIL DEL PASO 6
             $request['origen_peticion'] = 'local';
             
-            $enviarmail = $this->mail( $request );
-            if (isset($enviarmail['errors'])) {
+            $enviaremail = $this->email( $request );
+            if (isset($enviaremail['errors'])) {
                 $errors += 1;
-                $errorsMsg = array_merge($errorsMsg, $enviarmail['returnMsg']);
+                $errorsMsg = array_merge($errorsMsg, $enviaremail['returnMsg']);
                 goto end;
             }else{
-                array_push($okMsg,$enviarmail);
+                array_push($okMsg,$enviaremail);
             }
             //GUARDAR EL PASO 6
 
@@ -2884,7 +3103,7 @@ class InterAllianceController extends AppBaseController
             }
             */
 
-            //verificar si existe validador para el paso registrado para crear y enviar el e-mail al validador o validadores
+            //verificar si existe validador para el paso registrado para crear y enviar el email al validador o validadores
             // if ( isset($request['paso']) ) {
 
             //solo si acepto la solicitud se puede notificar al validador
@@ -2893,6 +3112,7 @@ class InterAllianceController extends AppBaseController
 
                 //datos del ultimo registro del paso (PasosAlianza)
                 $datosNotificar['paso_id'] = $crearPaso->id;
+                $datosNotificar['paso_proceso_id'] = $crearPaso->id;
                 $datosNotificar['tipo_paso_id'] = $crearPaso->tipo_paso_id;
                 $datosNotificar['estado_id'] = $crearPaso->estado_id;
                 $datosNotificar['alianza_id'] = $crearPaso->alianza_id;
@@ -2902,6 +3122,7 @@ class InterAllianceController extends AppBaseController
                 $datosNotificar['paso'] = $request['paso'];
                 $datosNotificar['accion'] = 'creacion';
                 //$datosNotificar['tipo_paso_id'] = $tipo_paso_id;
+                $datosNotificar['campus_id'] = $alianza_campus_id;
                 $datosNotificar['alianzaId'] = $alianzaId;
                 $datosNotificar['user_name'] = $this->user->name;
                 $datosNotificar['user_email'] = $this->user->email;
@@ -2917,19 +3138,20 @@ class InterAllianceController extends AppBaseController
                     $errors += 1;
                     $errorsMsg = array_merge($errorsMsg, 'Ocurrio un error al notificar al validador');
                     goto end;
-                }else{
-                    array_push($okMsg,$notificarValidador);
                 }
+                
+                array_push($okMsg,$notificarValidador);
+                
             }
             
 
             array_push($okMsg, 'Será notificado cuando haya una respuesta. <br>');
-            /*
-            if ($this->peticion != 'ajax') {
+            
+            if ($this->peticion == 'ajax') {
                 $redirect_url = route('interalliances.index');
                 array_push($okMsg,' <input type="hidden" class="" name="redirect_url" id="redirect_url" value="'.$redirect_url.'">');
             }
-            */
+            
             // $this->tipoRuta = 'destination';
             $paso = $request['paso'];
 
@@ -2961,7 +3183,8 @@ class InterAllianceController extends AppBaseController
         */
 
         end:
-
+        // print_r($okMsg);
+        // return 1;
         if ($errors > 0) {
             //echo 'error <br>';
             DB::rollBack();
@@ -2978,30 +3201,38 @@ class InterAllianceController extends AppBaseController
                 Flash::error('No se recibieron datos');
             }
         }else{
+            //simplemente se actualiza un campo cualquiera para que cambie la fecha de actualizacion
+            $actualizar_alianza = \App\Models\Alianza::where('id',$alianzaId)->update(['id' => $alianzaId]);
+
             DB::commit();
             if ( isset($request['modificar']) ) {
                 $msg .= 'Se actualizaron los datos del paso \''.$tipos_pasos[$paso].'\' correctamente! <br/>';
             }else{
                 $msg .= 'Se registraron los datos del paso \''.$tipos_pasos[$paso].'\' correctamente! <br/>';
             }
-
+            array_push($okMsg,$msg);
+            
             if ($this->peticion != 'ajax') {
                 //flash($msg);
                 //$msg = implode('<p>', $msg);
                 //print_r($msg);
+                $msgAjax = '';
                 foreach ($okMsg as $key => $value) {
                     $pos = strpos($value, '<input');
                     if ($pos === false) { 
-                        $value = str_replace('<br>', '', $value);
-                        $msg .= $value.' <br>';
+                        // $value = str_replace('<br>', '', $value);
+                        $msgAjax .= $value.'<br>';
+                        //en el caso de encontrar dos saltos de linea dejar solo uno
+                        $msgAjax = str_replace('<br><br>', '<br>', $msgAjax);
                     }
                 }
-                Flash::success($msg);
+                Flash::success($msgAjax);
+                
                 //echo $input['tipoRuta'];
                 
             }else{
                 
-                array_push($okMsg,$msg.'<input type="hidden" class="dato_adicional" name="alianzaId" value="'.$alianzaId.'"> <input type="hidden" name="modificar" value="1">');
+                array_push($okMsg,'<input type="hidden" class="dato_adicional" name="alianzaId" value="'.$alianzaId.'"> <input type="hidden" name="modificar" value="1">');
                 //array_push($okMsg,$msg.'<input type="hidden" class="" name="redirect_url" id="redirect_url" value="'.route('interalliances.index').'">'); 
 
                 $msgFlash = '';
@@ -3009,8 +3240,10 @@ class InterAllianceController extends AppBaseController
                     foreach ($okMsg as $key => $value) {
                         $pos = strpos($value, '<input');
                         if ($pos === false) { 
-                            $value = str_replace('<br>', '', $value);
-                            $msgFlash .= $value.' <br>';
+                            // $value = str_replace('<br>', '', $value);
+                            $msgFlash .= $value.'<br>';
+                            //en el caso de encontrar dos saltos de linea dejar solo uno
+                            $msgFlash = str_replace('<br><br>', '<br>', $msgFlash);
                         }
                     }
                     Flash::success($msgFlash);
@@ -3031,13 +3264,15 @@ class InterAllianceController extends AppBaseController
                 }
             }else{*/
                 if ($errors > 0 || $paso == 0) {
-                    if ( strpos($this->tipoRuta, 'destination') === false ) {
+                    if ( strpos($this->tipoRuta, 'destination') === false  && $request['paso'] != 6 ) {
                         return redirect(route('interalliances.show',$alianzaId));
                     }else{
                         return redirect(route('interalliances.destination',$alianzaId));
                     }
                 }else{
-                    if ( strpos($this->tipoRuta, 'destination') === false ) {
+                    if ( strpos($this->tipoRuta, 'destination') === false && $request['paso'] != 3 && $request['paso'] != 6 ) {
+                        return redirect(route('interalliances.show',$alianzaId));
+                    }elseif ( $request['paso'] == 3 || $request['paso'] == 6 ) {
                         return redirect(route('interalliances.index'));
                     }else{
                         return redirect(route('interalliances.destination',$alianzaId));
@@ -3055,34 +3290,42 @@ class InterAllianceController extends AppBaseController
      *
      * @return Response
      */
-    public function mail(Request $request)
+    public function email(Request $request)
     {
  
-        //print_r($request->all());
+        // print_r($request->all());
+        // return 1;
+
         $tipo_paso = '';
         $coordinador = '';
         $archivosAdjuntos = '';
         $alianzaId = '';
         $errors = 0;
-        $errorsMsg = [];
+        $errorsMsg = '';
         $okMsg = [];
+        $viewWith = $this->viewWith;
+
+        if (!isset($this->user->id)) {
+            $this->user = Auth::user();
+        }
 
         if (isset($request['alianzaId'])) {
             $alianzaId = $request['alianzaId'];
-        }elseif( session('alianzaId') != null ){
-            $alianzaId = session('alianzaId');
+        // }elseif( session('alianzaId') != null ){
+        //     $alianzaId = session('alianzaId');
         }else{
             
-            //return '<hr> El e-mail no se encuentra, No existe la alianza.';
+            //return '<hr> El email no se encuentra, No existe la alianza.';
             $errors += 1;
-            array_push($errorsMsg, 'No se encuentra la alianza.');
+            $errorsMsg = 'No se encuentra la alianza.';
             goto end;
         }
 
 
         if ( isset($request['paso']) ) {
 
-            $tipo_paso = $this->tipoPaso->where('nombre', 'paso'.$request['paso'].'_alianza')->pluck('id');
+            $tipo_paso = $this->tipoPaso->where('nombre', 'paso'.$request['paso'].'_interalliance')->select('id', 'nombre', DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
 
             $roleCoordinadorExterno = Role::where('name','coordinador_externo')->pluck('id');
             $roleCoordinadorInterno = Role::where('name','coordinador_interno')->pluck('id');
@@ -3104,34 +3347,38 @@ class InterAllianceController extends AppBaseController
                 } 
             } 
 
-            //muestra los datos de los e-mails registrados y los ordena desde el ultimo registrado hacia atras
-            $dataMail = DB::table('pasos_alianza')
-                    ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                    ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
+            //muestra los datos de los emails registrados y los ordena desde el ultimo registrado hacia atras
+            $dataEmail = DB::table('pasos_alianza')
+                    ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                    ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                     ->join('estado', 'pasos_alianza.estado_id', '=', 'estado.id')
                     ->where('pasos_alianza.alianza_id',$alianzaId )
-                    ->where('pasos_alianza.tipo_paso_id',$tipo_paso )
-                    ->select('mail.*','pasos_alianza.id AS pasos_alianza_id','pasos_alianza.observacion AS paso_observacion','estado.nombre AS estado_nombre')
-                    ->orderBy('mail.created_at','desc');
-            // echo $dataMail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
-            $dataMail = $dataMail->get();
+                    ->where('pasos_alianza.tipo_paso_id',$tipo_paso[0]['id'] )
+                    ->select('email.*','pasos_alianza.id AS pasos_alianza_id','pasos_alianza.observacion AS paso_observacion','estado.nombre AS estado_nombre')
+                    ->orderBy('email.created_at','desc');
+            // echo $dataEmail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
+            $dataEmail = $dataEmail->get();
+            // print_r($dataEmail);
+            if ( count($dataEmail) > 0 ) {
 
-            if ( count($dataMail) > 0 ) {
+                if ( isset($request['enviar']) && !isset($request['tokenemail']) ) {
+                    $request['tokenemail'] = $dataEmail[0]->tokenemail;
+                }
 
+                
+                // if ($dataEmail[0]->estado == '1') {
+                //     $errors += 1;
+                $errorsMsg = 'El email ya fue enviado.';
+                //     goto end;
+                // }
+                
                 if ( isset($request['validar_estado']) ) {
-                    return $dataMail[0];
+                    return $dataEmail[0];
                 }
-                /*
-                if ($dataMail[0]->estado == '1') {
-                    $errors += 1;
-                    array_push($errorsMsg, 'El e-mail ya fue enviado.');
-                    goto end;
-                }
-                */
 
-                if ( isset($request['ver']) && !isset($request['enviar']) && !isset($request['tokenmail']) ) {
+                if ( isset($request['ver']) && !isset($request['enviar']) && !isset($request['tokenemail']) ) {
                     $msj_header_text = '';
-                    $viewWith = '';
+                    
                     $vista = 'emails.alliances.show';
 
                     
@@ -3139,15 +3386,21 @@ class InterAllianceController extends AppBaseController
                     if( isset($request['aceptar_alianza']) && $request['aceptar_alianza'] == 'NO' ){
                         $vista = 'emails.alliances.show_declined';
 
-                        $viewWith = $this->datosAlianza($alianzaId,'mail','declinado',$tipo_paso);
+                        $viewWith = array_merge($viewWith,$this->datosAlianza($alianzaId,'email','declinado',$tipo_paso));
 
-                        $viewWith = array_merge($viewWith, ['dataMail' => $dataMail]);
+                        $viewWith = array_merge($viewWith, ['dataEmail' => $dataEmail]);
 
                     }else{
 
-                        $viewWith = $this->datosAlianza($alianzaId,'mail','ver',$tipo_paso);
+                        $viewWith = array_merge($viewWith,$this->datosAlianza($alianzaId,'email','ver',$tipo_paso));
 
-                        $viewWith = array_merge($viewWith, ['dataMail' => $dataMail, 'omitir_adjuntos' => true]);
+                        if ($viewWith['CoordinadorInterno'] == $this->user->id){
+                            $viewWith = array_merge($viewWith, ['editar_origin' => true]);
+                        }elseif ($viewWith['CoordinadorExterno'] == $this->user->id){
+                            $viewWith = array_merge($viewWith, ['editar_destination' => true]);
+                        }
+
+                        $viewWith = array_merge($viewWith, ['dataEmail' => $dataEmail, 'omitir_collapse' => true]);
                         
                     }
 
@@ -3155,13 +3408,13 @@ class InterAllianceController extends AppBaseController
                     //return view('emails.alianzas.response');
                     return view($vista)->with($viewWith);
 
-                }elseif ( isset($request['enviar']) && isset($request['tokenmail']) ) {
+                }elseif ( isset($request['enviar']) && isset($request['tokenemail']) ) {
 
-                    $tipo_mail = 'alianza';
-                    $request['tipo_paso_id'] = $tipo_paso;
-                    $request['dataMail'] = $dataMail;
+                    $tipo_email = 'alianza';
+                    $request['tipo_paso_id'] = $tipo_paso[0]['id'];
+                    $request['dataEmail'] = $dataEmail;
 
-                    $datosAlianza = $this->datosAlianza($alianzaId,'mail','ver',$tipo_paso);
+                    $datosAlianza = $this->datosAlianza($alianzaId,'email','ver',$tipo_paso);
 
                     $datosAlianzaKeys = array_keys($datosAlianza);
                     //print_r($datosAlianza['dataAlianza']);
@@ -3172,15 +3425,15 @@ class InterAllianceController extends AppBaseController
                     
                     
 
-                    $enviarMail = $this->enviarMail($tipo_mail, $request);
+                    $enviarEmail = $this->enviarEmail($tipo_email, $request);
                     
-                    return $enviarMail;
+                    return $enviarEmail;
 
                 }
                 
             }else{
                 $errors += 1;
-                array_push($errorsMsg, 'El paso no tiene asociado algún e-mail.');
+                $errorsMsg = 'El paso no tiene asociado algún email.';
                 goto end;
             }
 
@@ -3189,7 +3442,7 @@ class InterAllianceController extends AppBaseController
         }else{
 
             $errors += 1;
-            array_push($errorsMsg, 'No esta seleccionado ningún paso.');
+            $errorsMsg = 'No esta seleccionado ningún paso.';
             goto end;
         }
 
@@ -3201,7 +3454,7 @@ class InterAllianceController extends AppBaseController
 
             if ( isset($request['origen_peticion']) && $request['origen_peticion'] == 'local' ) {
                 return $errorsMsg;
-            }else if ($this->peticion != 'ajax') {
+            }elseif ($this->peticion != 'ajax') {
                 flash()->error($errorsMsg);
             }else{
                 return Response::json($errorsMsg, 422);
@@ -3221,11 +3474,13 @@ class InterAllianceController extends AppBaseController
     public function show($id, $peticion = '')
     {
         
-        $alianza = \App\Models\Alianza::where('token',$id)->first();
-        //print_r($alianza);
+        $alianza = \App\Models\Alianza::where('token',(string) $id);
+        $alianza = $alianza->first();
+
         if (empty($alianza)) {
             $alianza = $this->alianzaRepository->findWithoutFail($id);
         }
+        
 
         $alianzaId = 0;
         $dataAlianza = '';
@@ -3234,7 +3489,7 @@ class InterAllianceController extends AppBaseController
         $archivosAdjuntos = '';
         $CoordinadorInterno = 0;
         $CoordinadorExterno = 0;
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         $this->user = Auth::user();
 
         if (empty($alianza)) {
@@ -3249,37 +3504,58 @@ class InterAllianceController extends AppBaseController
                 $this->peticion = $peticion;
             }
 
-            $paso_titulo = $this->tipoPaso->where('nombre','like','%_alianza')->select('titulo',DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))->pluck('titulo','orden');
+
+            $validarAcceso = $this->validarAcceso('editar',$this->user->id,$alianzaId);
+            // print_r($validarAcceso);
+            // return 1;
+
+            $editar = false;
+            if($validarAcceso !== false){
+                $editar = true;
+            }
+
             //el tipo de paso setteado es porque el la alianza estan asociados los archivos adjuntos al paso3_alianza
-            $tipo_paso = $this->tipoPaso->where('nombre', 'paso3_alianza')->pluck('id');
+            $tipo_paso = $this->tipoPaso->where('nombre', 'paso3_interalliance')->select('id', 'nombre', DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
 
-            //solicita los datos de la alianza
-            $datosAlianza = $this->datosAlianza($alianzaId,'show','ver',$tipo_paso);
 
+
+            //verificar los datos de la alianza
+            $verificarDatosAlianza = $this->datosAlianza($alianzaId,'show','verificar',$tipo_paso);
 
             // print_r($datosAlianza);
-            $keyCoordExterno = $datosAlianza['keyCoordExterno'];
+            $keyCoordExterno = $verificarDatosAlianza['keyCoordExterno'];
             
             //evita que el coordinador externo ingrese
             if (strpos($this->tipoRuta, 'destination') === false && $this->peticion != 'local' && $keyCoordExterno !== false) {
-                $CoordinadorExterno = $datosAlianza['dataUsers'][$keyCoordExterno]['usuario_id'];
+
+                $CoordinadorExterno = $verificarDatosAlianza['dataUsers'][$keyCoordExterno]['usuario_id'];
                 if ($this->user->id == $CoordinadorExterno) {
                     return redirect(route('interalliances.destination',$alianzaId));
-                }else{
-                    $viewWith = $datosAlianza;
                 }
-            }else{
-                $viewWith = $datosAlianza;
+                // else{
+                //     $viewWith = $datosAlianza;
+                // }
+            // }else{
+            //     $viewWith = $datosAlianza;
             }
+
+            //solicita los datos de la alianza
+            $datosAlianza = $this->datosAlianza($alianzaId,'show','ver',$tipo_paso);
+            $viewWith = array_merge($viewWith,$datosAlianza);
 
             $view = 'InterAlliance.show';
             
+            if (strpos($this->tipoRuta, 'destination') === false){
+                $viewWith = array_merge($viewWith, ['editar_origin' => $editar]);
+            }
 
+            $viewWith = array_merge($viewWith, ['editar' => $editar]);
             // print_r($viewWith);
             if ( $this->peticion == 'local' ) {
                 return $viewWith;
             }else{
-                $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta, 'campusApp' => $this->campusApp]);
+                $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta]);
                 return view($view)->with($viewWith);
             }
                 
@@ -3293,7 +3569,7 @@ class InterAllianceController extends AppBaseController
      *
      * @return Response
      */
-    public function datosAlianza($alianzaId, $destino, $filtro, $tipo_paso = 0)
+    public function datosAlianza($alianzaId, $destino, $filtro, $tipo_paso = [])
     {
         $this->user = Auth::user();
         $roleCoordinadorInterno = Role::where('name','coordinador_interno')->pluck('id')->first();
@@ -3322,6 +3598,17 @@ class InterAllianceController extends AppBaseController
                     $CoordinadorExterno = $user->usuario_id;
                 }
             }
+
+            if ( $destino == 'show' && $filtro == 'verificar' ) {
+                $dataUsers = json_decode(json_encode($dataUsers),true);
+                //print_r($dataUsers);
+                
+                $keyCoordExterno = array_search($CoordinadorExterno, array_column($dataUsers, 'usuario_id'));
+                $keyCoordInterno = array_search($CoordinadorInterno, array_column($dataUsers, 'usuario_id'));
+
+                return ['dataUsers' => $dataUsers, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno ];
+            }
+
             //obtiene la lista de todos los estados
             $estadosData = \App\Models\Estado::select('id','uso','nombre')->get()->toArray();
             //separa solo los estados que usara el coordinador externo al aceptar / rechazar la alianza
@@ -3370,14 +3657,14 @@ class InterAllianceController extends AppBaseController
                     ->groupBy('campus.institucion_id')
                     ->select('campus.institucion_id','pais.id AS pais_id','pais.nombre AS pais_nombre','departamento.id AS departamento_id','departamento.nombre AS departamento_nombre','ciudad.id AS ciudad_id','ciudad.nombre AS ciudad_nombre')->get()->toArray();
 
-        if ($destino == 'mail' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
+        if ($destino == 'email' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
             //validar si existe representante          
             $buscarRepresentante = DB::table('campus')
                         ->join('user_campus', 'campus.id', '=', 'user_campus.campus_id')
                         ->join('users', 'user_campus.user_id', '=', 'users.id')
                         ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id');
 
-            if ($destino == 'mail' || $destino == 'show' || $destino == 'destination' ) {
+            if ($destino == 'email' || $destino == 'show' || $destino == 'destination' ) {
                 $buscarRepresentante = $buscarRepresentante->leftJoin('datos_personales', 'users.datos_personales_id', '=', 'datos_personales.id')
                         ->leftJoin('pais', 'datos_personales.nacionalidad_id', '=', 'pais.id')
                         ->leftJoin('tipo_documento', 'datos_personales.tipo_documento_id', '=', 'tipo_documento.id');
@@ -3397,7 +3684,7 @@ class InterAllianceController extends AppBaseController
             //echo $buscarRepresentante->toSql().'array_column(institucionUsuarios, id):'.implode(',', array_column($institucionUsuarios, 'id')).'roleRepresentante:'.$roleRepresentante;
             $buscarRepresentante = $buscarRepresentante->get()->toArray();
 
-            if ($destino == 'mail' || $destino == 'show' || $destino == 'destination' ) {
+            if ($destino == 'email' || $destino == 'show' || $destino == 'destination' ) {
             
                 $ciudadesRepresentante = DB::table('ciudad')->join('departamento', 'ciudad.departamento_id', '=', 'departamento.id')
                         ->join('pais', 'departamento.pais_id', '=', 'pais.id')
@@ -3455,7 +3742,7 @@ class InterAllianceController extends AppBaseController
         $keyCoordInterno = array_search($CoordinadorInterno, array_column($dataUsers, 'usuario_id'));
         
 
-        if ($destino == 'mail' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
+        if ($destino == 'email' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
 
             //buscar los archivos de soporte del representante legal
             $tipo_documento_id = \App\Models\TipoDocumento::where('nombre',['REPRESENTACIÓN LEGAL'])->pluck('id')->first();
@@ -3507,68 +3794,82 @@ class InterAllianceController extends AppBaseController
                     ->select('alianza.*','estado.nombre AS estado_nombre','tipo_tramite.nombre AS tipo_tramite_nombre' )
                     ->first();
             $dataAlianza = json_decode(json_encode($dataAlianza),true);
-
-            //verifica si ya existen validadores revisando y que hayan rechazado alguna revision de la alianza para permitir editar 
-            $pasosAlianza = \App\Models\Validation\PasosAlianza::where('alianza_id',$alianzaId)->whereIn('estado_id',array_column($estadosValidaciones, 'id'))->get()->toArray();
-            $editar = false;
-            if ( count($pasosAlianza) ) {
-                $hanRechazado = array_search($estadosValidaciones[$keyEstadoRechazado]['id'], array_column($pasosAlianza, 'estado_id'));
-                if ( $hanRechazado !== false && in_array($this->user->id, [$CoordinadorInterno,$CoordinadorExterno]) ) {
-                    $editar = true;
-                }
-            }else{
-                $editar = true;
-            }
+            //cambiar el texto de la duracion 
+            $dataAlianza['duracion'] = str_replace("MESES", "Mes(es)", $dataAlianza['duracion']);
+            $dataAlianza['duracion'] = str_replace("AÑOS", "Año(s)", $dataAlianza['duracion']);
+            // //verifica si ya existen validadores revisando y que hayan rechazado alguna revision de la alianza para permitir editar 
+            // $pasosAlianza = \App\Models\Validation\PasosAlianza::where('alianza_id',$alianzaId)->whereIn('estado_id',array_column($estadosValidaciones, 'id'))->get()->toArray();
+            // $editar = false;
+            // if ( count($pasosAlianza) ) {
+            //     $hanRechazado = array_search($estadosValidaciones[$keyEstadoRechazado]['id'], array_column($pasosAlianza, 'estado_id'));
+            //     if ( $hanRechazado !== false && in_array($this->user->id, [$CoordinadorInterno,$CoordinadorExterno]) ) {
+            //         $editar = true;
+            //     }
+            // }else{
+            //     $editar = true;
+            // }
 
             //echo $dataAlianza->toSql();
             $dataAlianza['facultades'] = $dataFacultades;
             $dataAlianza['programas'] = $dataProgramas;
             $dataAlianza['aplicaciones'] = $dataAplicaciones;
+            $dataAlianza['enviar_solicitud'] = '';
    
-            $dataMail = DB::table('pasos_alianza')
-                    ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                    ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
+            $dataEmail = DB::table('pasos_alianza')
+                    ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                    ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
                     ->where('pasos_alianza.alianza_id',$alianzaId )
-                    ->where('pasos_alianza.tipo_paso_id',$tipo_paso )
-                    ->select('pasos_alianza.id AS pasos_alianza_id','mail.id')
-                    ->orderBy('mail.created_at','desc')
-                    ->get();
+                    ->whereIn('pasos_alianza.user_id',array_column($dataUsers, 'usuario_id') )
+                    ->whereIn('pasos_alianza.tipo_paso_id',array_column($tipo_paso, 'id') )
+                    ->select('pasos_alianza.id AS pasos_alianza_id','pasos_alianza.tipo_paso_id','pasos_alianza.user_id','email.id','email.estado')
+                    ->orderBy('email.created_at','desc')
+                    ->get()
+                    ->toArray();
             
             $archivosAdjuntos = '';
-            if (count($dataMail)) {
+            if (count($dataEmail)) {
+
+                $dataAlianza['enviar_solicitud'] = [];
+                foreach ($tipo_paso as $key => $value) {
+                    $keyEmailCreado = array_search($value['id'], array_column($dataEmail, 'tipo_paso_id'));
+                    $estadoEmail = ($keyEmailCreado !== false) ? $dataEmail[$keyEmailCreado]->estado : '';
+                    $dataAlianza['enviar_solicitud'][$value['orden']] = (in_array($estadoEmail, ['',0,false]))    ? 'No ha sido enviada' :  'Ya fue enviada';
+                }
+
+
                 $archivosAdjuntos = DB::table('pasos_alianza')
-                        ->join('pasos_alianza_mail', 'pasos_alianza.id', '=', 'pasos_alianza_mail.pasos_alianza_id')
-                        ->join('mail', 'pasos_alianza_mail.mail_id', '=', 'mail.id')
-                        ->join('mail_archivo', 'mail.id', '=', 'mail_archivo.mail_id')
-                        ->join('archivo', 'mail_archivo.archivo_id', '=', 'archivo.id')
+                        ->join('pasos_alianza_email', 'pasos_alianza.id', '=', 'pasos_alianza_email.pasos_alianza_id')
+                        ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
+                        ->join('email_archivo', 'email.id', '=', 'email_archivo.email_id')
+                        ->join('archivo', 'email_archivo.archivo_id', '=', 'archivo.id')
                         ->join('formato', 'archivo.formato_id', '=', 'formato.id')
-                        ->where('pasos_alianza.id',$dataMail[0]->pasos_alianza_id) 
-                        ->where('mail.id',$dataMail[0]->id) 
+                        ->where('pasos_alianza.id',$dataEmail[0]->pasos_alianza_id) 
+                        ->where('email.id',$dataEmail[0]->id) 
                         ->where('pasos_alianza.alianza_id',$alianzaId) 
-                        ->orderBy('mail.id','desc')
+                        ->orderBy('email.id','desc')
                         ->select('archivo.*','formato.nombre AS formato_nombre');
-                //echo $archivosAdjuntos->toSql().' |$dataMail[0]->pasos_alianza_id:'.$dataMail[0]->pasos_alianza_id.' |$dataMail[0]->id:'.$dataMail[0]->id.' |$alianzaId:'.$alianzaId;
+                //echo $archivosAdjuntos->toSql().' |$dataEmail[0]->pasos_alianza_id:'.$dataEmail[0]->pasos_alianza_id.' |$dataEmail[0]->id:'.$dataEmail[0]->id.' |$alianzaId:'.$alianzaId;
                 $archivosAdjuntos = $archivosAdjuntos->get()->toArray();
             }
             
         }
                 
                 
-        $viewWith = ['alianzaId' => $alianzaId, 'dataUsers' => $dataUsers, 'CoordinadorInterno' => $CoordinadorInterno, 'CoordinadorExterno' => $CoordinadorExterno, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno,'peticion' => $this->peticion];
+        $viewWith = array_merge($this->viewWith,['alianzaId' => $alianzaId, 'dataUsers' => $dataUsers, 'CoordinadorInterno' => $CoordinadorInterno, 'CoordinadorExterno' => $CoordinadorExterno, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno,'peticion' => $this->peticion]);
 
-        if ($destino == 'mail' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
+        if ($destino == 'email' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
             if ( $filtro == 'declinado' ) {
                 return $viewWith;
             }elseif ( $filtro == 'ver' ) {
 
-                $viewWith = array_merge($viewWith, ['paso_titulo' => $this->paso_titulo, 'dataAlianza' => $dataAlianza, 'editar' => $editar, 'archivosAdjuntos' => $archivosAdjuntos, 'archivosDocumentoRepresentante' => $archivosDocumentoRepresentante]);
+                $viewWith = array_merge($viewWith, ['paso_titulo' => $this->paso_titulo, 'dataAlianza' => $dataAlianza, 'archivosAdjuntos' => $archivosAdjuntos, 'archivosDocumentoRepresentante' => $archivosDocumentoRepresentante]);
                 
                 return $viewWith;
             }
         }
-        if ($destino == 'crearMail' && $filtro == 'nuevo' ) {
+        if ($destino == 'crearEmail' && $filtro == 'nuevo' ) {
 
-            $viewWith = ['dataUsers' => $dataUsers, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno];
+            $viewWith = array_merge($this->viewWith,['dataUsers' => $dataUsers, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno]);
             
             return $viewWith;
         }
@@ -3591,9 +3892,9 @@ class InterAllianceController extends AppBaseController
 
             return redirect(route('interalliances.index'));
         }
-        $viewWith = [];
-        $viewWith = $this->show($alianza_id, 'local');
-        $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'peticion' => 'limpio']);
+        $viewWith = $this->viewWith;
+        $viewWith = array_merge($viewWith,$this->show($alianza_id, 'local'));
+        $viewWith = array_merge($viewWith, ['peticion' => 'limpio']);
         $view = 'InterAlliance.show';
         //$view = 'welcome';
         
@@ -3628,11 +3929,11 @@ class InterAllianceController extends AppBaseController
     {
         //return \View::make('errors.404')->with(['peticion' => $this->peticion]);
         $verificarToken = '';
-        $viewWith = [];
+        $viewWith = $this->viewWith;
         $alliance = [];
         $existeRepresentante = false;
         $alianzaId = 0;
-        $tipo_paso = 0;
+        $tipo_paso = [];
         $destino = 'edit';
         $existe_paso = 0;
         $datosAlianza = '';
@@ -3654,28 +3955,19 @@ class InterAllianceController extends AppBaseController
         $keyEstadoValidacion = $keysEstadosValidaciones[$keyEstadoValidacion];
 
         // $alianza = \App\Models\Alianza::where('token',$id_o_token)->where('estado','1')->select('id','token')->first();
-        $alianza = \App\Models\Alianza::where('token',$id_o_token)->select('id','token')->first();
+        $alianza = \App\Models\Alianza::where('token',(string) $id_o_token)->select('id','token')->first();
 
         if (empty($alianza)) {
             //si no se obtiene por el token entonces por el id
             $alianza = $this->alianzaRepository->findWithoutFail($id_o_token);
             if ( count($alianza) > 0 ) { 
                 
-                $viewWith = [];
+                $viewWith = $this->viewWith;
                 $alliance = [];
                 $existeRepresentante = false;
                 $alianza = $alianza;
                 $alianzaId = $alianza->id;
 
-                $validarAcceso = $this->validarAcceso('editar',$this->user->id,$alianzaId);
-
-                if ($validarAcceso === 'coordinador_externo') {
-                    return redirect(route('interalliances.destination.edit',$alianzaId));
-                }elseif($validarAcceso === false){
-                    Flash::error('No tiene permitido editar esta alianza');
-
-                    return redirect(route('interalliances.index'));
-                }
 
             }else{
 
@@ -3685,6 +3977,16 @@ class InterAllianceController extends AppBaseController
             }
         }else{
             $alianzaId = $alianza->id;
+        }
+
+        $validarAcceso = $this->validarAcceso('editar',$this->user->id,$alianzaId);
+
+        if ($validarAcceso === 'coordinador_externo' && $this->tipoRuta != 'interalliances.destination.edit') {
+            return redirect(route('interalliances.destination',$alianzaId));
+        }elseif($validarAcceso === false){
+            Flash::error('No tiene permitido editar esta alianza');
+
+            return redirect(route('interalliances.index'));
         }
 
         //verifica si ya existen validadores revisando y que hayan rechazado alguna revision de la alianza para permitir editar 
@@ -3709,7 +4011,7 @@ class InterAllianceController extends AppBaseController
         if ($paso != '') {
             //echo $paso;
             //verificar si existe el paso 
-            $existe_paso = $this->tipoPaso->where('nombre', 'paso'.$paso.'_alianza')->pluck('id');
+            $existe_paso = $this->tipoPaso->where('nombre', 'paso'.$paso.'_interalliance')->pluck('id');
             if (!count($existe_paso)) {
                 Flash::error('No se encontro el paso de la alianza');
 
@@ -3724,7 +4026,8 @@ class InterAllianceController extends AppBaseController
             
         }else{
 
-            $tipo_paso = $this->tipoPaso->where('nombre', 'paso'.$paso.'_alianza')->pluck('id');
+            $tipo_paso = $this->tipoPaso->where('nombre', 'paso'.$paso.'_interalliance')->select('id', 'nombre', DB::raw('replace(substr(nombre,instr(nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
         }
 
         $datosAlianza = $this->datosAlianza($alianza->id,$destino,'ver',$tipo_paso);
@@ -3733,11 +4036,11 @@ class InterAllianceController extends AppBaseController
         $keyCoordInterno = $datosAlianza['keyCoordInterno'];
         $keyCoordExterno = $datosAlianza['keyCoordExterno'];
 
-        if ($datosAlianza['editar'] === false) {
-            Flash::error('No se puede editar la alianza');
+        // if ($datosAlianza['editar'] === false) {
+        //     Flash::error('No se puede editar la alianza');
 
-            return redirect(route('interalliances.index'));
-        }
+        //     return redirect(route('interalliances.index'));
+        // }
 
         $dataAlianza['alianzaId'] = $datosAlianza['dataAlianza']['id'];
         //verifica si la ruta es para edicion por parte del coordinador externo
@@ -3866,7 +4169,7 @@ class InterAllianceController extends AppBaseController
             //if ($existeRepresentante == false ) {
                 //retornar el formulario desde el paso 4 al coordinador
                 $tipo_institucion_destino = $this->tipoInstitucion->pluck('nombre','id');
-                $pais_institucion_destino = $this->pais->pluck('nombre','id');
+                $pais_institucion_destino = $this->pais->orderBy('nombre','asc')->pluck('nombre','id');
 
                 $departamento_institucion_destino = '';
                 $ciudad_institucion_destino = '';
@@ -3931,7 +4234,7 @@ class InterAllianceController extends AppBaseController
         if ($this->tipoRuta == 'interalliances.destination.edit') {
             
             //datos generales
-            $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'tipoRuta' => $this->tipoRuta, 'atoken' => $alianza->token,'alianzaId' => $alianzaId,'existeRepresentante' => $existeRepresentante, 'alliance' => $dataAlianza, 'coordinador_destino' => $coordinador_destino, 'paso_titulo' => $this->paso_titulo, 'nombre' => 'alianza', 'paso' => '4','peticion' => 'externa']);
+            $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta, 'atoken' => $alianza->token,'alianzaId' => $alianzaId,'existeRepresentante' => $existeRepresentante, 'alliance' => $dataAlianza, 'coordinador_destino' => $coordinador_destino, 'paso_titulo' => $this->paso_titulo, 'nombre' => 'alianza', 'paso' => '4','peticion' => 'externa']);
 
             //if ($existeRepresentante == false) {
                 //datos para la institucion de destino
@@ -3955,7 +4258,7 @@ class InterAllianceController extends AppBaseController
         }else{
             //obtiene los datos iniciales para los campos de los formularios
             // se envia el origen de la peticion como 'local' para que retorne solo los datos
-            $viewWith = $this->origin($alianza->id,'local');
+            $viewWith = array_merge($this->viewWith,$this->origin($alianza->id,'local'));
             
             $viewWith['programa_origen'] = \App\Models\Admin\Programa::whereIn('facultad_id', $dataAlianza['facultad_origen'])->pluck('nombre','id');
             $viewWith['aplicaciones'] = \App\Models\Aplicaciones::where('tipo_alianza_id', $dataAlianza['tipo_alianza'])->pluck('nombre','id');
@@ -3979,6 +4282,14 @@ class InterAllianceController extends AppBaseController
             }
 
             $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta, 'alliance' => $dataAlianza,'editar_paso' => false]);
+
+            if (empty($existe_paso)) {
+                $viewWith = array_merge($viewWith, ['editar_paso' => false]);
+                $vista = 'InterAlliance.create';
+            }else{
+                $viewWith = array_merge($viewWith, ['editar_paso' => $paso]);
+                $vista = 'InterAlliance.edit';
+            }
         }
 
         $viewWith = array_merge($viewWith, ['peticion' => 'normal']);
@@ -4177,15 +4488,28 @@ class InterAllianceController extends AppBaseController
                 if (isset($dataUser['name'])) {
                     $actualizarUser->name = $dataUser['name'];
                 }
+
                 if (isset($dataUser['email'])) {
                     if ( $actualizarUser->email != $dataUser['email'] ) {
-                        $actualizarUser->activo = 1;
+                        //$actualizarUser->activo = 1;
                     }
                     $actualizarUser->email = $dataUser['email'];
                 }
+
+                $datos_personalesId = $actualizarUser->datos_personales->id;
+                $datos_personales = \App\Models\DatosPersonales::where('id',$datos_personalesId)
+                    ->update($datosPersonales);
+                
+                /*
                 //datos personales
                 if (isset($datosPersonales['nombres'])) {
                     $actualizarUser->datos_personales->nombres = $datosPersonales['nombres'];
+                }
+                if (isset($datosPersonales['nacionalidad_id'])) {
+                    $actualizarUser->datos_personales->nacionalidad_id = $datosPersonales['nacionalidad_id'];
+                }
+                if (isset($datosPersonales['tipo_documento_id'])) {
+                    $actualizarUser->datos_personales->tipo_documento_id = $datosPersonales['tipo_documento_id'];
                 }
                 if (isset($datosPersonales['ciudad_residencia_id'])) {
                     $actualizarUser->datos_personales->ciudad_residencia_id = $datosPersonales['ciudad_residencia_id'];
@@ -4196,6 +4520,8 @@ class InterAllianceController extends AppBaseController
                 if (isset($datosPersonales['cargo'])) {
                     $actualizarUser->datos_personales->cargo = $datosPersonales['cargo'];
                 }
+                */
+
                 //guardar los cambios en el usuario y sus datos personales
                 $actualizarUser->push(); 
 
@@ -4203,6 +4529,7 @@ class InterAllianceController extends AppBaseController
                 if ($rol == 'representante_legal') {
                     $tipo = 'representante';
                 }
+
                 $asociarUsuario = $this->asociarUsuario($tipo,$actualizarUser->id,$rol,$campus,$alianza);
                 if ( $asociarUsuario == 'error_usuario' ) {
                     $retorno = 'error_asociar';
@@ -4240,7 +4567,7 @@ class InterAllianceController extends AppBaseController
                     $alianza->institucion()->sync($institucionOrigen);
 
                     $retorno = $alianza;
-                    session(['alianzaId' => $alianza->id]);
+                    //session(['alianzaId' => $alianza->id]);
                 }else{
                     $retorno = 'error_alianza';
                 }
@@ -4265,7 +4592,7 @@ class InterAllianceController extends AppBaseController
                         $alianza->institucion()->syncWithoutDetaching($institucionOrigen);
 
                         $retorno = $alianza;
-                        session(['alianzaId' => $alianza->id]);
+                        // session(['alianzaId' => $alianza->id]);
                     }else{
                         $retorno = 'error_alianza';
                     }
@@ -4406,7 +4733,8 @@ class InterAllianceController extends AppBaseController
     {
         $retorno = false;
         $facultades = '';
-        if( $dataFacultad != false ){
+
+        if( $dataFacultad !== false ){
             //buscar tipo_facultad=UNIDAD
             $tipo_facultad = \App\Models\TipoFacultad::select('id')->where('nombre',$tipoFacultad)->get();
 
@@ -4419,7 +4747,8 @@ class InterAllianceController extends AppBaseController
                 //quitar el elemento 'Otro' que tiene el id '999999'
                 unset($otrasfacultades['999999']);
                 //asociar el resto de facultades
-                $facultades = $this->facultad->whereIn('id',[$nuevaFacultad->id , $otrasfacultades ])->pluck('id')->toArray();
+                $facultades = $this->facultad->whereIn('id',[ $otrasfacultades ])->pluck('id')->toArray();
+                array_push($facultades, $nuevaFacultad->id);
                 $retorno = $nuevaFacultad;
             }else{
                 $retorno = 'error_facultad';
@@ -4496,7 +4825,7 @@ class InterAllianceController extends AppBaseController
         $institucion = 0;
         if($tipo == 'editar'){
 
-            $rolesUsuario = DB::table('model_has_roles')->join('roles','model_has_roles.role_id','roles.id')->where('model_has_roles.model_id',$user_id )->select('roles.name')->get()->toArray();
+            $rolesUsuario = DB::table('model_has_roles')->join('roles','model_has_roles.role_id','roles.id')->where('model_has_roles.model_id',$user_id )->pluck('roles.name')->toArray();
 
             if (empty($rolesUsuario)) {
                 return false;
@@ -4510,13 +4839,73 @@ class InterAllianceController extends AppBaseController
 
             //si hace parte regresar el rol del usuario
             if (!empty($usuarioAlianza)) {
+                $registrosPasos = \App\Models\Validation\PasosAlianza::where('alianza_id',$alianza_id)->select('id','user_id','estado_id','tipo_paso_id')->orderBy('tipo_paso_id','asc')->get()->toArray();
+                //obtiene la lista de todos los estados
+                $estadosData = \App\Models\Estado::select('id','uso','nombre')->get()->toArray();
+                //separa solo los estados que usara el coordinador externo al aceptar / rechazar la alianza
+                $estadosExternosData = array_filter($estadosData, function($var){
+                    return ($var['uso'] == 'EXTERNAL');
+                });
+                $estadosValidatorData = array_filter($estadosData, function($var){
+                    return ($var['uso'] == 'VALIDATOR');
+                });
+
+                reset($estadosExternosData);
+                $keyEstadosExternos = key($estadosExternosData);
+
+                reset($estadosValidatorData);
+
+                $paso = 3;
+                $tipo_paso = $this->tipoPaso->where('nombre','paso'.$paso.'_interalliance')->pluck('id')->first();
+                $keyPasoAlianza = array_search($tipo_paso, array_column($registrosPasos, 'tipo_paso_id') );
+                $dataEmail = DB::table('pasos_alianza_email')
+                    ->join('email', 'pasos_alianza_email.email_id', '=', 'email.id')
+                    ->where('pasos_alianza_email.pasos_alianza_id', $registrosPasos[$keyPasoAlianza]['id'] )
+                    ->select('email.*')
+                    ->orderBy('email.created_at','desc');
+
+                // echo $dataEmail->toSql().' |$alianzaId:'.$alianzaId.' |$tipo_paso:'.$tipo_paso;
+                $dataEmail = $dataEmail->first();
+
                 if (array_search('coordinador_externo', $rolesUsuario) !== false) {
-                    return 'coordinador_externo';
+
+                    $keyEstadoAceptado1 = array_search('ACEPTADO', array_column($estadosExternosData,'nombre') );
+                    $keyEstadoDeclinado1 = array_search('DECLINADO', array_column($estadosExternosData,'nombre') );
+                    $keysEstadosExternos = array_keys($estadosExternosData);
+                    
+                    $keyEstadoRechazado1 = array_search('RECHAZADO', array_column($estadosValidatorData,'nombre') );
+                    $keysEstadosRechazados = array_keys($estadosValidatorData);
+
+                    $keyEstadoAceptado = $keysEstadosExternos[$keyEstadoAceptado1];
+                    $keyEstadoDeclinado = $keysEstadosExternos[$keyEstadoDeclinado1];
+                    $keyEstadoRechazado = $keysEstadosRechazados[$keyEstadoRechazado1];
+
+                    $estaAceptado = array_search($estadosExternosData[$keyEstadoAceptado]['id'], array_column($registrosPasos,'estado_id'));
+                    $estaDeclinado = array_search($estadosExternosData[$keyEstadoDeclinado]['id'], array_column($registrosPasos,'estado_id'));
+                    $estaRechazado = array_search($estadosValidatorData[$keyEstadoRechazado]['id'], array_column($registrosPasos,'estado_id'));
+
+                    if ( count($dataEmail) > 0 && $dataEmail->estado == 1 && $estaAceptado === false ) {
+                        return 'coordinador_externo';
+                    }elseif ( count($dataEmail) > 0 && $dataEmail->estado == 1 && $estaRechazado !== false ) {
+                        return 'coordinador_externo';
+                    }elseif( $estaAceptado === false && $estaDeclinado === false ){
+                        return 'coordinador_externo';
+                    }
+                    
                 }else{
-                    return 'coordinador_interno';
+
+                    if ( count($dataEmail) > 0 && $dataEmail->estado == 0 ) {
+                        return 'coordinador_interno';
+                    }elseif( empty($dataEmail) ){
+                        return 'coordinador_interno';
+                    }
+
                 }
             }else{
             //si no hacen parte de la creacion de la alianza entonces verificar que pertenezcan a la misma institucion y tengan el rol especifico para poder editar la alianza
+        //POR AHORA NO VA A PERMITIR ESTO (SOLAMENTE LOS QUE PERTENEZCAN)
+                return false;
+
                 if (session('campusApp') == null) {
                     if ( isset($this->campusApp[0]) ) {
                         return false;
@@ -4569,40 +4958,6 @@ class InterAllianceController extends AppBaseController
         end:
         return $retorno;
 
-    }
-
-    public function get_format($df) {
-
-        $str = '';
-        $str .= ($df->invert == 1) ? ' - ' : '';
-        if ($df->y > 0) {
-            // years
-            $str .= ($df->y > 1) ? $df->y . ' Años ' : $df->y . ' Año ';
-        } 
-        if ($df->m > 0) {
-            // month
-            $str .= ($df->m > 1) ? $df->m . ' Meses ' : $df->m . ' Mes ';
-        } 
-        if ($df->d > 0) {
-            // days
-            $str .= ($df->d > 1) ? $df->d . ' Días ' : $df->d . ' Día ';
-        }else{
-            $str .= ' 0 Días ';
-        }
-        // if ($df->h > 0) {
-        //     // hours
-        //     $str .= ($df->h > 1) ? $df->h . ' Horas ' : $df->h . ' Hora ';
-        // } 
-        // if ($df->i > 0) {
-        //     // minutes
-        //     $str .= ($df->i > 1) ? $df->i . ' Minutos ' : $df->i . ' Minuto ';
-        // } 
-        // if ($df->s > 0) {
-        //     // seconds
-        //     $str .= ($df->s > 1) ? $df->s . ' Segundos ' : $df->s . ' Segundo ';
-        // }
-
-        return $str;
     }
 
 }
