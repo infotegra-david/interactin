@@ -1,3 +1,5 @@
+192.168.50.104
+
 uma pacma cragma specma: 'toxicity'
 no likes no music: 
 
@@ -465,6 +467,14 @@ interactin
 	sudo systemctl restart apache2
 
 - subir cambios a git
+	
+	user.email=david.calderon@infotegra.com
+	user.name=infotegra-david
+
+	usar los siguientes comandos para configurar el git
+		git config --global user.name "infotegra-david"
+		git config --global user.email "david.calderon@infotegra.com"
+
 
 	- abrir un bash en la carpeta del proyecto
 	- ejecutar los siguientes comandos

@@ -1797,12 +1797,12 @@ class InterChangeController extends AppBaseController
             //verificar si ya es estudiante
             if ( $rolUsuario == 'estudiante' && isset($dataUser['id']) ) {
 
-                $crearTipo = 'actualizar';
+                $crearUsuarioTipo = 'actualizar';
                 
             }
 
             //en el caso de querer modificar los datos
-            $crearUsuario = $this->crearUsuario($crearTipo,$dataUser,'estudiante',$campusApp->id,$dataDatosPersonalesOrigen,'');
+            $crearUsuario = $this->crearUsuario($crearUsuarioTipo,$dataUser,'estudiante',$campusApp->id,$dataDatosPersonalesOrigen,'');
             // Create the user
 
             if ( $crearUsuario === 'error_usuario' ) {
@@ -2066,6 +2066,8 @@ class InterChangeController extends AppBaseController
         /// FIN PASO 13
 
 
+
+
         /// INICIO PASO 6
         /// INICIO PASO 6
         /// INICIO PASO 6
@@ -2151,52 +2153,6 @@ class InterChangeController extends AppBaseController
         /// FIN PASO 7
         /// FIN PASO 7
 
-        //registro
-        /// INICIO PASO 7
-        /// INICIO PASO 7
-        /// INICIO PASO 7
-
-        //registrar/actualizar la informacion de movilidad [paso 7]
-
-        if ( isset($request['paso']) && $request['paso'] == '7' ) {
-            
-
-            $programa = \App\Models\Admin\Programa::find($request['inscripcion_programa_destino']);
-
-            if (empty($programa)) {
-                $errors += 1;
-                array_push($errorsMsg, 'No se encontro el programa enviado, es necesario que escoja un programa valido.');
-                goto end;
-            }
-
-            $dataInscripcion['programa_destino_id']= $programa->id;
-
-            //registrar/actualizar las asignaturas a cursar (equivalentes) [paso 7]
-
-
-
-
-
-
-
-
-
-            //datos para actualizar la inscripcion
-            if ( $inscripcionId != 0 ) {
-                $dataInscripcion['id']= $inscripcionId;
-            }
-
-            $paso = $request['paso'];
-
-        }
-
-
-        
-
-        /// FIN PASO 7
-        /// FIN PASO 7
-        /// FIN PASO 7
-
         
 
         /// INICIO PASO 8
@@ -2205,6 +2161,7 @@ class InterChangeController extends AppBaseController
 
         
         if ( isset($request['paso']) && $request['paso'] == '8' ) {
+
             //registrar/actualizar los datos de contacto en caso de emergencia del estudiante [paso 8]
                 // if ( $estudianteId != 0 ) {
                 //     $dataUser['id']= $estudianteId;
@@ -2219,9 +2176,9 @@ class InterChangeController extends AppBaseController
                 
                 if (isset($contacto->contacto_id)) {
                     $dataUser['id'] = $contacto->contacto_id;
-                    $crearTipo = 'actualizar';
+                    $crearUsuarioTipo = 'actualizar';
                 }else{
-                    $crearTipo = 'nuevo';
+                    $crearUsuarioTipo = 'nuevo';
                 }
 
             }else{
@@ -2257,7 +2214,7 @@ class InterChangeController extends AppBaseController
             $dataDatosPersonalesOrigen['contacto_parentesco']= $input['contacto_parentesco'];
 
             //en el caso de querer modificar los datos
-            $crearUsuario = $this->crearUsuario($crearTipo,$dataUser,'contacto',$campusApp->id,$dataDatosPersonalesOrigen,'');
+            $crearUsuario = $this->crearUsuario($crearUsuarioTipo,$dataUser,'contacto',$campusApp->id,$dataDatosPersonalesOrigen,'');
             // Create the user
 
             if ( $crearUsuario === 'error_usuario' ) {
@@ -2282,7 +2239,7 @@ class InterChangeController extends AppBaseController
             }
 
 
-            if ($crearTipo == 'actualizar') {
+            if ($crearUsuarioTipo == 'actualizar') {
                 $datos['user_id'] = $estudianteId;
                 $datos['contacto_id'] = $contactoId;
                 $datos['contacto_parentesco'] = $input['contacto_parentesco'];
@@ -3417,7 +3374,7 @@ class InterChangeController extends AppBaseController
                 }
                 $contacto_departamento_residencia =\App\Models\Admin\State::where('pais_id',$pais_contacto_residencia )->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
 
-                $contacto_ciudad_residencia = [];
+                $contacto_ciudad_residencia = collect([]);
 
             }
             if (!empty($datosInscripcion['dataUsers'][$keyEstudianteId]['ciudad_residencia_id'])) {
@@ -3435,7 +3392,7 @@ class InterChangeController extends AppBaseController
                 }
                 $estudiante_departamento_residencia =\App\Models\Admin\State::where('pais_id',$pais_estudiante_residencia )->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
 
-                $estudiante_ciudad_residencia = [];
+                $estudiante_ciudad_residencia = collect([]);
 
             }
 //OPTIMIZAR ESTOS QUERYES PARA NO REPETIR LAS CONSULTAS
@@ -3511,6 +3468,7 @@ class InterChangeController extends AppBaseController
             $routeListAsignaturas = route('interchanges.'.strtolower($this->tipoInterChange).'.listAsignaturas',$inscripcionId);
             $routeEditAsignaturas = route('interchanges.'.strtolower($this->tipoInterChange).'.editAsignaturas',$inscripcionId);
             
+            $contacto_parentesco =\App\Models\Parentesco::select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
 
             $fuente_financia_nacional = \App\Models\FuenteFinanciacion::where('tipo',0)->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
 
@@ -3518,7 +3476,7 @@ class InterChangeController extends AppBaseController
 
             $fuente_financia_internacional = \App\Models\FuenteFinanciacion::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($fuente_financia_internacional_todos)->pluck('nombre','id');
 
-            $viewWith = array_merge($viewWith, ['estudiante_nacionalidad' => $estudiante_nacionalidad, 'estudiante_departamento_residencia' => $estudiante_departamento_residencia, 'estudiante_ciudad_residencia' => $estudiante_ciudad_residencia, 'idiomas' => $idiomas, 'niveles' => $niveles, 'user_id' => $user_id, 'programas_origen' => $programas_origen, 'programas_destino' => $programas_destino, 'asignaturas_origen' => $asignaturas_origen, 'asignaturas_destino' => $asignaturas_destino, 'inscripcion_campus_destino' => $inscripcion_campus_destino, 'inscripcion_facultad_destino' => $inscripcion_facultad_destino, 'inscripcion_programa_destino' => $inscripcion_programa_destino, 'routeListAsignaturas' => $routeListAsignaturas, 'routeEditAsignaturas' => $routeEditAsignaturas, 'contacto_departamento_residencia' => $contacto_departamento_residencia, 'contacto_ciudad_residencia' => $contacto_ciudad_residencia, 'fuente_financia_nacional' => $fuente_financia_nacional, 'fuente_financia_internacional' => $fuente_financia_internacional ]);
+            $viewWith = array_merge($viewWith, ['estudiante_nacionalidad' => $estudiante_nacionalidad, 'estudiante_departamento_residencia' => $estudiante_departamento_residencia, 'estudiante_ciudad_residencia' => $estudiante_ciudad_residencia, 'idiomas' => $idiomas, 'niveles' => $niveles, 'user_id' => $user_id, 'programas_origen' => $programas_origen, 'programas_destino' => $programas_destino, 'asignaturas_origen' => $asignaturas_origen, 'asignaturas_destino' => $asignaturas_destino, 'inscripcion_campus_destino' => $inscripcion_campus_destino, 'inscripcion_facultad_destino' => $inscripcion_facultad_destino, 'inscripcion_programa_destino' => $inscripcion_programa_destino, 'routeListAsignaturas' => $routeListAsignaturas, 'routeEditAsignaturas' => $routeEditAsignaturas, 'contacto_departamento_residencia' => $contacto_departamento_residencia, 'contacto_ciudad_residencia' => $contacto_ciudad_residencia, 'contacto_parentesco' => $contacto_parentesco, 'fuente_financia_nacional' => $fuente_financia_nacional, 'fuente_financia_internacional' => $fuente_financia_internacional ]);
 
 
         }
@@ -3900,6 +3858,8 @@ class InterChangeController extends AppBaseController
                 ->select('user_contacto.*','users.id AS contacto_id','datos_personales.nombres AS contacto_nombres','datos_personales.apellidos AS contacto_apellidos','datos_personales.email_personal AS contacto_email','datos_personales.telefono AS contacto_telefono','datos_personales.celular AS contacto_celular','datos_personales.ciudad_residencia_id AS contacto_ciudad_residencia_id','datos_personales.direccion AS contacto_direccion','datos_personales.codigo_postal AS contacto_codigo_postal' )
                 ->get()->toArray();
 
+        $contactoParentesco = DB::table('parentesco')->whereIn('id',array_column($contactoUsuarios, 'parentesco_id'))->get()->toArray();
+
         $ciudadesResidenciaUsuariosId = array_merge(array_column($dataUsers, 'ciudad_residencia_id'),array_column($contactoUsuarios, 'contacto_ciudad_residencia_id'));
 
         $ciudadResidenciaUsuarios = DB::table('ciudad')
@@ -3943,6 +3903,12 @@ class InterChangeController extends AppBaseController
             foreach ($ciudadResidenciaUsuarios as $data => $ciudad) {
                 if ($contacto->contacto_ciudad_residencia_id == $ciudad->ciudad_id) {
                     $contacto->ciudad_residencia = $ciudad;
+                }
+            }
+            //asociar los datos del parentesco al usuario
+            foreach ($contactoParentesco as $data2 => $parentesco) {
+                if ($contacto->parentesco_id == $parentesco->id) {
+                    $contacto->parentesco = $parentesco;
                 }
             }
         }
@@ -4157,7 +4123,7 @@ class InterChangeController extends AppBaseController
             $dataInscripcion['archivo_documentos_soporte'] = $dataArchivoDocumentosSoporte[0] ?? [];
             $dataInscripcion['archivo_foto'] = $dataArchivoFoto[0] ?? [];
             $dataInscripcion['archivo_documentos_finales'] = $dataArchivoDocumentosFinales[0] ?? [];
-            print_r($dataInscripcion);
+            // print_r($dataInscripcion);
             $dataInscripcion['enviar_solicitud'] = '';
 
             if ( !empty($tipo_paso) && count($tipo_paso) ) {
@@ -4499,7 +4465,7 @@ class InterChangeController extends AppBaseController
                 $retorno = 'error_usuario';
                 goto end;
             }
-            $usuario_principal->contacto()->sync([$usuario->id => ['parentesco' => $datos['contacto_parentesco']]]);
+            $usuario_principal->contacto()->sync([$usuario->id => ['parentesco_id' => $datos['contacto_parentesco']]]);
         }
 
         switch ($tipo) {

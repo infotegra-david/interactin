@@ -986,10 +986,12 @@
     });
 
 
-	$('input#date').each(function(){
-    	$( this ).datepicker();
-    	$( this ).datepicker("option", "dateFormat", "yy-mm-dd");
-    	$( this ).datepicker("setDate", $( this ).attr('value') );
+	$('.datepicker').each(function(){
+		var thisId = $( this ).attr('id');
+
+    	$( '#' + thisId ).datepicker();
+    	$( '#' + thisId ).datepicker("option", "dateFormat", "yy-mm-dd");
+    	$( '#' + thisId ).datepicker("setDate", $( this ).attr('value') );
 
 	});
     	// $( 'input#date' ).datepicker();

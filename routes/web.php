@@ -651,3 +651,5 @@ Route::get('admin/equivalentes/{equivalentes}/edit', ['as'=> 'admin.equivalentes
 
 
 Route::resource('tipoPlantillas', 'TipoPlantillaController');
+
+Route::resource('parentescos', 'ParentescoController');

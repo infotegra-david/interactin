@@ -17,7 +17,7 @@ class CreateUserContactoTable extends Migration {
 			$table->increments('id');
 			$table->integer('user_id')->unsigned()->index('fk_user_contacto_users1_idx');
 			$table->integer('contacto_id')->unsigned()->default(1)->index('fk_user_contacto_users2_idx');
-			$table->string('parentesco', 45)->nullable();
+			$table->integer('parentesco_id')->unsigned()->default(1)->index('fk_user_contacto_parentesco1_idx');
 			$table->timestamps();
 			$table->softDeletes();
 		});

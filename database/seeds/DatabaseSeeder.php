@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             
         
         $this->call(TipoPlantillaTableSeeder::class);
+        $this->call(ParentescoTableSeeder::class);
     }
         //Model::unguard();
         

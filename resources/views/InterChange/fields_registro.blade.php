@@ -214,7 +214,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_exp_pasaporte') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-										{{ Form::text('estudiante_exp_pasaporte', old('estudiante_exp_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del pasaporte', 'title' => 'Ingrese la fecha de expedición del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+										{{ Form::text('estudiante_exp_pasaporte', old('estudiante_exp_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md datepicker', 'placeholder' => 'Ingrese la fecha de expedición del pasaporte', 'title' => 'Ingrese la fecha de expedición del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'estudiante_exp_pasaporte' ]) }}
 									</div>
 								</div>
 							</div>
@@ -222,7 +222,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_vence_pasaporte') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-										{{ Form::text('estudiante_vence_pasaporte', old('estudiante_vence_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de vencimiento del pasaporte', 'title' => 'Ingrese la fecha de vencimiento del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+										{{ Form::text('estudiante_vence_pasaporte', old('estudiante_vence_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md datepicker', 'placeholder' => 'Ingrese la fecha de vencimiento del pasaporte', 'title' => 'Ingrese la fecha de vencimiento del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'estudiante_vence_pasaporte' ]) }}
 									</div>
 								</div>
 							</div>
@@ -541,7 +541,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('contacto_parentesco') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-user fa-md fa-fw"></i></span>
-										{{ Form::text('contacto_parentesco', old('contacto_parentesco'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Parentesco', 'title' => 'Parentesco']) }}
+										{{ Form::select('contacto_parentesco', $contacto_parentesco->prepend('Seleccione el parentesco',''), old('contacto_parentesco'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '', 'title' => 'Parentesco']) }}
 									</div>
 								</div>
 							</div>
@@ -1065,6 +1065,15 @@
     }else{
     	$programas_origen_json = '{"0":"Registre primero un programa de origen"}';
     }
+    /*
+    if (count($asignaturas_origen)) {
+	    $asignaturas_origen_json = json_encode($asignaturas_origen);
+	    $asignaturas_origen_json = '{"0":"Seleccione una asignatura de origen",'. substr($asignaturas_origen_json, 1);
+    }else{
+    */
+    	// $asignaturas_origen_json = '{"0":"Seleccione primero un programa de origen"}';
+    	$asignaturas_origen_json = '{"0":"Seleccione una asignatura de orige","999999":"Otra"}';
+    // }
 
     $programa_destino_id = $interchange['inscripcion_programa_destino'];
 
@@ -1074,13 +1083,6 @@
 	    $programas_destino_json = '{"0":"Seleccione un programa de destino",'. substr($programas_destino_json, 1);
     }else{
     	$programas_destino_json = '{"0":"Seleccione primero un programa de destino arriba"}';
-    }
-    
-    if (count($asignaturas_origen)) {
-	    $asignaturas_origen_json = json_encode($asignaturas_origen);
-	    $asignaturas_origen_json = '{"0":"Seleccione una asignatura de origen",'. substr($asignaturas_origen_json, 1);
-    }else{
-    	$asignaturas_origen_json = '{"0":"Seleccione primero un programa de origen"}';
     }
 
 	if (count($asignaturas_destino)) {
@@ -1440,11 +1442,12 @@
                     editoptions: {
                         value: {!! $programas_origen_json !!},
                         dataInit: function (elem) {
-                             $(elem).attr('target','asignatura_origen_id');
-                             $(elem).attr('url','{{ route('admin.subjects.listSubjects') }}');
-                             $(elem).attr('extra_value_field','nro_creditos_origen');
+                            $(elem).addClass('full');
+                            $(elem).attr('target','asignatura_origen_id');
+                            $(elem).attr('url','{{ route('admin.subjects.listSubjects') }}');
+                            $(elem).attr('extra_value_field','nro_creditos_origen');
                         },
-                        defaultValue: '{{ $programa_origen_id }}',
+                        // defaultValue: '{ { $programa_origen_id }}',
                     },
                     editrules: {
                         number: true,
@@ -1481,9 +1484,10 @@
                     editoptions: {
                         value: {!! $asignaturas_origen_json !!},
                         dataInit: function (elem) {
-                             // $(elem).attr('class','hide');
-                             $(elem).attr('readonly_field','nro_creditos_origen');
-                             $(elem).attr('set_value_field','nro_creditos_origen');
+                            $(elem).addClass('full');
+                            // $(elem).attr('class','hide');
+                            $(elem).attr('readonly_field','nro_creditos_origen');
+                            $(elem).attr('set_value_field','nro_creditos_origen');
                         },
                     },
                     editrules: {
@@ -1501,6 +1505,7 @@
                     editable: true,
                     editoptions: {
                         dataInit: function (elem) {
+                            $(elem).addClass('full');
                              // $(elem).attr('class','hide');
                         },
                     },
@@ -1518,6 +1523,7 @@
                     editable: true,
                     editoptions: {
                         dataInit: function (elem) {
+                            $(elem).addClass('full');
                             $(elem).attr("readonly", "readonly"); 
                         },
                     },
@@ -1539,6 +1545,7 @@
                     editoptions: {
                         value: {!! $programas_destino_json !!},
                         dataInit: function (elem) {
+                             $(elem).addClass('full');
                              $(elem).attr('target','asignatura_destino_id');
                              $(elem).attr('url','{{ route('admin.subjects.listSubjects') }}');
                              $(elem).attr('extra_value_field','nro_creditos_destino');
@@ -1579,6 +1586,7 @@
                     editoptions: {
                         value: {!! $asignaturas_destino_json !!},
                         dataInit: function (elem) {
+                             $(elem).addClass('full');
                              // $(elem).attr('class','hide');
                              $(elem).attr('readonly_field','nro_creditos_destino');
                              $(elem).attr('set_value_field','nro_creditos_destino');
@@ -1599,6 +1607,7 @@
                     editable: true,
                     editoptions: {
                         dataInit: function (elem) {
+                             $(elem).addClass('full');
                              // $(elem).attr('class','hide');
                         },
                     },
@@ -1616,6 +1625,7 @@
                     editable: true,
                     editoptions: {
                         dataInit: function (elem) {
+                            $(elem).addClass('full');
                             $(elem).attr("readonly", "readonly"); 
                         },
                     },

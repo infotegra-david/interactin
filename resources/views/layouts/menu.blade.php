@@ -209,3 +209,7 @@
     <a href="{!! route('tipoPlantillas.index') !!}"><i class="fa fa-edit"></i><span>TipoPlantillas</span></a>
 </li>
 
+<li class="{{ Request::is('parentescos*') ? 'active' : '' }}">
+    <a href="{!! route('parentescos.index') !!}"><i class="fa fa-edit"></i><span>Parentescos</span></a>
+</li>
+

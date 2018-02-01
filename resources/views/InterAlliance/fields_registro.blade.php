@@ -326,7 +326,7 @@
 										<div class="input-group {{ ($errors->has('repre_fecha_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md datepicker', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'repre_fecha_exped_documento' ]) }}
 												<span class="input-group-addon" rel="tooltip" data-original-title="Ingrese la fecha de expedición del documento del Representante." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 										
 										</div>

@@ -765,7 +765,7 @@
                         <!-- Updated At Field -->
                         <div class=" full">
                             {!! Form::label('contacto_parentesco', 'Parentesco:', ['class' => 'text-bold']) !!}
-                            <span> {{ $dataUsers[$keyEstudianteId]['contacto']['parentesco'] ?? '' }}</span>
+                            <span> {{ $dataUsers[$keyEstudianteId]['contacto']['parentesco']['nombre'] ?? '' }}</span>
                         </div>
                     </div>
                 </div>
