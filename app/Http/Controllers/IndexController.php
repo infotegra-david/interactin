@@ -57,6 +57,24 @@ class IndexController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function idiomaAppSelect(Request $request)
+    {
+        \App::setLocale($request['idiomaAppSelect']);
+        session(['user_locale' => $request['idiomaAppSelect']]);
+
+        if (\App::isLocale($request['idiomaAppSelect'])) {
+            return \App::getLocale();
+        }else{
+            return Response::json(['error' => 'El idioma no se pudo cambiar'], 404);
+        }
+
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

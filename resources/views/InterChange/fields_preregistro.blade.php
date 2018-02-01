@@ -94,7 +94,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_tipo_documento') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-id-card fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_tipo_documento', $estudiante_tipo_documento->prepend('Seleccione el tipo de documento', ''), old('estudiante_tipo_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de documento' ]) }}
+										{{ Form::select('estudiante_tipo_documento', $estudiante_tipo_documento->prepend('Seleccione el tipo de documento',''), old('estudiante_tipo_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '' ]) }}
 									</div>
 								</div>
 							</div>
@@ -154,7 +154,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_facultad') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_facultad', $estudiante_facultad->prepend('Seleccione la facultad', ''), old('estudiante_facultad'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione la facultad', 'target' => 'estudiante_programa', 'url' => route('admin.programs.listPrograms')]) }}
+										{{ Form::select('estudiante_facultad', $estudiante_facultad->prepend('Seleccione la facultad',''), old('estudiante_facultad'), ['class' => 'form-control input-md', 'target' => 'estudiante_programa', 'url' => route('admin.programs.listPrograms')]) }}
 									</div>
 								</div>
 							</div>
@@ -162,7 +162,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_programa') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-graduation-cap fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_programa', $estudiante_programa, old('estudiante_programa'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione el programa', 'target' => '', 'url' => '']) }}
+										{{ Form::select('estudiante_programa', $estudiante_programa->prepend('Seleccione el programa',''), old('estudiante_programa'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -206,7 +206,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_periodo') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_periodo', $inscripcion_periodo->prepend('Seleccione el periodo', ''), old('inscripcion_periodo'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione el periodo', 'target' => '', 'url' => '']) }}
+										{{ Form::select('inscripcion_periodo', $inscripcion_periodo->prepend('Seleccione el periodo',''), old('inscripcion_periodo'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -214,7 +214,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_modalidad') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_modalidad', $inscripcion_modalidad->prepend('Seleccione la modalidad', ''), old('inscripcion_modalidad'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione la modalidad', 'target' => 'inscripcion_pais', 'url' => route('admin.countries.listCountriesModalidad')]) }}
+										{{ Form::select('inscripcion_modalidad', $inscripcion_modalidad->prepend('Seleccione la modalidad',''), old('inscripcion_modalidad'), ['class' => 'form-control input-md', 'target' => 'inscripcion_pais', 'url' => route('admin.countries.listCountriesModalidad')]) }}
 									</div>
 								</div>
 							</div>
@@ -222,7 +222,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_pais') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-graduation-cap fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_pais', $inscripcion_pais, old('inscripcion_pais'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione el país', 'target' => 'inscripcion_institucion_destino', 'val_extra' => 'inscripcion_modalidad', 'url' => route('admin.institutions.listInstitutions')]) }}
+										{{ Form::select('inscripcion_pais', $inscripcion_pais->prepend('Seleccione el país',''), old('inscripcion_pais'), ['class' => 'form-control input-md', 'target' => 'inscripcion_institucion_destino', 'val_extra' => 'inscripcion_modalidad', 'url' => route('admin.institutions.listInstitutions')]) }}
 									</div>
 								</div>
 							</div>
@@ -230,7 +230,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-graduation-cap fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_institucion_destino', $inscripcion_institucion_destino, old('inscripcion_institucion_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione la institución de destino', 'target' => '', 'url' => '']) }}
+										{{ Form::select('inscripcion_institucion_destino', $inscripcion_institucion_destino->prepend('Seleccione la institución de destino',''), old('inscripcion_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -309,7 +309,8 @@
 							<!--<li class="Previous first disabled">
 							<a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
 							</li>-->
-							@if( $editar_paso === false || $editar_paso === true )
+							<?php var_dump($editar_paso); ?>
+							@if( $editar_paso === false )
 								<li class="Previous">
 									<a href="javascript:void(0);" id="btnBack" class="btn btn-lg btn-default"><i class="fa fa-arrow-left"></i> Atras </a>
 								</li>

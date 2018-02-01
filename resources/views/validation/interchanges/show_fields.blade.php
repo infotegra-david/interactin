@@ -1,7 +1,7 @@
 <div class="{{ ( $peticion == 'normal' ? 'hide' : '') }}" id="datos_validacion_inscripcion">
     @include('InterChange.show_fields')
 </div>
-@if(isset($GenerarDocumento) && $GenerarDocumento == true && $editar == true)
+@if(isset($GenerarDocumento) && $GenerarDocumento == true && $editar_validacion == true)
 <hr>
 <div class="row col-sm-12">
     <h4>Es necesario que primero imprima alguna pre-forma para ser firmada por las personas correspondientes.</h4>
@@ -22,7 +22,7 @@
 @endif
 
 <div class="row col-sm-12">
-    @if ( $editar == true )
+    @if ( $editar_validacion == true )
         {!! Form::open(['route' => ['interchanges.validations_interchanges.store',$inscripcionId], 'files' => true]) !!}
 
             @include('validation.interchanges.pasos_inscripcions.fields')
@@ -60,7 +60,7 @@
                 <td class="">{!! $pasoInscripcion->updated_at !!}</td>
                 <td class="">
                     <a href="{!! route('interchanges.validations_interchanges.show', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Ver" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
-                    @if($user_actual == $pasoInscripcion->user_id && $editar == true)
+                    @if($user_actual == $pasoInscripcion->user_id && $editar_validacion == true)
                     <a href="{!! route('interchanges.validations_interchanges.edit', [$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" title="Editar" class='btn btn-success btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
                     @endif
                 </td>

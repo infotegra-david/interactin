@@ -1,3 +1,4 @@
+
 <!-- Nombre Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('nombre', 'Nombre:') !!}
@@ -6,8 +7,9 @@
 
 <!-- Institucion Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('institucion_id', 'Institucion Id:') !!}
-    {!! Form::number('institucion_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('institucion_id', 'Institucion:') !!}
+
+    {!! Form::select('institucion_id', $institucion, old('institucion_id'), ['class' => 'form-control', 'placeholder' => 'Seleccione una institucion']) !!}
 </div>
 
 <!-- Telefono Field -->
@@ -36,8 +38,20 @@
 
 <!-- Ciudad Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('ciudad_id', 'Ciudad Id:') !!}
-    {!! Form::number('ciudad_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('ciudad_id', 'Ciudad:') !!}
+    {!! Form::select('ciudad_id', $ciudad, old('ciudad_id'), ['class' => 'form-control', 'placeholder' => 'Seleccione una institucion']) !!}
+</div>
+
+<!-- Principal Field -->
+<div class="form-group col-sm-6"> 
+    <div class="input-group full">
+        {!! Form::label('principal', 'Sede principal:') !!}          
+        <div class="form-control">
+            <label class="checkbox-inline full">
+                {!! Form::checkbox('principal', 1, null) !!} Si
+            </label>
+        </div>
+    </div>
 </div>
 
 <!-- Submit Field -->

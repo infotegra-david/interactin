@@ -65,7 +65,7 @@ class InterChangeController extends AppBaseController
 
     public function __construct(InscripcionRepository $inscripcionRepo, TipoPaso $tipoPasoModel, Institucion $institucionModel, Facultad $facultadModel, Country $countryModel, Request $request)
     {
-        $this->middleware(function ($request, $next) {
+        /*$this->middleware(function ($request, $next) {
             if (Auth::user()) {
                 $this->user = Auth::user();
                 if (isset($this->user->campus)) {
@@ -102,6 +102,53 @@ class InterChangeController extends AppBaseController
             $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
+        });*/
+        $this->middleware(function ($request, $next) {
+            if ($request->ajax() && isset($request['oper'])) {
+                //si es una peticion tipo ajax y viene con variables del plugin jqgrid no realice las validaciones
+            }else{
+                if (Auth::user()) {
+                    $this->user = Auth::user();
+                    if (isset($this->user->campus)) {
+                        $this->campusApp = $this->user->campus;
+                        if (session('campusApp') == null) {
+                            session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                            session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                            session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                        }
+                        if (count($this->campusApp)) {
+                            $this->campusApp = $this->campusApp->pluck('nombre','id');
+                        }else{
+                            $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                        }
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+
+                if( session('campusApp') != null && session('campusApp') != 0 ){
+                    $campusAppId = session('campusApp') ?? 0;
+
+                    // if ( Auth::user() !== NULL) {
+                        $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                        if( !count($this->campusAppFound) ){
+                            Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                            return redirect(route('home'));
+                        }
+                    // }
+                }else{
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                    // $campusAppId = session('campusApp');
+                    // return redirect(route('home'));
+                }
+                
+                $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+            }
+            return $next($request);
+
         });
 
         $this->inscripcionRepository = $inscripcionRepo;
@@ -116,22 +163,26 @@ class InterChangeController extends AppBaseController
             $this->peticion = "normal";
         }
 
-        $roleValidador = Role::where('name','validador')->pluck('id');
-        
-        $this->tipos_pasos = $this->tipoPaso->leftjoin('user_tipo_paso','tipo_paso.id','user_tipo_paso.tipo_paso_id')
-            ->leftjoin('model_has_roles','user_tipo_paso.user_id','model_has_roles.model_id')
-            ->where('nombre','like','%_interchange')
-            ->where(function ($query) use ($roleValidador) {
-                $query->whereNull('model_has_roles.role_id')
-                    ->orWhere('model_has_roles.role_id',$roleValidador); 
-            })
-            ->select('user_tipo_paso.user_id', 'tipo_paso.id', 'tipo_paso.nombre','tipo_paso.titulo','tipo_paso.seccion','tipo_paso.reglas', DB::raw('replace(substr(tipo_paso.nombre,instr(tipo_paso.nombre,"paso")+4,2),"_","") AS orden'))
-            ->get()->toArray();
+        if ($request->ajax() && isset($request['oper'])) {
+            //si es una peticion tipo ajax y viene con variables del plugin jqgrid no realice las validaciones
+        }else{
+            $roleValidador = Role::where('name','validador')->pluck('id');
+            
+            $this->tipos_pasos = $this->tipoPaso->leftjoin('user_tipo_paso','tipo_paso.id','user_tipo_paso.tipo_paso_id')
+                ->leftjoin('model_has_roles','user_tipo_paso.user_id','model_has_roles.model_id')
+                ->where('nombre','like','%_interchange')
+                ->where(function ($query) use ($roleValidador) {
+                    $query->whereNull('model_has_roles.role_id')
+                        ->orWhere('model_has_roles.role_id',$roleValidador); 
+                })
+                ->select('user_tipo_paso.user_id', 'tipo_paso.id', 'tipo_paso.nombre','tipo_paso.titulo','tipo_paso.seccion','tipo_paso.reglas', DB::raw('replace(substr(tipo_paso.nombre,instr(tipo_paso.nombre,"paso")+4,2),"_","") AS orden'))
+                ->get()->toArray();
 
-        foreach ($this->tipos_pasos as $key => $value) {
-            $this->paso_titulo[$value['orden']] = $value['titulo'];
-            //crea un array con el numero del paso 
-            $this->numeros_pasos[$value['orden']] = $value;
+            foreach ($this->tipos_pasos as $key => $value) {
+                $this->paso_titulo[$value['orden']] = $value['titulo'];
+                //crea un array con el numero del paso 
+                $this->numeros_pasos[$value['orden']] = $value;
+            }
         }
 
         //diferentes formas de obtener la ruta
@@ -217,10 +268,10 @@ class InterChangeController extends AppBaseController
 
 
         // $this->inscripcionRepository->pushCriteria(new RequestCriteria($request));
-        // $inscripcions = $this->inscripcionRepository->all();
+        // $inscripciones = $this->inscripcionRepository->all();
 
         // return view('InterChange.index')
-        //     ->with(['interChanges', $inscripcions, 'campusApp' => $this->campusApp, 'peticion' => $this->peticion]);
+        //     ->with(['interChanges', $inscripciones, 'campusApp' => $this->campusApp, 'peticion' => $this->peticion]);
 
 
 
@@ -244,10 +295,12 @@ class InterChangeController extends AppBaseController
         $roleCopiaEmails = array_filter($rolesUsuarios, function($var){
             return ($var['name'] == 'copia_oculta_email');
         });
+
         reset($roleCoordinadorInterno);
         reset($roleCoordinadorExterno);
         reset($roleEstudiante);
         reset($roleCopiaEmails);
+
         $keyRoleCoorInt = key($roleCoordinadorInterno);
         $keyRoleCoorExt = key($roleCoordinadorExterno);
         $keyRoleEstudiante = key($roleEstudiante);
@@ -547,8 +600,8 @@ class InterChangeController extends AppBaseController
             
             // $tipos_pasos = $this->tipoPaso->where([['nombre','like','%_interchange']])->select('id','nombre','titulo')->get()->toArray();
             $tipos_pasos = $this->tipos_pasos;
-// echo 'tipos_pasos:';
-// print_r($tipos_pasos);
+        // echo 'tipos_pasos:';
+        // print_r($tipos_pasos);
             
             $totalValidadores = \App\Models\Validation\UserPaso::select('users.id AS user_id', 'users.name', 'users.email', 'user_tipo_paso.titulo', 'user_tipo_paso.campus_id', 'user_tipo_paso.tipo_paso_id')
                         ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
@@ -616,8 +669,8 @@ class InterChangeController extends AppBaseController
                     $inscripciones[$keyinscripciones]['pasos_inscripcion'] = array();
                     $inscripciones[$keyinscripciones]['estado_actual'] = '';
                     //esta variable es usada para señalar cuales inscripciones van a estar resaltadas debido a que son tareas pendientes del usuario
-// echo 'totalValidadoresXI:';
-// print_r($totalValidadoresXI);
+    // echo 'totalValidadoresXI:';
+    // print_r($totalValidadoresXI);
                     if (count($totalValidadoresXI) >= 1) {
                         $keyEsValidador = array_search($this->user->id, array_column($totalValidadoresXI, 'user_id'));
                         
@@ -920,12 +973,99 @@ class InterChangeController extends AppBaseController
     public function map(Request $request)
     {
         
-        if ( strpos($this->tipoRuta, 'interout') !== false ) {
-            return redirect('/html/interout-map.php');
+        //$RouteName = Route::currentRouteName();
+        //echo session('campusApp');
+        $campusApp = $this->campusAppFound;
+                
+        //print_r($this->paso_titulo);
+        $institucionId = $campusApp->institucion->id;
+
+        $periodos = \App\Models\Periodo::select('id','nombre','fecha_desde','fecha_hasta')
+            ->where('vigente',1)
+            ->get()->toArray();
+
+        $periodo = [];
+
+        $inscripciones = DB::table('inscripcion')
+            ->where('inscripcion.institucion_destino_id','<>',$institucionId)
+            ->whereNotNull('inscripcion.institucion_destino_id')
+            ->whereNull('inscripcion.deleted_at')
+            ->select(DB::raw('count(*) As conteo'),'inscripcion.*','inscripcion.institucion_destino_id AS institucion_id')
+            ->groupBy('institucion_destino_id');
+
+        foreach ($periodos as $key => $value) {
+            $periodo[$value['id']] = $value['nombre'];
+            if (isset($request['filter']) && $request['filter'] == $value['id'] ) {
+                $fecha_desde = $value['fecha_desde'];
+                $fecha_hasta = $value['fecha_hasta'];
+                $inscripciones = $inscripciones->where(function ($query) use ($fecha_desde,$fecha_hasta) {
+                    $query->whereBetween('inscripcion.fecha_inicio', array($fecha_desde, $fecha_hasta))
+                          ->orWhere(function ($query) use ($fecha_desde,$fecha_hasta) {
+                              $query->where('inscripcion.fecha_fin', '>=', $fecha_desde);
+                              $query->where('inscripcion.fecha_fin', '<=', $fecha_hasta);
+                          });
+                });
+
+
+
+                // ->where([['inscripcion.fecha_inicio','>=',$value['fecha_desde']],['inscripcion.fecha_fin','<=',$value['fecha_hasta']]]);
+                
+            }
         }
-        if ( strpos($this->tipoRuta, 'interin') !== false ) {
-            return redirect('/html/interin-map.php');
+
+        // echo $inscripciones->toSql();
+        // print_r( $inscripciones->getBindings() );
+
+        $inscripciones = $inscripciones->get()->toArray();
+
+        // print_r($inscripciones);
+        // echo '<br> -------------------------------- <br>';
+
+        $departamentosInscripciones = DB::table('campus')->join('ciudad','campus.ciudad_id','ciudad.id')
+            ->where('campus.principal',1)
+            ->whereIn('campus.institucion_id',array_column($inscripciones, 'institucion_id'))
+            ->select(DB::raw('count(*) As conteo'),'ciudad.departamento_id','campus.institucion_id')
+            ->groupBy('campus.institucion_id')
+            ->get()->toArray(); 
+
+        //multiplicar la cantidad de inscripciones por institucion con la cantidad por departamento
+        foreach ($inscripciones as $keyinscripciones => $inscripcion) {
+            foreach ($departamentosInscripciones as $keydepartamentos => $departamento) {
+                if ($inscripcion->institucion_id == $departamento->institucion_id) {
+                    $departamento->conteo_total = $inscripcion->conteo;
+                    $departamento->inscripcion = $inscripcion;
+                }
+            }
         }
+
+        // print_r($departamentosInscripciones);
+        // echo '<br> -------------------------------- <br>';
+
+        $paisesInscripciones = DB::table('pais')->join('departamento','pais.id','departamento.pais_id')
+            ->whereIn('departamento.id',array_column($departamentosInscripciones, 'departamento_id'))
+            ->select(DB::raw('count(*) As conteo'),'departamento.id AS departamento_id','pais.id','pais.nombre','pais.codigo_ref')
+            ->groupBy('pais.id')
+            ->get()->toArray();
+
+        //multiplicar la cantidad de inscripciones totales parciales con la cantidad por pais
+        foreach ($paisesInscripciones as $keypaisesInscripciones => $pais) {
+            $pais->conteo_total = 0;
+            $pais->departamento = array();
+            foreach ($departamentosInscripciones as $keydepartamentos => $departamento) {
+                if ($pais->departamento_id == $departamento->departamento_id) {
+                    $pais->conteo_total += $departamento->conteo_total;
+                    $pais->departamento[] = $departamento;
+                }
+            }
+        }
+
+        // print_r($paisesInscripciones);
+        // echo '<br> -------------------------------- <br>';
+
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'paisesInscripciones' => $paisesInscripciones, 'periodo' => $periodo, 'periodo_filtrado' => $request['filter'] ?? '']);
+
+        return view('InterChange.map')
+            ->with($this->viewWith);
     }
 
     /**
@@ -1049,9 +1189,9 @@ class InterChangeController extends AppBaseController
                     $viewWith = array_merge($viewWith, ['omitir_adjuntos' => true, 'omitir_collapse' => true, 'pasoMaximo' => $request['paso']]);
                     
                     if ($viewWith['estudianteId'] == $this->user->id){
-                        $viewWith = array_merge($viewWith, ['editar_paso' => true]);
+                        $viewWith = array_merge($viewWith, ['editar' => true]);
                     }elseif ($viewWith['postulanteId'] == $this->user->id){
-                        $viewWith = array_merge($viewWith, ['editar_paso' => true]);
+                        $viewWith = array_merge($viewWith, ['editar' => true]);
                     }
 
                     
@@ -1187,17 +1327,17 @@ class InterChangeController extends AppBaseController
             $tipoModalidad = 1;
         }
         
-        $clase_documento = \App\Models\ClaseDocumento::where('nombre','IDENTIDAD')->pluck('id');
-        $estudiante_tipo_documento = \App\Models\TipoDocumento::where('clase_documento_id',$clase_documento)->pluck('nombre','id');
+        $clasificacion = \App\Models\Clasificacion::where('nombre','IDENTIDAD')->pluck('id');
+        $estudiante_tipo_documento = \App\Models\TipoDocumento::where('clasificacion_id',$clasificacion)->pluck('nombre','id');
         if (session('campusApp') == null) {
             session(['campusApp' => $this->campusApp->first()->id]);
         }
         $estudiante_facultad = $this->facultad->where('campus_id',session('campusApp'))->pluck('nombre','id');
-        $estudiante_programa =[];
+        $estudiante_programa =collect([]);
         $inscripcion_periodo = \App\Models\Periodo::where('vigente','1')->pluck('nombre','id');
         $inscripcion_modalidad =\App\Models\Modalidades::where('tipo',$tipoModalidad)->select('nombre','id')->pluck('nombre','id');
-        $inscripcion_institucion_destino =[];
-        $inscripcion_pais =[];
+        $inscripcion_institucion_destino =collect([]);
+        $inscripcion_pais =collect([]);
 
 
         $viewWith = array_merge($this->viewWith,['paso' => '1','peticion' => $this->peticion ?? 'normal', 'paso_titulo' => $this->paso_titulo, 'estudiante_tipo_documento' => $estudiante_tipo_documento, 'estudiante_facultad' => $estudiante_facultad, 'estudiante_programa' => $estudiante_programa, 'inscripcion_periodo' => $inscripcion_periodo, 'inscripcion_modalidad' => $inscripcion_modalidad, 'inscripcion_institucion_destino' => $inscripcion_institucion_destino, 'inscripcion_pais' => $inscripcion_pais]); 
@@ -1476,14 +1616,14 @@ class InterChangeController extends AppBaseController
                 'inscripcion_facultad_destino' => 'required',
                 'inscripcion_programa_destino' => 'required',
 
-/*
+        /*
                 'asignatura_local' => 'required',
                 'codigo_asignatura_local' => 'required',
                 'creditos_asignatura_local' => 'required',
                 'asignatura_destino' => 'required',
                 'codigo_asignatura_destino' => 'required',
                 'creditos_asignatura_destino' => 'required',
-*/
+        */
             ] );
             /*    
             //en el caso de que escojan la opcion Otro
@@ -1906,7 +2046,8 @@ class InterChangeController extends AppBaseController
             
             
             if ($this->peticion == 'ajax') {
-                $redirect_url = route('interchanges.'.strtolower($this->tipoInterChange).'.show',$inscripcionId);
+                // $redirect_url = route('interchanges.'.strtolower($this->tipoInterChange).'.show',$inscripcionId);
+                $redirect_url = route('interchanges.'.strtolower($this->tipoInterChange).'.index');
                 array_push($okMsg,' <input type="hidden" class="" name="redirect_url" id="redirect_url" value="'.$redirect_url.'">');
             }
 
@@ -1977,17 +2118,22 @@ class InterChangeController extends AppBaseController
                 goto end;
             }
 
-            $dataInscripcion['programa_destino_id']= $programa->id;
-
             //registrar/actualizar las asignaturas a cursar (equivalentes) [paso 7]
+            $inscripcionAsignaturas = \App\Models\Admin\InscripcionAsignaturas::join('equivalentes','inscripcion_asignaturas.equivalentes_id','equivalentes.id')
+                ->where('inscripcion_asignaturas.inscripcion_id',$inscripcionId)->select('inscripcion_asignaturas.id')
+                ->count();
+
+            if (empty($inscripcionAsignaturas)) {
+                $errors += 1;
+                array_push($errorsMsg, 'No se han registrado las asignaturas equivalentes, es necesario que las registre.');
+                goto end;
+            }
+
+            
 
 
 
-
-
-
-
-
+            $dataInscripcion['programa_destino_id']= $programa->id;
 
             //datos para actualizar la inscripcion
             if ( $inscripcionId != 0 ) {
@@ -2326,8 +2472,8 @@ class InterChangeController extends AppBaseController
                 $nombre_archvo_input = 'archivo_documentos_finales';
             }
             
-            $tipo_documento = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                ->where([['tipo_documento.nombre',$tipo_documento_nombre],['clase_documento.nombre','INSCRIPCION']])
+            $tipo_documento = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                ->where([['tipo_documento.nombre',$tipo_documento_nombre],['clasificacion.nombre','INSCRIPCION']])
                 ->pluck('tipo_documento.id')->first();
 
             //cargar el archivo de soporte
@@ -2689,14 +2835,15 @@ class InterChangeController extends AppBaseController
             array_push($okMsg,$msg);
             
             if ($this->peticion != 'ajax') {
+                $msgFlash = '';
                 foreach ($okMsg as $key => $value) {
                     $pos = strpos($value, '<input');
                     if ($pos === false) { 
                         $value = str_replace('<br>', '', $value);
-                        $msg .= $value.' <br>';
+                        $msgFlash .= $value.' <br>';
                     }
                 }
-                Flash::success($msg);
+                Flash::success($msgFlash);
             }else{
                 //por no tener la clase dato_adicional solo estara en el formulario actual y no en el siguiente
                 
@@ -2857,7 +3004,7 @@ class InterChangeController extends AppBaseController
 
 
 
-            $viewWith = array_merge($viewWith, ['editar_paso' => $editar, 'pasoMaximo' => $pasoMaximo]);
+            $viewWith = array_merge($viewWith, ['editar' => $editar, 'pasoMaximo' => $pasoMaximo]);
         // print_r($viewWith);
 
             $view = 'InterChange.show';
@@ -2873,6 +3020,85 @@ class InterChangeController extends AppBaseController
                 
         }
 
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listAsignaturas($inscripcion_id, $peticion = '')
+    {
+        if ($peticion == 'local') {
+            $inscripcion = $inscripcion_id;
+            $inscripcionId = $inscripcion_id;
+        }else{
+            $inscripcion = $this->inscripcionRepository->findWithoutFail($inscripcion_id);
+            $inscripcionId = $inscripcion->id;
+            
+        }
+
+        if ( !empty($inscripcion) ) {
+
+            $inscripcionAsignaturas = [];
+
+            // lista de id de registro de equivalentes
+            $inscripcion_asignaturas_id = \App\Models\Admin\InscripcionAsignaturas::where('inscripcion_id',$inscripcionId)
+                ->pluck('equivalentes_id');
+
+            // lista de registro de equivalentes (asignatura_origen y asignatura_destino)
+            $equivalentes = \App\Models\Admin\Equivalentes::whereIn('id',$inscripcion_asignaturas_id)
+                ->select('id','asignatura_origen_id','asignatura_destino_id')
+                ->get()->toArray();
+
+            $asignaturas_id = array_merge(array_column($equivalentes, 'asignatura_origen_id'),array_column($equivalentes, 'asignatura_destino_id'));
+
+            // detalles de las asginaturas (nombre, nro. creditos)
+            
+            $asignaturas = \App\Models\Admin\Asignatura::join('programa','asignatura.programa_id','programa.id')
+                ->whereIn('asignatura.id',$asignaturas_id)
+                ->select('asignatura.id AS asignatura_id','asignatura.nombre','asignatura.nro_creditos','programa.nombre AS programa_nombre')
+                ->get()->toArray();
+            
+            foreach ($equivalentes as $key1 => $equivalente) {
+
+                foreach ($asignaturas as $key2 => $asignatura) {
+
+                    $inscripcionAsignaturas[$key1]['id'] = $equivalente['id'];
+                    if ($equivalente['asignatura_origen_id'] == $asignatura['asignatura_id']) {
+                        $inscripcionAsignaturas[$key1]['asignatura_origen_id'] = $asignatura['nombre'];
+                        $inscripcionAsignaturas[$key1]['nro_creditos_origen'] = $asignatura['nro_creditos'];
+                        $inscripcionAsignaturas[$key1]['programa_origen_id'] = $asignatura['programa_nombre'];
+                    }
+
+                    if ($equivalente['asignatura_destino_id'] == $asignatura['asignatura_id']) {
+                        $inscripcionAsignaturas[$key1]['asignatura_destino_id'] = $asignatura['nombre'];
+                        $inscripcionAsignaturas[$key1]['nro_creditos_destino'] = $asignatura['nro_creditos'];
+                        $inscripcionAsignaturas[$key1]['programa_destino_id'] = $asignatura['programa_nombre'];
+                    }
+
+                }
+
+            }
+            
+            // $inscripcionAsignaturas = $asignaturas;
+
+            // $listAsignaturas = $inscripcionAsignaturas;
+
+            // print_r($inscripcionAsignaturas);
+
+            if ($this->peticion == "ajax" ) {
+                $listAsignaturas = json_encode($inscripcionAsignaturas);
+            }elseif ($peticion == 'local') {
+                $listAsignaturas = $inscripcionAsignaturas;
+            }
+
+        }else{
+            $listAsignaturas = [];
+        }
+
+        return $listAsignaturas;
     }
 
     /**
@@ -3027,11 +3253,13 @@ class InterChangeController extends AppBaseController
         if (!count($tipo_paso)) {
             Flash::error('No se encontro el paso de la inscripción');
 
-            return redirect(route('interchanges.'.strtolower($this->tipoInterChange).'.show',$inscripcion->id));
+            return redirect(route('interchanges.'.strtolower($this->tipoInterChange).'.show',$inscripcionId));
         }
 
-        $datosInscripcion = $this->datosInscripcion($inscripcion->id,$destino,'ver',$tipo_paso);
+        $datosInscripcion = $this->datosInscripcion($inscripcionId,$destino,'ver',$tipo_paso);
         // print_r($datosInscripcion);
+        // echo 'datosInscripcion[dataInscripcion]:';
+        // print_r($datosInscripcion['dataInscripcion']);
         // echo '$pasoMaximo:'.$pasoMaximo;
         $dataInscripcion['inscripcionId'] = $datosInscripcion['dataInscripcion']['id'];
         $keyEstudianteId = $datosInscripcion['keyEstudianteId'];
@@ -3066,11 +3294,16 @@ class InterChangeController extends AppBaseController
         if (isset($datosInscripcion['dataUsers'][$keyEstudianteId]['programa'])) {
             $keyProgramaOrigen = array_search($datosInscripcion['dataInscripcion']['programa_origen_id'], array_column($datosInscripcion['dataUsers'][$keyEstudianteId]['programa'], 'programa_id'));
         }else{
-            $keyProgramaOrigen = NULL;
+            $keyProgramaOrigen = false;
         }
+        if ($keyProgramaOrigen === false) {
+            $keyProgramaOrigen = -1;
+        }
+
         if ($pasoMaximo > 4 ) {
-            $dataInscripcion['estudiante_facultad'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['facultad_nombre'] ?? 0;
-            $dataInscripcion['estudiante_programa'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['programa_nombre'] ?? 0;
+            
+            $dataInscripcion['estudiante_facultad'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['facultad_nombre'] ?? '';
+            $dataInscripcion['estudiante_programa'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['programa_nombre'] ?? '';
         }else{
             $dataInscripcion['estudiante_facultad'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['facultad_id'] ?? 0;
             $dataInscripcion['estudiante_programa'] = $datosInscripcion['dataUsers'][$keyEstudianteId]['programa'][$keyProgramaOrigen]['programa_id'] ?? 0;
@@ -3093,6 +3326,10 @@ class InterChangeController extends AppBaseController
         $dataInscripcion['inscripcion_institucion_destino'] = $datosInscripcion['dataInscripcion']['institucion_destino'][0]['institucion_nombre'] ?? 0;
         
         $dataInscripcion['inscripcion_campus_destino'] = $datosInscripcion['dataInscripcion']['programa_destino'][0]['facultad_destino'][0]['campus_destino'][0]['campus_id'] ?? 0;
+        
+        $dataInscripcion['inscripcion_facultad_origen'] = $datosInscripcion['dataInscripcion']['programa_origen'][0]['facultad_id'] ?? 0;
+
+        $dataInscripcion['inscripcion_programa_origen'] = $datosInscripcion['dataInscripcion']['programa_origen'][0]['programa_id'] ?? 0;
         
         $dataInscripcion['inscripcion_facultad_destino'] = $datosInscripcion['dataInscripcion']['programa_destino'][0]['facultad_destino'][0]['facultad_id'] ?? 0;
 
@@ -3138,7 +3375,7 @@ class InterChangeController extends AppBaseController
         $dataInscripcion['archivo_documentos_finales'] = $datosInscripcion['dataInscripcion']['archivo_documentos_finales'] ?? '';
 
         //obtiene los datos iniciales para los campos de los formularios, como los selects
-        $viewWith = array_merge($viewWith,$this->create($inscripcion->id));
+        $viewWith = array_merge($viewWith,$this->create($inscripcionId));
 
         $estudiante_programa = \App\Models\Admin\Programa::where('facultad_id',$dataInscripcion['estudiante_facultad'])->pluck('nombre','id');
         $inscripcion_pais = app('App\Repositories\Admin\CountryRepository')->listCountriesModalidad($dataInscripcion['inscripcion_modalidad']);
@@ -3209,34 +3446,50 @@ class InterChangeController extends AppBaseController
             $idiomas = \App\Models\Admin\TipoIdioma::select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
             $niveles = \App\Models\Admin\Nivel::select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
             $user_id = $datosInscripcion['dataUsers'][$keyEstudianteId]['user_id'];
+            
+            // $datosInscripcion['dataInscripcion']['programa_origen'][0]
 
-            $dataInscripcion_programa_destino = \App\Models\Admin\Programa::where('id',$datosInscripcion['dataInscripcion']['programa_destino_id'])->first();
+            // $dataInscripcion_programa_destino = \App\Models\Admin\Programa::where('id',$datosInscripcion['dataInscripcion']['programa_destino_id'])->first();
 
+            $dataInscripcion_programa_destino = $datosInscripcion['dataInscripcion']['programa_destino'][0] ?? '';
+
+            
+            $programas_origen = \App\Models\Admin\Programa::where('facultad_id',$datosInscripcion['dataInscripcion']['programa_origen'][0]['facultad_id'] ?? 0)->pluck('nombre','id');
+            // $programas_origen = $programas_origen->put('999999','Otro');
+
+            $asignaturas_origen = \App\Models\Admin\Asignatura::where('programa_id',$datosInscripcion['dataInscripcion']['programa_origen_id'])->pluck('nombre','id');
+            $asignaturas_origen = $asignaturas_origen->put('999999','Otro');
+
+            $programas_destino = \App\Models\Admin\Programa::where('facultad_id',$datosInscripcion['dataInscripcion']['programa_destino'][0]['facultad_id'] ?? 0)->pluck('nombre','id');
+            // $programas_destino = $programas_destino->put('999999','Otro');
+
+            $asignaturas_destino = \App\Models\Admin\Asignatura::where('programa_id',$datosInscripcion['dataInscripcion']['programa_destino_id'])->pluck('nombre','id');
+            $asignaturas_destino = $asignaturas_destino->put('999999','Otro');
 
             //la lista de programas, facultades y campus se obtienen a partir del campo programa_destino_id de lo contrario se carga la lista de campus a partir de la institucion
             if (!empty($dataInscripcion_programa_destino)) {
                 
-                $inscripcion_programa_destino_todos = \App\Models\Admin\Programa::where('facultad_id',$dataInscripcion_programa_destino->facultad_id)->select('nombre','id')->orderBy('nombre','asc');
+                $inscripcion_programa_destino_todos = \App\Models\Admin\Programa::where('facultad_id',$dataInscripcion_programa_destino['facultad_id'])->select('nombre','id')->orderBy('nombre','asc');
 
                 // $inscripcion_programa_destino = \App\Models\Admin\Programa::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($inscripcion_programa_destino_todos)->pluck('nombre','id')->toArray();
-                $inscripcion_programa_destino = $inscripcion_programa_destino_todos->pluck('nombre','id')->toArray();
+                $inscripcion_programa_destino = $inscripcion_programa_destino_todos->pluck('nombre','id');
 
             }else{
                 // $inscripcion_programa_destino = \App\Models\Admin\Programa::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->pluck('nombre','id')->toArray();
-                $inscripcion_programa_destino = [];
+                $inscripcion_programa_destino = collect([]);
             }
 
             if (!empty($inscripcion_programa_destino) && count($inscripcion_programa_destino) ) {
-                $facultad_destino = \App\Models\Admin\Facultad::where('id',$dataInscripcion_programa_destino->facultad_id)->first()->toArray();
+                $facultad_destino = \App\Models\Admin\Facultad::where('id',$dataInscripcion_programa_destino['facultad_id'])->first()->toArray();
 
                 $inscripcion_facultad_destino_todos = \App\Models\Admin\Facultad::where('campus_id',$facultad_destino['campus_id'])->select('nombre','id')->orderBy('nombre','asc');
             
                 // $inscripcion_facultad_destino = \App\Models\Admin\Facultad::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($inscripcion_facultad_destino_todos)->pluck('nombre','id')->toArray();
-                $inscripcion_facultad_destino = $inscripcion_facultad_destino_todos->pluck('nombre','id')->toArray();
+                $inscripcion_facultad_destino = $inscripcion_facultad_destino_todos->pluck('nombre','id');
 
             }else{
                 // $inscripcion_facultad_destino = \App\Models\Admin\Facultad::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->pluck('nombre','id')->toArray();
-                $inscripcion_facultad_destino = [];
+                $inscripcion_facultad_destino = collect([]);
             }
 
             if (!empty($inscripcion_facultad_destino) && count($inscripcion_facultad_destino) ) {
@@ -3246,22 +3499,26 @@ class InterChangeController extends AppBaseController
                 $inscripcion_campus_destino_todos = \App\Models\Admin\Campus::where('institucion_id',$campus_destino['institucion_id'])->select('nombre','id')->orderBy('nombre','asc');
             
                 // $inscripcion_campus_destino = \App\Models\Admin\Campus::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($inscripcion_campus_destino_todos)->pluck('nombre','id')->toArray();
-                $inscripcion_campus_destino = $inscripcion_campus_destino_todos->pluck('nombre','id')->toArray();
+                $inscripcion_campus_destino = $inscripcion_campus_destino_todos->pluck('nombre','id');
 
             }else{
                 // se carga la lista de campus a partir de la institucion
                 
                 // $inscripcion_campus_destino = \App\Models\Admin\Campus::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->pluck('nombre','id')->toArray();
-                $inscripcion_campus_destino = \App\Models\Admin\Campus::where('institucion_id',$datosInscripcion['dataInscripcion']['institucion_destino_id'])->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id')->toArray();
+                $inscripcion_campus_destino = \App\Models\Admin\Campus::where('institucion_id',$datosInscripcion['dataInscripcion']['institucion_destino_id'])->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
             }
 
-            $fuente_financia_nacional = \App\Models\FuenteFinanciacion::where('tipo',0)->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id')->toArray();
+            $routeListAsignaturas = route('interchanges.'.strtolower($this->tipoInterChange).'.listAsignaturas',$inscripcionId);
+            $routeEditAsignaturas = route('interchanges.'.strtolower($this->tipoInterChange).'.editAsignaturas',$inscripcionId);
+            
+
+            $fuente_financia_nacional = \App\Models\FuenteFinanciacion::where('tipo',0)->select('nombre','id')->orderBy('nombre','asc')->pluck('nombre','id');
 
             $fuente_financia_internacional_todos = \App\Models\FuenteFinanciacion::where('tipo',1)->select('nombre','id')->orderBy('nombre','asc');
 
-            $fuente_financia_internacional = \App\Models\FuenteFinanciacion::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($fuente_financia_internacional_todos)->pluck('nombre','id')->toArray();
+            $fuente_financia_internacional = \App\Models\FuenteFinanciacion::select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($fuente_financia_internacional_todos)->pluck('nombre','id');
 
-            $viewWith = array_merge($viewWith, ['estudiante_nacionalidad' => $estudiante_nacionalidad, 'estudiante_departamento_residencia' => $estudiante_departamento_residencia, 'estudiante_ciudad_residencia' => $estudiante_ciudad_residencia, 'idiomas' => $idiomas, 'niveles' => $niveles, 'user_id' => $user_id, 'inscripcion_campus_destino' => $inscripcion_campus_destino, 'inscripcion_facultad_destino' => $inscripcion_facultad_destino, 'inscripcion_programa_destino' => $inscripcion_programa_destino, 'contacto_departamento_residencia' => $contacto_departamento_residencia, 'contacto_ciudad_residencia' => $contacto_ciudad_residencia, 'fuente_financia_nacional' => $fuente_financia_nacional, 'fuente_financia_internacional' => $fuente_financia_internacional ]);
+            $viewWith = array_merge($viewWith, ['estudiante_nacionalidad' => $estudiante_nacionalidad, 'estudiante_departamento_residencia' => $estudiante_departamento_residencia, 'estudiante_ciudad_residencia' => $estudiante_ciudad_residencia, 'idiomas' => $idiomas, 'niveles' => $niveles, 'user_id' => $user_id, 'programas_origen' => $programas_origen, 'programas_destino' => $programas_destino, 'asignaturas_origen' => $asignaturas_origen, 'asignaturas_destino' => $asignaturas_destino, 'inscripcion_campus_destino' => $inscripcion_campus_destino, 'inscripcion_facultad_destino' => $inscripcion_facultad_destino, 'inscripcion_programa_destino' => $inscripcion_programa_destino, 'routeListAsignaturas' => $routeListAsignaturas, 'routeEditAsignaturas' => $routeEditAsignaturas, 'contacto_departamento_residencia' => $contacto_departamento_residencia, 'contacto_ciudad_residencia' => $contacto_ciudad_residencia, 'fuente_financia_nacional' => $fuente_financia_nacional, 'fuente_financia_internacional' => $fuente_financia_internacional ]);
 
 
         }
@@ -3281,19 +3538,227 @@ class InterChangeController extends AppBaseController
         // print_r($dataInscripcion);
         $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta, 'interchange' => $dataInscripcion,'lista_documentos_soporte' => $lista_documentos_soporte,'lista_documentos_finales' => $lista_documentos_finales, 'editar_paso' => false]);
 
-        if (!empty($existe_paso)) {
-            $viewWith = array_merge($viewWith, ['editar_paso' => $paso]);
-        }else{
-            $viewWith = array_merge($viewWith, ['editar_paso' => true]);
+        //si solo se puede editar un paso entonces asignar ese dato a la variable editar_paso
+        if ($pasoMinimo == $pasoMaximo) {
+            $viewWith = array_merge($viewWith, ['editar_paso' => $pasoMinimo]);
         }
-
-        //FALTAN LOS DATOS PARA LOS PASOS 5 EN ADELANTE
+        
 
         $viewWith = array_merge($viewWith, ['peticion' => 'normal', 'paso' => (($pasoMaximo <= 4) ? 1 : 5), 'pasoMaximo' => $pasoMaximo, 'pasoMinimo' => $pasoMinimo ]);
         
+        // print_r($viewWith['interchange']);
         // print_r($viewWith);
 
         return view($vista)->with($viewWith);
+    }
+
+    
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function editAsignaturas($inscripcion_id, Request $request)
+    {
+        // $retorno = ['id' => 2];
+        // return response()->json($retorno);
+         // return $request->all();
+
+        /*
+        programa_origen_id:999999
+        programa_origen_id_otro:aaaaa
+
+        asignatura_origen_id:999999
+        asignatura_origen_id_otro:bbbbbbbb
+        nro_creditos_origen
+
+        programa_destino_id:999999
+        programa_destino_id_otro:cccccccc
+
+        asignatura_destino_id:999999
+        asignatura_destino_id_otro:dddddddddd
+        nro_creditos_destino
+        */
+
+
+        // if (isset($request['metodo']) && $request['metodo'] == 'create') { 
+        //     if (isset($request['tipo_idioma_id']) && $request['tipo_idioma_id'] == '') {
+        //         return response()->json(['Seleccione un tipo de idioma'], 422);
+        //     }
+        //     return json_encode($request->all());
+        // }
+
+        if (isset($request['id'], $request['oper']) && $request['oper'] == 'del' &&  strpos($request['id'], 'jqg') !== false && $user_id == 0 ) {
+            return 1;
+        }
+
+        $retorno = false;
+
+        if (isset($request['id'], $request['oper'])) {
+
+            if($request['oper'] == 'add' || $request['oper'] == 'edit' ) {
+
+                $reglas = [
+                    'programa_origen_id' => 'required',
+                    'asignatura_origen_id' => 'required',
+                    'programa_destino_id' => 'required',
+                    'asignatura_destino_id' => 'required',
+                ];
+
+
+                //realiza la comprobacion en el caso que elija la opcion 'Otro' en algún campo
+                /*
+                if (isset($request['programa_origen_id']) && $request['programa_origen_id'] == '999999') {
+                    $reglas = array_merge($reglas,[
+                        'programa_origen_id_otro' => 'required'
+                    ]);
+                }*/
+
+                if (isset($request['asignatura_origen_id']) && $request['asignatura_origen_id'] == '999999') {
+                    $reglas = array_merge($reglas,[
+                        'asignatura_origen_id_otro' => 'required',
+                        'nro_creditos_origen' => 'required'
+                    ]);
+                }
+
+                if (isset($request['programa_destino_id']) && $request['programa_destino_id'] == '999999') {
+                    $reglas = array_merge($reglas,[
+                        'programa_destino_id_otro' => 'required'
+                    ]);
+                }
+
+                if (isset($request['asignatura_destino_id']) && $request['asignatura_destino_id'] == '999999') {
+                    $reglas = array_merge($reglas,[
+                        'asignatura_destino_id_otro' => 'required',
+                        'nro_creditos_destino' => 'required'
+                    ]);
+                }
+
+                $this->validate($request, $reglas);
+
+
+                if ($request['programa_origen_id'] != 0 && $request['asignatura_origen_id'] != 0 && $request['programa_destino_id'] != 0 && $request['asignatura_destino_id'] != 0) {
+
+                    DB::beginTransaction();
+                    
+                    //realiza el registro de cada nuevo dato en el caso que elija la opcion 'Otro' en algún campo
+                    /*
+                    if (isset($request['programa_origen_id']) && $request['programa_origen_id'] == '999999') {
+
+                    }*/
+
+                    if ($request['asignatura_origen_id'] == '999999') {
+
+                        $maxCodigoAsignatura =  \App\Models\Admin\Asignatura::where('programa_id',$request['programa_origen_id'])->max('codigo') ?? $request['programa_origen_id'].'0000';
+
+                        $maxCodigoAsignatura = intval($maxCodigoAsignatura) +1;
+
+                        $asignatura_origen = \App\Models\Admin\Asignatura::create(
+                            [ 'nombre' => $request['asignatura_origen_id_otro'],'programa_id' => $request['programa_origen_id'],'nro_creditos' => $request['nro_creditos_origen'],'codigo' => $maxCodigoAsignatura ]
+                        );
+
+                        $request['asignatura_origen_id'] = $asignatura_origen->id;
+
+                        
+                    }
+
+                    /*
+                    if (isset($request['programa_destino_id']) && $request['programa_destino_id'] == '999999') {
+                        
+                    }*/
+
+                    if ($request['asignatura_destino_id'] == '999999') {
+
+                        $maxCodigoAsignatura =  \App\Models\Admin\Asignatura::where('programa_id',$request['programa_destino_id'])->max('codigo') ?? $request['programa_destino_id'].'0000';
+
+                        $maxCodigoAsignatura = intval($maxCodigoAsignatura) +1;
+
+                        $asignatura_destino = \App\Models\Admin\Asignatura::create(
+                            [ 'nombre' => $request['asignatura_destino_id_otro'],'programa_id' => $request['programa_destino_id'],'nro_creditos' => $request['nro_creditos_destino'],'codigo' => $maxCodigoAsignatura ]
+                        );
+
+                        $request['asignatura_destino_id'] = $asignatura_destino->id;
+
+                        
+                    }
+
+
+                    //al editar o registrar, se debe igualmente crear una equivalencia nueva 
+
+                    //buscar si existe una equivalencia con esas asignaturas
+                    $existeEquivalencia = \App\Models\Admin\Equivalentes::where([[ 'asignatura_origen_id',$request['asignatura_origen_id']], ['asignatura_destino_id', $request['asignatura_destino_id'] ]])->first();
+
+                    if (empty($existeEquivalencia)) {
+                        //si no existe algun registro entonces registrar la nueva equivalencia 
+
+                        $nueva_equivalencia = \App\Models\Admin\Equivalentes::create([ 'asignatura_origen_id' => $request['asignatura_origen_id'], 'asignatura_destino_id' => $request['asignatura_destino_id'] ]);
+                        
+                    }else{
+                        $nueva_equivalencia = $existeEquivalencia;
+                    }
+
+
+
+                    if ($request['oper'] == 'edit') {
+
+                        //buscar el registro en la tabla inscripcion_asignaturas
+                        $inscripcion_asignatura = \App\Models\Admin\InscripcionAsignaturas::where([['inscripcion_id',$inscripcion_id],['equivalentes_id',$request['id']]])->select('id')->first();
+                        
+                        if (empty($inscripcion_asignatura)) {
+                            DB::rollBack();
+                            return response()->json(['No se encontro el registro de la equivalencia asociada.'], 422);
+                        }
+                        
+                        //actualizar el registro en inscripcion_asignatura
+
+                        $actualizarRegistro = \App\Models\Admin\InscripcionAsignaturas::where('id',$inscripcion_asignatura->id)
+                            ->update(['equivalentes_id' => $nueva_equivalencia->id ]);
+                        
+                        DB::commit();
+
+                        return $actualizarRegistro;
+
+                    }else{
+
+                        
+                        //crear el registro en inscripcion_asignatura
+
+                        $crearRegistro = \App\Models\Admin\InscripcionAsignaturas::create(['inscripcion_id' => $inscripcion_id, 'equivalentes_id' => $nueva_equivalencia->id ]);
+                        
+                        DB::commit();
+
+                        return ['id' => $crearRegistro->id];
+                    }
+
+                }else{
+                    return response()->json(['Hay datos vacios, verifique la información'], 422);
+                }
+
+            }elseif ($request['oper'] == 'del') {
+                // $ids = explode(',', $request['id']);
+
+                // $eliminar = $user->campus()->detach([$request['id']]);
+
+                //buscar los registros en la tabla inscripcion_asignaturas
+                $inscripcion_asignaturas = \App\Models\Admin\InscripcionAsignaturas::where('inscripcion_id',$inscripcion_id)
+                    ->whereIn('equivalentes_id',[$request['id']])
+                    ->pluck('id');
+
+                $eliminarRegistro = \App\Models\Admin\InscripcionAsignaturas::whereIn('id',$inscripcion_asignaturas)->forceDelete();
+
+                return $eliminarRegistro;
+            }else{
+                return response()->json(['Seleccione un registro'], 422);
+            }
+
+            
+        }else{
+            return response()->json(['Seleccione un registro'], 422);
+        }
+
+        return $retorno;
     }
 
     /**
@@ -3574,7 +4039,7 @@ class InterChangeController extends AppBaseController
 
             $dataProgramaOrigen = \App\Models\Inscripcion::join('programa', 'inscripcion.programa_origen_id', '=', 'programa.id')
                     ->where('inscripcion.id',$inscripcionId )
-                    ->select('programa.id AS programa_id','programa.nombre AS programa_nombre' )
+                    ->select('programa.id AS programa_id','programa.nombre AS programa_nombre','programa.facultad_id' )
                     ->get()
                     ->toArray();
             $dataProgramaOrigen = json_decode(json_encode($dataProgramaOrigen),true);
@@ -3615,6 +4080,8 @@ class InterChangeController extends AppBaseController
                     ->get()
                     ->toArray();
 
+            $dataAsignaturas = $this->listAsignaturas($inscripcionId, 'local');
+
             $dataFinanciaciones = [];
 
             foreach ($listaFinanciaciones as $key => $financiacion) {
@@ -3626,9 +4093,9 @@ class InterChangeController extends AppBaseController
             }
 
             //la lista de documentos esta guardada como tipo json en el campo 'descripcion '
-            $tipos_documentos_inscripcion = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
+            $tipos_documentos_inscripcion = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
                 ->whereIn('tipo_documento.nombre',['DOCUMENTOS SOPORTE','FOTO','DOCUMENTOS FINALES INSCRIPCION'])
-                ->where('clase_documento.nombre','INSCRIPCION')
+                ->where('clasificacion.nombre','INSCRIPCION')
                 ->select('tipo_documento.*')
                 ->get()->toArray();
 
@@ -3685,11 +4152,12 @@ class InterChangeController extends AppBaseController
             $dataInscripcion['institucion_destino'] = $dataInstitucion_destino;
             $dataInscripcion['programa_origen'] = $dataProgramaOrigen;
             $dataInscripcion['programa_destino'] = $dataProgramaDestino;
+            $dataInscripcion['asignaturas'] = $dataAsignaturas;
             $dataInscripcion['financiacion'] = $dataFinanciaciones;
             $dataInscripcion['archivo_documentos_soporte'] = $dataArchivoDocumentosSoporte[0] ?? [];
             $dataInscripcion['archivo_foto'] = $dataArchivoFoto[0] ?? [];
             $dataInscripcion['archivo_documentos_finales'] = $dataArchivoDocumentosFinales[0] ?? [];
-            
+            print_r($dataInscripcion);
             $dataInscripcion['enviar_solicitud'] = '';
 
             if ( !empty($tipo_paso) && count($tipo_paso) ) {

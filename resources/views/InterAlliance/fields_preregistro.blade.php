@@ -73,7 +73,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('tipo_tramite') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-check-square-o fa-md fa-fw"></i></span>
-										{{ Form::select('tipo_tramite', $tipo_tramite->prepend('Seleccione el tipo de trámite', ''), old('tipo_tramite'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de trámite']) }}
+										{{ Form::select('tipo_tramite', $tipo_tramite->prepend('Seleccione el tipo de trámite',''), old('tipo_tramite'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -118,7 +118,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('tipo_alianza') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-check fa-md fa-fw"></i></span>
-										{{ Form::select('tipo_alianza', $tipo_alianza->prepend('Seleccione el tipo de alianza', ''), old('tipo_alianza'), ['class' => 'form-control input-md', 'target' => 'aplicaciones', 'url' => route('aplicaciones.listAplicaciones'), 'placeholder' => 'Seleccione el tipo de alianza']) }}
+										{{ Form::select('tipo_alianza', $tipo_alianza->prepend('Seleccione el tipo de alianza',''), old('tipo_alianza'), ['class' => 'form-control input-md', 'target' => 'aplicaciones', 'url' => route('aplicaciones.listAplicaciones')]) }}
 										<span class="input-group-addon" rel="popover" data-original-title="Seleccione el tipo de alianza" data-content="<div class='checkbox'>De acuerdo a sus propósitos, defina si la alianza que desea suscribir es:</div><div class='checkbox'>- <b>Marco:</b> que conlleva al cumplimiento de compromisos interinstitucionales de manera general, y en la mayoría de los casos requieren de alianzas específicas para la ejecución en el momento que sea necesario.</div><div class='checkbox'>- <b>Específico:</b> son los que llevan al cumplimiento de compromisos y obligaciones determinadas, precisas y ejecutables.</div>" data-placement="top" data-html="true" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -129,7 +129,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('aplicaciones') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-check-square fa-md fa-fw"></i></span>
-										{{ Form::select('aplicaciones', $aplicaciones, old('aplicaciones'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione las aplicaciones (modalidades)', 'target' => '', 'url' => '']) }}
+										{{ Form::select('aplicaciones', $aplicaciones->prepend('Seleccione las aplicaciones',''), old('aplicaciones'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 										<span class="input-group-addon" rel="popover" data-original-title="Seleccione las aplicaciones (modalidades)" data-content="En este campo debe especificarse cuál será el objeto de la alianza o la modalidad de la misma dentro de la lista.<br>Seleccione una opción luego de conocer qué tipos de colaboración son contempladas en cada categoría." data-placement="bottom" data-html="true" ><i class="fa fa-commenting fa-md fa-fw" title="click para ver ayuda" ></i></span>
 									</div>
 								</div>
@@ -140,26 +140,38 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('responsable_arl') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-ambulance fa-md fa-fw"></i></span>
-										{{ Form::select('responsable_arl', config('options.ARL'), old('responsable_arl'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+										{{ Form::select('responsable_arl', __('messages.options.arl'), old('responsable_arl'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
 							
+						<!--fecha de inicio  -->
+							<div class="col-sm-6 col-md-6">
+								<div class="form-group">
+									<div class="input-group {{ ($errors->has('fecha_inicio') ? 'has-error' : '') }}">
+										<span class="input-group-addon"><i class="fa fa-clock-o fa-md fa-fw"></i></span>
+
+										{{ Form::text('fecha_inicio', old('fecha_inicio'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de inicio de la alianza', 'title' => 'Ingrese la fecha de inicio de la alianza', 'onfocussss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+									</div>
+								</div>
+							</div>
+
 						<!--duración-->
 							<div class="col-sm-6 col-md-6"> 
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('duracion_cant') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-calendar-check-o fa-md fa-fw"></i></span>
 										<div class="col-sm-6 nopadding">
-											{{ Form::select('duracion_cant', config('options.duracion_cant'), old('duracion_cant') ?? '1', ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+											{{ Form::select('duracion_cant', __('messages.options.duracion_cant'), old('duracion_cant') ?? '1', ['class' => 'form-control input-md', 'title' => 'Seleccione el tiempo de duración', 'target' => '', 'url' => '']) }}
 										</div>
 										<div class="col-sm-6 nopadding">
-											{{ Form::select('duracion_unid', config('options.duracion_unid'), old('duracion_unid') ?? 'MESES', ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+											{{ Form::select('duracion_unid', __('messages.options.duracion_unid'), old('duracion_unid') ?? 'MESES', ['class' => 'form-control input-md', 'title' => 'Seleccione el tiempo de duración', 'target' => '', 'url' => '']) }}
 										</div>
 										<span class="input-group-addon" rel="popover" data-content="Seleccione el período en el que la alianza tendrá vigencia una vez esté formalizado." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
 							</div>
+
 						<!--explique el objetivo-->
 							<div class="col-sm-6 col-md-6">
 								<div class="form-group">
@@ -205,7 +217,7 @@
 										<span class="input-group-addon"><i class="fa fa-user-o fa-md fa-fw"></i></span>
 										{{ Form::hidden('coordinador_origen', $alliance['coordinador_origen']) }}
 
-										{{-- Form::select('coordinador_origen', $coordinador_origen->prepend('Seleccione al coordinador', ''), old('coordinador_origen'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_origen,cargo_coordinador_origen,telefono_coordinador_origen,email_coordinador_origen', 'url' => route('interalliances.list'), 'placeholder' => 'Seleccione al Coordinador']) --}}
+										{{-- Form::select('coordinador_origen', $coordinador_origen->prepend('Seleccione al Coordinador',''), old('coordinador_origen'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_origen,cargo_coordinador_origen,telefono_coordinador_origen,email_coordinador_origen', 'url' => route('interalliances.list')]) --}}
 										<span class="input-group-addon" rel="popover" data-content="Por favor incluya los datos de contacto de la persona designada en la Facultad para realizar seguimiento a la suscripción y ejecución de la alianza en la institucion." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -315,7 +327,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('institucion_destino', $institucion_destino->prepend('Seleccione la institucion', ''), old('institucion_destino[]'), ['class' => 'form-control input-md', 'target' => 'coordinador_destino,tipo_institucion_destino,nombre_institucion_destino,direccion_institucion_destino,telefono_institucion_destino,codigo_postal_institucion_destino,pais_institucion_destino,departamento_institucion_destino,ciudad_institucion_destino', 'url' => route('interalliances.list'), 'placeholder' => 'Seleccione la institucion']) }}
+										{{ Form::select('institucion_destino', $institucion_destino->prepend('Seleccione la institucion',''), old('institucion_destino[]'), ['class' => 'form-control input-md', 'target' => 'coordinador_destino,tipo_institucion_destino,nombre_institucion_destino,direccion_institucion_destino,telefono_institucion_destino,codigo_postal_institucion_destino,pais_institucion_destino,departamento_institucion_destino,ciudad_institucion_destino', 'url' => route('interalliances.list')]) }}
 										<span class="input-group-addon" rel="popover" data-content="Seleccione la Institución Contraparte." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -329,7 +341,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('tipo_institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-sitemap fa-md fa-fw"></i></span>
-										{{ Form::select('tipo_institucion_destino', $tipo_institucion_destino->prepend('Seleccione el tipo de institucion', ''), old('tipo_institucion_destino'), ['class' => 'form-control input-md no_vaciar', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de institucion']) }}
+										{{ Form::select('tipo_institucion_destino', $tipo_institucion_destino->prepend('Seleccione el tipo de institución',''), old('tipo_institucion_destino'), ['class' => 'form-control input-md no_vaciar', 'target' => '', 'url' => '']) }}
 										<span class="input-group-addon" rel="popover" data-content="Caracterice la naturaleza de la institución contraparte de acuerdo a su constitución jurídica." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -376,7 +388,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('pais_institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-										{{ Form::select('pais_institucion_destino', $pais_institucion_destino->prepend('Seleccione el país', ''), null, ['class' => 'form-control input-md no_vaciar', 'target' => 'departamento_institucion_destino', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país']) }}
+										{{ Form::select('pais_institucion_destino', $pais_institucion_destino->prepend('Seleccione el país',''), null, ['class' => 'form-control input-md no_vaciar', 'target' => 'departamento_institucion_destino', 'url' => route('admin.cities.listStates')]) }}
 										<span class="input-group-addon" rel="popover" data-content="Precise el país y la ciudad de establecimiento de la institución contraparte." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -386,7 +398,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('departamento_institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('departamento_institucion_destino', $departamento_institucion_destino, old('departamento_institucion_destino'), ['class' => 'form-control input-md', 'target' => 'ciudad_institucion_destino', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento']) }}
+										{{ Form::select('departamento_institucion_destino', $departamento_institucion_destino->prepend('Seleccione el departamento',''), old('departamento_institucion_destino'), ['class' => 'form-control input-md', 'target' => 'ciudad_institucion_destino', 'url' => route('admin.cities.listCities')]) }}
 									</div>
 								</div>
 							</div>
@@ -395,7 +407,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('ciudad_institucion_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('ciudad_institucion_destino', $ciudad_institucion_destino, old('ciudad_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la ciudad']) }}
+										{{ Form::select('ciudad_institucion_destino', $ciudad_institucion_destino->prepend('Seleccione la ciudad',''), old('ciudad_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -412,7 +424,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('coordinador_destino') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
-										{{ Form::select('coordinador_destino', $coordinador_destino, old('coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione al coordinador', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) }}
+										{{ Form::select('coordinador_destino', $coordinador_destino->prepend('Seleccione al coordinador',''), old('coordinador_destino'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) }}
 										<span class="input-group-addon" rel="popover" data-content="Esta información corresponde al par académico o la persona designada para realizar seguimiento a la suscripción y ejecución de la alianza en la institución contraparte." data-placement="top" ><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>

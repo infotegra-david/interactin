@@ -328,7 +328,7 @@
             </div>
         </div>
         
-        @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+        @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
             <div class="col-sm-12">
                 <div class="">
                     <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[1]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -477,7 +477,7 @@
             </div>
         </div>
         
-        @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+        @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
             <div class="col-sm-12">
                 <div class="">
                     <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[2]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -590,15 +590,15 @@
             </div>
             <br>
             
-            @if( isset($dataUsers[$keyEstudianteId]['asignaturas']) )
-                @foreach( $dataUsers[$keyEstudianteId]['asignaturas'] as $asignatura )
+            @if( count($dataInscripcion['asignaturas']) >= 1 ) 
+                @foreach( $dataInscripcion['asignaturas'] as $asignatura )
                     <div class="col-sm-12">
                         <div class="">
                             <div class=" full">
                                 <!-- Updated At Field -->
                                 <div class=" full">
-                                    {!! Form::label('tipo_idioma_nombre', 'Idioma:', ['class' => 'text-bold']) !!}
-                                    <span> {{ $asignatura['tipo_idioma_nombre'] ?? '' }}</span>
+                                    {!! Form::label('asignatura_origen_id', 'Asignatura de origen:', ['class' => 'text-bold']) !!}
+                                    <span> {{ $asignatura['asignatura_origen_id'] ?? '' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -608,8 +608,8 @@
                             <div class=" full">
                                 <!-- Updated At Field -->
                                 <div class=" full">
-                                    {!! Form::label('nombre_examen', 'Nombre del examen:', ['class' => 'text-bold']) !!}
-                                    <span> {{ $asignatura['nombre_examen'] ?? '' }}</span>
+                                    {!! Form::label('nro_creditos_origen', 'Nro. de creditos:', ['class' => 'text-bold']) !!}
+                                    <span> {{ $asignatura['nro_creditos_origen'] ?? '' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -619,8 +619,8 @@
                             <div class=" full">
                                 <!-- Updated At Field -->
                                 <div class=" full">
-                                    {!! Form::label('nivel_nombre', 'Nivel alcanzado:', ['class' => 'text-bold']) !!}
-                                    <span> {{ $asignatura['nivel_nombre'] ?? '' }}</span>
+                                    {!! Form::label('asignatura_destino_id', 'Asignatura de destino:', ['class' => 'text-bold']) !!}
+                                    <span> {{ $asignatura['asignatura_destino_id'] ?? '' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -630,8 +630,8 @@
                             <div class=" full">
                                 <!-- Updated At Field -->
                                 <div class=" full">
-                                    {!! Form::label('certificado', 'Certificado:', ['class' => 'text-bold']) !!}
-                                    <span> {{ $asignatura['certificado'] ?? '' }}</span>
+                                    {!! Form::label('nro_creditos_destino', 'Nro. de creditos:', ['class' => 'text-bold']) !!}
+                                    <span> {{ $asignatura['nro_creditos_destino'] ?? '' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -666,7 +666,7 @@
             </div>
         </div>
         
-        @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+        @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
             <div class="col-sm-12">
                 <div class="">
                     <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[3]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -710,7 +710,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[4]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -866,7 +866,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[8]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -953,7 +953,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[9]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -1034,7 +1034,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[10]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -1084,7 +1084,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[11]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -1135,7 +1135,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[12]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -1180,7 +1180,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo <= 13 )
+            @if( isset($editar) && $editar == true && $pasoMaximo <= 13 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[13]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>
@@ -1230,7 +1230,7 @@
                 </div>
             </div>
         
-            @if( isset($editar_paso) && $editar_paso == true && $pasoMaximo >= 14 )
+            @if( isset($editar) && $editar == true && $pasoMaximo >= 14 )
                 <div class="col-sm-12">
                     <div class="">
                         <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.editStep',[$inscripcionId,$numero_paso[14]]) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar</a>

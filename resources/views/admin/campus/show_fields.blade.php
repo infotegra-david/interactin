@@ -1,9 +1,3 @@
-<!-- Id Field -->
-<div class="form-group">
-    {!! Form::label('id', 'Id:') !!}
-    <p>{!! $campus->id !!}</p>
-</div>
-
 <!-- Nombre Field -->
 <div class="form-group">
     {!! Form::label('nombre', 'Nombre:') !!}
@@ -12,8 +6,8 @@
 
 <!-- Institucion Id Field -->
 <div class="form-group">
-    {!! Form::label('institucion_id', 'Institucion Id:') !!}
-    <p>{!! $campus->institucion_id !!}</p>
+    {!! Form::label('institucion_id', 'Institucion:') !!}
+    <p>{!! $institucion->nombre !!}</p>
 </div>
 
 <!-- Telefono Field -->
@@ -42,25 +36,15 @@
 
 <!-- Ciudad Id Field -->
 <div class="form-group">
-    {!! Form::label('ciudad_id', 'Ciudad Id:') !!}
-    <p>{!! $campus->ciudad_id !!}</p>
+    {!! Form::label('ciudad_id', 'Ciudad:') !!}
+    <p>{!! $ciudad->nombre !!}</p>
 </div>
 
-<!-- Created At Field -->
+<!-- Ciudad Id Field -->
 <div class="form-group">
-    {!! Form::label('created_at', 'Created At:') !!}
-    <p>{!! $campus->created_at !!}</p>
+    {!! Form::label('principal', 'Sede principal:') !!}
+    <p>{!! ($campus->principal==1 ? 'Si' : 'No') !!}</p>
 </div>
 
-<!-- Updated At Field -->
-<div class="form-group">
-    {!! Form::label('updated_at', 'Updated At:') !!}
-    <p>{!! $campus->updated_at !!}</p>
-</div>
 
-<!-- Deleted At Field -->
-<div class="form-group">
-    {!! Form::label('deleted_at', 'Deleted At:') !!}
-    <p>{!! $campus->deleted_at !!}</p>
-</div>
 

@@ -36,7 +36,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Validación - Inscripcion #{{ $pasoInscripcion->inscripcion_id }}, vista del registro 
+            Validación - Inscripcion #{{ $pasosInscripcion->inscripcion_id }}, vista del registro 
         </h1>
     </section>
     <div class="content">
@@ -44,9 +44,9 @@
             <div class="box-body">
                 <div class="row" style="padding-left: 20px">
                     @include('validation.interchanges.pasos_inscripcions.show_fields')
-                    <a href="{!! route('interchanges.validations_interchanges.show',[$pasoInscripcion->inscripcion_id]) !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
-                    @if($editar == true)
-                        <a href="{!! route('interchanges.validations_interchanges.edit',[$pasoInscripcion->inscripcion_id, $pasoInscripcion->id]) !!}" class='btn btn-success'><i class="glyphicon glyphicon-edit"></i> Editar</a>
+                    <a href="{!! route('interchanges.validations_interchanges.show',[$pasosInscripcion->inscripcion_id]) !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
+                    @if($editar_validacion == true)
+                        <a href="{!! route('interchanges.validations_interchanges.edit',[$pasosInscripcion->inscripcion_id, $pasosInscripcion->id]) !!}" class='btn btn-success'><i class="glyphicon glyphicon-edit"></i> Editar</a>
                     @endif
                 </div>
             </div>

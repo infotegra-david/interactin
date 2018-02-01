@@ -24,6 +24,7 @@
     $page_nav = 1;
     $page_nav_route[ "InterAdmin" ]["sub"][ "InstitutionSettings" ]["sub"][ "CampusSettings" ]["active"] = true;
     //$submenu2='';
+    
     ?>
 
 @endsection
@@ -38,6 +39,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
+
                    {!! Form::model($campus, ['route' => ['admin.campus.update', $campus->id], 'method' => 'patch']) !!}
 
                         @include('admin.campus.fields')

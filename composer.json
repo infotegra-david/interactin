@@ -18,7 +18,9 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
         "orangehill/iseed": "dev-master",
+        "orchestra/parser": "~3.0",
         "rap2hpoutre/laravel-log-viewer": "^0.10.2",
+        "spatie/array-to-xml": "^2.7",
         "spatie/laravel-permission": "^2.7"
     },
     "require-dev": {

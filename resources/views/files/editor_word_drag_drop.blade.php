@@ -262,8 +262,13 @@
 
 					// You can still access and use the native dataTransfer - e.g. to set the drag image.
 					// Note: IEs do not support this method... :(.
-					if ( dataTransfer.$.setDragImage ) {
-						dataTransfer.$.setDragImage( target.findOne( 'img' ).$, 0, 0 );
+					try{
+						if ( dataTransfer.$.setDragImage ) {
+							dataTransfer.$.setDragImage( target.findOne( 'img' ).$, 0, 0 );
+						}
+						
+					}catch(err){
+						
 					}
 				} );
 			} );

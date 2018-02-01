@@ -43,7 +43,7 @@ class TipoPasoTableSeeder extends Seeder
             array (
                 'id' => 3,
                 'nombre' => 'paso3_interalliance',
-                'titulo' => 'Guardar/Enviar Pre-registro',
+                'titulo' => 'Enviar Pre-registro',
                 'seccion' => 'Pre-registro',
                 'reglas' => '',
                 'created_at' => NULL,
@@ -76,7 +76,7 @@ class TipoPasoTableSeeder extends Seeder
             array (
                 'id' => 6,
                 'nombre' => 'paso6_interalliance',
-                'titulo' => 'Guardar/Enviar Registro',
+                'titulo' => 'Enviar Registro',
                 'seccion' => 'Registro',
                 'reglas' => '',
                 'created_at' => NULL,
@@ -219,7 +219,7 @@ class TipoPasoTableSeeder extends Seeder
             array (
                 'id' => 19,
                 'nombre' => 'paso13_interchange',
-                'titulo' => 'Guardar/Enviar Inscripción',
+                'titulo' => 'Enviar Inscripción',
                 'seccion' => 'Inscripción',
                 'reglas' => '',
                 'created_at' => NULL,

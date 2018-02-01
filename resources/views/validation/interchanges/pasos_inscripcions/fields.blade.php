@@ -55,7 +55,7 @@
         </div>
     </div>
     <!-- Inscripcion Id Field -->
-    {!! Form::hidden('inscripcion_id', ($inscripcion_id ?? $pasoInscripcion->inscripcion_id) ) !!}
+    {!! Form::hidden('inscripcion_id', ($inscripcion_id ?? $pasosInscripcion->inscripcion_id) ) !!}
     {!! Form::hidden('paso_inscripcion_id', ($paso_inscripcion_id ?? 0) ) !!}
 
     <!-- Submit Field -->

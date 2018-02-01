@@ -207,6 +207,7 @@ trait Validador{
                         if ($yaValidoAntes === false) {
                             if ($validadores[$keyValidadores]['user_id'] != $request['user_id']) {
                                 $errors += 1;
+    
                                 $msg = 'No es su turno de validación.';
                                 if ($tipo == 'alianza') {
                                     $msg = 'No es su turno de validación.';
@@ -242,6 +243,7 @@ trait Validador{
                     }else{
                         if($valueUltimas != $estadosValidadores[$estadoAprobado]['id']){
                             $errors += 1;
+
                             $msg = 'No es su turno de validación.';
                             if ($tipo == 'alianza') {
                                 $msg = 'No es su turno de validación.';

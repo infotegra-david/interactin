@@ -100,7 +100,7 @@
                                             <div class="col-sm-12">
                                                 <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.index') !!}" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Atras</a>
 
-                                                @if( $editar_paso == true )
+                                                @if( $editar == true )
                                                     <a href="{!! route('interchanges.'.strtolower($tipoInterChange).'.edit',$inscripcionId) !!}" class="btn btn-success"><i class="glyphicon glyphicon-edit"></i> Editar todo</a>
                                                 @endif
                                             </div>

@@ -31,7 +31,7 @@
 
 @section('email_footer')
     <br>
-    @php $emailCoordinador = $dataUsers[$keyCoordExterno]['coordinador_email']; @endphp
+    @php $emailCoordinador = $dataUsers[$keyCoordExterno]['coordinador_email'] ?? ''; @endphp
     E-mail del coordinador: {{ $emailCoordinador }}
 @endsection
 

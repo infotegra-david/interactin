@@ -25,10 +25,10 @@ class EmailController extends AppBaseController
     private $user;
     private $campusApp;
     private $campusAppFound;
-    private $campusUser;
+    // private $campusUser;
     private $tipoRuta;
     private $route_split;
-    private $routeLists;
+    // private $routeLists;
     private $proceso;
     private $peticion;
     private $viewWith = [];
@@ -37,7 +37,7 @@ class EmailController extends AppBaseController
     {
         
 
-        $this->middleware(function ($request, $next) {
+        /*$this->middleware(function ($request, $next) {
             if (Auth::user()) {
                 $this->user = Auth::user();
                 if (isset($this->user->campus)) {
@@ -74,17 +74,64 @@ class EmailController extends AppBaseController
             $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
-        });
+        });*/
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+            }
 
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
+            }
+            
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+
+            return $next($request);
+        });
 
         $name = Route::currentRouteName();
 
-        //$action = Route::currentRouteAction();
+        // $action = Route::currentRouteAction();
+        
         if (!empty($name) ) {
             $this->tipoRuta = $name;
             $this->route_split = substr($name, 0,strrpos($name, "."));
             $this->proceso = substr($name, 0,strpos($name, "."));
-            $this->routeLists = route($this->proceso.'.emails_'.$this->proceso.'.lists');
+            // $this->routeLists = route($this->proceso.'.registros_emails_'.$this->proceso.'.lists');
+
+            // echo $this->tipoRuta.' <br>';
+            // echo $this->route_split.' <br>';
+            // echo $this->proceso.' <br>';
         }
 
 //esta validacion puede ser obsoleta, no parece que llegue a entrar
@@ -107,7 +154,7 @@ class EmailController extends AppBaseController
 
         $this->emailRepository = $emailRepo;
 
-        $this->viewWith = array_merge($this->viewWith,['route_split' => $this->route_split]);
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'route_split' => $this->route_split, 'proceso' => $this->proceso]);
     }
 
     /**

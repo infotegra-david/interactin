@@ -58,7 +58,7 @@
     </div>
 
 <?php
-
+    /*
     // $campus = $campus->toArray();
     $campus = json_encode($campus);
     $campus = '{"0":"Seleccione un campus",'. substr($campus, 1);
@@ -75,16 +75,17 @@
         // $orden = '{"0":"Seleccione primero un paso del proceso"}';
     }else{
     }
+    */
 ?>
 
 
-{{ Html::script('js/plugin/jqgrid/jquery.jqGrid.js') }}
-{{ Html::script('js/plugin/jqgrid/locale/grid.locale-es.js') }}
+{{-- Html::script('js/plugin/jqgrid/jquery.jqGrid.js') --}}
+{{-- Html::script('js/plugin/jqgrid/locale/grid.locale-es.js') --}}
 
 
     <script type="text/javascript"> 
     
-        $(document).ready(function () {
+        /*$(document).ready(function () {
 
             $('#Form_assignments_button').on('click',function(e){
                 $('form.Form_assignments').submit();
@@ -112,10 +113,10 @@
 
             $("#jqGrid1").jqGrid({
                 // data : jqgrid_data,
-                url: '{{ route($routeData) }}',
+                url: '{ { route($routeData) }}',
                 mtype: "GET",
                 datatype: "json",
-                editurl : "{{ route($route) }}",
+                editurl : "{ { route($route) }}",
                 caption : "",
                 autowidth : true,
                 loadonce : true,
@@ -144,12 +145,12 @@
                         editable: true,
                         edittype:'select',
                         editoptions: {
-                            value: {!! $campus !!},
+                            value: { !! $campus !!},
                             dataInit: function (elem) {
                                 $(elem).attr('target','user_id');
                                 $(elem).attr('change_after','tipo_paso_id');
-                                // $(elem).attr('url','{{ route('admin.campus.listcampus') }}');
-                                $(elem).attr('url','{{ $routeLists }}?type=validador');
+                                // $(elem).attr('url','{ { route('admin.campus.listcampus') }}');
+                                $(elem).attr('url','{ { $routeLists }}?type=validador');
                             }
                         },
                         editrules: {
@@ -167,7 +168,7 @@
                         editable: true,
                         edittype:"select",
                         editoptions: {
-                            value: {!! $user !!},
+                            value: { !! $user !!},
                         },
                         editrules: {
                             // number: true,
@@ -186,13 +187,13 @@
                     @endif
                         edittype:'select',
                         editoptions: {
-                            value: {!! $tipo_paso !!},
+                            value: { !! $tipo_paso !!},
                             dataInit: function (elem) {
                                  $(elem).attr('target','orden');
-                                 $(elem).attr('url','{{ $routeLists }}?type=orden');
+                                 $(elem).attr('url','{ { $routeLists }}?type=orden');
                                  $(elem).attr('val_extra','campus_id');
                             },
-                            defaultValue: {{ $tipo_paso_default }}
+                            defaultValue: { { $tipo_paso_default }}
                         },
                         editrules: {
                     @if(isset($omitir_tipo_paso))
@@ -209,7 +210,7 @@
                         editable: true,
                         edittype:"select",
                         editoptions: {
-                            value: {!! $orden !!},
+                            value: { !! $orden !!},
                         },
                         editrules: {
                             number: true,
@@ -239,7 +240,7 @@
             });
 
             function linkFormat( cellvalue, options, rowObject ){
-                return '<span><a href="{{ route($routeView) }}/'+cellvalue+'" class="btn btn-sm btn-success fa fa-search-plus"> Ver Registro</a></span>';
+                return '<span><a href="{ { route($routeView) }}/'+cellvalue+'" class="btn btn-sm btn-success fa fa-search-plus"> Ver Registro</a></span>';
             }
 
             function refresh_jqGrid(){
@@ -371,7 +372,7 @@
 
 
             function cambiarEstilosJqgrid(){
-                // /* Add tooltips */
+                // Add tooltips
                 $('.navtable .ui-pg-button').tooltip({
                     container : 'body'
                 });
@@ -423,7 +424,7 @@
                 //los datos de la lista de pasos y el orden dependen de la combinacion entre el campus y el tipo de paso
                 $('[name="tipo_paso_id"]').change();
             })
-        });
+        });*/
 
 
     </script>

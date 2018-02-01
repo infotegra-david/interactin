@@ -17,7 +17,7 @@ class CreateTipoDocumentoTable extends Migration {
 			$table->increments('id');
 			$table->string('nombre', 100);
 			$table->text('descripcion', 65535)->nullable();
-			$table->integer('clase_documento_id')->unsigned()->index('fk_tipo_documento_clase_documento1_idx');
+			$table->integer('clasificacion_id')->unsigned()->index('fk_tipo_documento_clasificacion1_idx');
 			$table->timestamps();
 			$table->softDeletes();
 		});

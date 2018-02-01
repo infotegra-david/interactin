@@ -55,9 +55,10 @@ Route::get('/1', function(){
 
 Route::get('/',['as' => 'index','uses' => 'IndexController@index']);
 Route::post('/campusAppSelect',['as' => 'campusAppSelect','uses' => 'IndexController@campusAppSelect']);
+Route::post('/idiomaAppSelect',['as' => 'idiomaAppSelect','uses' => 'IndexController@idiomaAppSelect']);
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('/home', ['as' => 'home','uses' => 'HomeController@index']);
+Route::get('/home', 'HomeController@index')->name('home');
 });
 /*
 //Route::get('/html/{pagina?}',['as' => 'pagina','uses' => 'FilesController@pagina']);
@@ -93,7 +94,7 @@ Route::group(['prefix' => '/admin', 'as' => 'admin.', 'namespace' => 'Admin'], f
 
     Route::post('institutions/listInstitutions', ['as' => 'institutions.listInstitutions','uses' => 'InstitucionController@listInstitutions']);
     Route::get('institutions/{institucion_id}/documents/create', ['as' => 'institutions.documents.create','uses' => 'InstitucionController@documents_create']);
-    Route::get('institutions/{institucion_id}/documents/{documento_id?}', ['as' => 'institutions.documents','uses' => 'InstitucionController@documents']);
+    Route::get('institutions/{institucion_id}/documents/{documento_id?}', ['as' => 'institutions.documents','uses' => 'InstitucionController@documents_edit']);
     Route::post('institutions/{institucion_id}/documents', ['as' => 'institutions.documents.store','uses' => 'InstitucionController@documents_store']);
     Route::resource('institutions', 'InstitucionController');
 
@@ -105,7 +106,8 @@ Route::group(['prefix' => '/admin', 'as' => 'admin.', 'namespace' => 'Admin'], f
     
     Route::resource('programs', 'ProgramaController');
     Route::post('programs/listPrograms', ['as' => 'programs.listPrograms','uses' => 'ProgramaController@listPrograms']);
-    
+
+    Route::post('subjects/listSubjects', ['as' => 'subjects.listSubjects','uses' => 'AsignaturaController@listSubjects']);
     Route::resource('subjects', 'AsignaturaController');
 
     Route::resource('documentosInstitucion', 'DocumentosInstitucionController');
@@ -203,19 +205,36 @@ Route::group(['prefix' => '/interalliances', 'as' => 'interalliances.', 'middlew
 
     //SE DEFINE UNA RUTA PARA ADMINISTRAR LOS EMAILS DEL PROCESO
 
-    Route::post('emails/lists',['as' => 'emails_interalliances.lists','uses' => 'EmailController@lists']);
-    Route::post('emails/storeupdate',['as' => 'emails_interalliances.storeupdate','uses' => 'EmailController@storeUpdate']);
+    // Route::post('emails/plantillas',['as' => 'emails_interalliances.plantillas','uses' => 'EmailController@index']);
+    // Route::post('emails/registros',['as' => 'emails_interalliances.registros','uses' => 'EmailController@index']);
 
-    //para asignar los validadores
-    Route::resource('emails', 'EmailController',['names' => [
-        'index' => 'emails_interalliances.index',
-        'store' => 'emails_interalliances.store',
-        'create' => 'emails_interalliances.create',
-        'show' => 'emails_interalliances.show',
-        'update' => 'emails_interalliances.update',
-        'destroy' => 'emails_interalliances.destroy',
-        'edit' => 'emails_interalliances.edit'
+    // Route::post('emails/lists',['as' => 'emails_interalliances.lists','uses' => 'EmailController@lists']);
+    // Route::post('emails/storeupdate',['as' => 'emails_interalliances.storeupdate','uses' => 'EmailController@storeUpdate']);
+
+    //para administrar las plantillas de los emails
+    Route::resource('emails/plantillas', 'PlantillasController',['names' => [
+        'index' => 'plantillas_emails_interalliances.index',
+        'store' => 'plantillas_emails_interalliances.store',
+        'create' => 'plantillas_emails_interalliances.create',
+        'show' => 'plantillas_emails_interalliances.show',
+        'update' => 'plantillas_emails_interalliances.update',
+        'destroy' => 'plantillas_emails_interalliances.destroy',
+        'edit' => 'plantillas_emails_interalliances.edit'
     ]]);
+    //para administrar los registros de los emails
+    Route::resource('emails/registros', 'EmailController',['names' => [
+        'index' => 'registros_emails_interalliances.index',
+        'store' => 'registros_emails_interalliances.store',
+        'create' => 'registros_emails_interalliances.create',
+        'show' => 'registros_emails_interalliances.show',
+        'update' => 'registros_emails_interalliances.update',
+        'destroy' => 'registros_emails_interalliances.destroy',
+        'edit' => 'registros_emails_interalliances.edit'
+    ]]);
+
+    Route::get('emails/',['as' => 'registros_emails_interalliances.home',function(){
+        return view('emails.home', ['peticion' => 'normal','route_split' => 'interalliances.registros_emails_interalliances.home','route_plantillas' => 'interalliances.plantillas_emails_interalliances.index','route_registros' => 'interalliances.registros_emails_interalliances.index']);
+    }]);
 
     //Route::resource('interalliances', 'InterAllianceController');
 
@@ -321,19 +340,30 @@ Route::group(['prefix' => '/interchanges', 'as' => 'interchanges.', 'middleware'
     
     //SE DEFINE UNA RUTA PARA ADMINISTRAR LOS EMAILS DEL PROCESO
 
-    Route::post('emails/lists',['as' => 'emails_interchanges.lists','uses' => 'EmailController@lists']);
-    Route::post('emails/storeupdate',['as' => 'emails_interchanges.storeupdate','uses' => 'EmailController@storeUpdate']);
-
-    //para asignar los validadores
-    Route::resource('emails', 'EmailController',['names' => [
-        'index' => 'emails_interchanges.index',
-        'store' => 'emails_interchanges.store',
-        'create' => 'emails_interchanges.create',
-        'show' => 'emails_interchanges.show',
-        'update' => 'emails_interchanges.update',
-        'destroy' => 'emails_interchanges.destroy',
-        'edit' => 'emails_interchanges.edit'
+    //para administrar las plantillas de los emails
+    Route::resource('emails/plantillas', 'PlantillasController',['names' => [
+        'index' => 'plantillas_emails_interchanges.index',
+        'store' => 'plantillas_emails_interchanges.store',
+        'create' => 'plantillas_emails_interchanges.create',
+        'show' => 'plantillas_emails_interchanges.show',
+        'update' => 'plantillas_emails_interchanges.update',
+        'destroy' => 'plantillas_emails_interchanges.destroy',
+        'edit' => 'plantillas_emails_interchanges.edit'
     ]]);
+    //para administrar los registros de los emails
+    Route::resource('emails/registros', 'EmailController',['names' => [
+        'index' => 'registros_emails_interchanges.index',
+        'store' => 'registros_emails_interchanges.store',
+        'create' => 'registros_emails_interchanges.create',
+        'show' => 'registros_emails_interchanges.show',
+        'update' => 'registros_emails_interchanges.update',
+        'destroy' => 'registros_emails_interchanges.destroy',
+        'edit' => 'registros_emails_interchanges.edit'
+    ]]);
+
+    Route::get('emails/',['as' => 'registros_emails_interchanges.home',function(){
+        return view('emails.home', ['peticion' => 'normal','route_split' => 'interchanges.registros_emails_interchanges.home','route_plantillas' => 'interchanges.plantillas_emails_interchanges.index','route_registros' => 'interchanges.registros_emails_interchanges.index']);
+    }]);
 
     //InterChange
 
@@ -347,6 +377,13 @@ Route::group(['prefix' => '/interchanges', 'as' => 'interchanges.', 'middleware'
     //Pdf
     Route::get('interout/{inscripcion_id}/pdf',['as' => 'interout.pdf','uses' => 'InterChangeController@pdf']);
     Route::get('interin/{inscripcion_id}/pdf',['as' => 'interin.pdf','uses' => 'InterChangeController@pdf']);
+
+    //Asignaturas de la inscripcion
+    Route::post('interout/{inscripcion_id}/listAsignaturas',['as' => 'interout.listAsignaturas','uses' => 'InterChangeController@listAsignaturas']);
+    Route::post('interout/{inscripcion_id}/editAsignaturas',['as' => 'interout.editAsignaturas','uses' => 'InterChangeController@editAsignaturas']);
+
+    Route::post('interin/{inscripcion_id}/listAsignaturas',['as' => 'interin.listAsignaturas','uses' => 'InterChangeController@listAsignaturas']);
+    Route::post('interin/{inscripcion_id}/editAsignaturas',['as' => 'interin.editAsignaturas','uses' => 'InterChangeController@editAsignaturas']);
 
     //Edit
     Route::get('interout/{inscripcion_id}/{paso}/edit',['as' => 'interout.editStep','uses' => 'InterChangeController@edit']);
@@ -441,19 +478,30 @@ Route::group(['prefix' => '/interactions', 'as' => 'interactions.', 'middleware'
     
     //SE DEFINE UNA RUTA PARA ADMINISTRAR LOS EMAILS DEL PROCESO
 
-    Route::post('emails/lists',['as' => 'emails_interactions.lists','uses' => 'EmailController@lists']);
-    Route::post('emails/storeupdate',['as' => 'emails_interactions.storeupdate','uses' => 'EmailController@storeUpdate']);
-
-    //para asignar los validadores
-    Route::resource('emails', 'EmailController',['names' => [
-        'index' => 'emails_interactions.index',
-        'store' => 'emails_interactions.store',
-        'create' => 'emails_interactions.create',
-        'show' => 'emails_interactions.show',
-        'update' => 'emails_interactions.update',
-        'destroy' => 'emails_interactions.destroy',
-        'edit' => 'emails_interactions.edit'
+    //para administrar las plantillas de los emails
+    Route::resource('emails/plantillas', 'PlantillasController',['names' => [
+        'index' => 'plantillas_emails_interactions.index',
+        'store' => 'plantillas_emails_interactions.store',
+        'create' => 'plantillas_emails_interactions.create',
+        'show' => 'plantillas_emails_interactions.show',
+        'update' => 'plantillas_emails_interactions.update',
+        'destroy' => 'plantillas_emails_interactions.destroy',
+        'edit' => 'plantillas_emails_interactions.edit'
     ]]);
+    //para administrar los registros de los emails
+    Route::resource('emails/registros', 'EmailController',['names' => [
+        'index' => 'registros_emails_interactions.index',
+        'store' => 'registros_emails_interactions.store',
+        'create' => 'registros_emails_interactions.create',
+        'show' => 'registros_emails_interactions.show',
+        'update' => 'registros_emails_interactions.update',
+        'destroy' => 'registros_emails_interactions.destroy',
+        'edit' => 'registros_emails_interactions.edit'
+    ]]);
+
+    Route::get('emails/',['as' => 'registros_emails_interactions.home',function(){
+        return view('emails.home', ['peticion' => 'normal','route_split' => 'interactions.registros_emails_interactions.home','route_plantillas' => 'interactions.plantillas_emails_interactions.index','route_registros' => 'interactions.registros_emails_interactions.index']);
+    }]);
 
 
     //InterAction
@@ -530,7 +578,7 @@ Route::resource('tipoArchivos', 'TipoArchivoController');
 
 
 
-Route::resource('claseDocumentos', 'ClaseDocumentoController');
+Route::resource('clasificacion', 'ClasificacionController');
 
 Route::resource('tipoDocumentos', 'TipoDocumentoController');
 
@@ -591,6 +639,15 @@ Route::resource('financiacions', 'FinanciacionController');
 
 Route::resource('fuenteFinanciacions', 'FuenteFinanciacionController');
 
-Route::resource('financiacions', 'FinanciacionController');
 
-Route::resource('financiacions', 'FinanciacionController');
+Route::get('admin/equivalentes', ['as'=> 'admin.equivalentes.index', 'uses' => 'Admin\EquivalentesController@index']);
+Route::post('admin/equivalentes', ['as'=> 'admin.equivalentes.store', 'uses' => 'Admin\EquivalentesController@store']);
+Route::get('admin/equivalentes/create', ['as'=> 'admin.equivalentes.create', 'uses' => 'Admin\EquivalentesController@create']);
+Route::put('admin/equivalentes/{equivalentes}', ['as'=> 'admin.equivalentes.update', 'uses' => 'Admin\EquivalentesController@update']);
+Route::patch('admin/equivalentes/{equivalentes}', ['as'=> 'admin.equivalentes.update', 'uses' => 'Admin\EquivalentesController@update']);
+Route::delete('admin/equivalentes/{equivalentes}', ['as'=> 'admin.equivalentes.destroy', 'uses' => 'Admin\EquivalentesController@destroy']);
+Route::get('admin/equivalentes/{equivalentes}', ['as'=> 'admin.equivalentes.show', 'uses' => 'Admin\EquivalentesController@show']);
+Route::get('admin/equivalentes/{equivalentes}/edit', ['as'=> 'admin.equivalentes.edit', 'uses' => 'Admin\EquivalentesController@edit']);
+
+
+Route::resource('tipoPlantillas', 'TipoPlantillaController');

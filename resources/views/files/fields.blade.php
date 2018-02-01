@@ -53,7 +53,7 @@
 		<div class="form-group">
 			<footer>
 				
-				{!! Form::button('<i class="fa fa-arrow-left"></i> <strong>Atras</strong>', ['type' => 'button', 'class' => 'btn btn-md btn-default text-black', 'name' => 'btn-back', 'id' => 'btn-back', 'url' => '{{ $route_back }}' ]) !!}
+				{!! Form::button('<i class="fa fa-arrow-left"></i> <strong>Atras</strong>', ['type' => 'button', 'class' => 'btn btn-md btn-default text-black', 'name' => 'btn-back', 'id' => 'btn-back', 'url' => $route_back ]) !!}
 
 				{!! Form::button('<i class="fa fa-external-link"></i> <strong>Guardar</strong>', ['type' => 'button', 'class' => 'btn btn-md btn-success text-black', 'name' => 'guardar_documento', 'id' => 'guardar_documento', 'form_target' => '#EditarDocumento' ]) !!}
 			</footer>
@@ -66,13 +66,14 @@
 	$(document).ready(function() {
 		// With Callback
 		$("#btn-back").click(function(e) {
+			var thisUrl = $(this).attr('url');
 			$.SmartMessageBox({
 				title : "Advertencia!",
 				content : "Si no guarda los cambios se perderan, seguro que quiere salir del editor?",
 				buttons : '[No][Si]'
 			}, function(ButtonPressed) {
 				if (ButtonPressed === "Si") {
-					window.location.href = $(this).attr('url');
+					window.location.href = thisUrl;
 					
 				}
 				if (ButtonPressed === "No") {

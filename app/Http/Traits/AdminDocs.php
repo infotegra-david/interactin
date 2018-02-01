@@ -371,9 +371,9 @@ trait AdminDocs{
 
             if (isset($datos['tipo_documento'])) {
 
-                $tipo_documento = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
+                $tipo_documento = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
                     ->where('tipo_documento.id',$datos['tipo_documento'])
-                    ->select('tipo_documento.id','tipo_documento.nombre','clase_documento.nombre AS clase_documento')
+                    ->select('tipo_documento.id','tipo_documento.nombre','clasificacion.nombre AS clasificacion')
                     ->first();
 
                 if(empty($tipo_documento)){
@@ -406,7 +406,7 @@ trait AdminDocs{
                 
                 if (!in_array($datos['archivo_contenido'], ['',null]) || !in_array($datos['archivo_input'], ['',null]) ) {
 
-                    if ($tipo_documento->clase_documento == 'INSTITUCION') {
+                    if ($tipo_documento->clasificacion == 'INSTITUCION') {
                         if ($datoProceso != 'institucionId') {
                             $view = $route_error;
                             $errors += 1;
@@ -417,7 +417,7 @@ trait AdminDocs{
                         if ($tipo_documento->nombre == 'PRE-FORMAS') {
                             $path = 'institucion/'.$idProceso.'/convenios';
                         }
-                    }elseif ($tipo_documento->clase_documento == 'ALIANZA') {
+                    }elseif ($tipo_documento->clasificacion == 'ALIANZA') {
                         if ($datoProceso != 'alianzaId') {
                             $view = $route_error;
                             $errors += 1;
@@ -432,7 +432,7 @@ trait AdminDocs{
                             $path = 'alianza/'.$idProceso.'/documentos';
                         }
 
-                    }elseif ($tipo_documento->clase_documento == 'IDENTIDAD') {
+                    }elseif ($tipo_documento->clasificacion == 'IDENTIDAD') {
                         if ($datoProceso != 'userId') {
                             $view = $route_error;
                             $errors += 1;
@@ -440,7 +440,7 @@ trait AdminDocs{
                             goto end;
                         }
                         $path = 'user/'.$idProceso;
-                    }elseif ($tipo_documento->clase_documento == 'INSCRIPCION') {
+                    }elseif ($tipo_documento->clasificacion == 'INSCRIPCION') {
                         if ($datoProceso != 'inscripcionId') {
                             $view = $route_error;
                             $errors += 1;
@@ -448,7 +448,7 @@ trait AdminDocs{
                             goto end;
                         }
                         $path = 'inscripcion/'.$idProceso;
-                    }elseif ($tipo_documento->clase_documento == 'OPORTUNIDAD') {
+                    }elseif ($tipo_documento->clasificacion == 'OPORTUNIDAD') {
                         if ($datoProceso != 'oportunidadId') {
                             $view = $route_error;
                             $errors += 1;
@@ -456,7 +456,7 @@ trait AdminDocs{
                             goto end;
                         }
                         $path = 'oportunidad/'.$idProceso;
-                    }elseif ($tipo_documento->clase_documento == 'INICIATIVA') {
+                    }elseif ($tipo_documento->clasificacion == 'INICIATIVA') {
                         if ($datoProceso != 'iniciativaId') {
                             $view = $route_error;
                             $errors += 1;
@@ -464,7 +464,7 @@ trait AdminDocs{
                             goto end;
                         }
                         $path = 'oportunidad/'.$idProceso;
-                    }elseif ($tipo_documento->clase_documento == 'MULTIMEDIA') {
+                    }elseif ($tipo_documento->clasificacion == 'MULTIMEDIA') {
                         $path = 'multimedia';
                     }else{
                         $view = $route_error;
@@ -827,9 +827,9 @@ trait AdminDocs{
 
         // ya no es necesario porque se esta recibiendo
         // $tipo_documento_nombre = 'PRE-FORMAS';
-        // $clase_documento_nombre = 'ALIANZA';
-        // $request['tipo_documento'] = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-        //         ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+        // $clasificacion_nombre = 'ALIANZA';
+        // $request['tipo_documento'] = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+        //         ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
         //         ->pluck('id')->first();
 
         // $tipo_documento = \App\Models\TipoDocumento::where('id',$request['tipo_documento'])->pluck('nombre')->first();

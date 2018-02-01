@@ -28,7 +28,7 @@
 
     <!-- Activo Field -->
     <div class="form-group col-xs-12 col-sm-6 ">
-        <div class="input-group">
+        <div class="input-group full">
             {!! Form::label('activo', 'Activo:') !!}
             <div class="form-control">
                 <label class="checkbox-inline full">

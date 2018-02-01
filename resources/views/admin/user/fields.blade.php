@@ -21,10 +21,14 @@
 
     <!-- Activo Field -->
     <div class="form-group col-sm-6">
-        {!! Form::label('activo', 'Activo:') !!}
-        <label class="checkbox-inline">
-            {!! Form::checkbox('activo', 1, null) !!} 
-        </label>
+        <div class="input-group full">
+            {!! Form::label('activo', 'Activo:') !!}
+            <div class="form-control">
+                <label class="checkbox-inline full">
+                    {!! Form::checkbox('activo', 1, null) !!} Si
+                </label>
+            </div>
+        </div>
     </div>
 
     <!-- Submit Field -->

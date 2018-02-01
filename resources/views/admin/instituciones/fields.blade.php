@@ -12,8 +12,9 @@
 
 <!-- Tipo Institucion Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('tipo_institucion_id', 'Tipo Institucion Id:') !!}
-    {!! Form::number('tipo_institucion_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('tipo_institucion_id', 'Tipo Institucion:') !!}
+    {!! Form::select('tipo_institucion_id', $tipo_institucion, old('tipo_institucion_id'), ['class' => 'form-control', 'placeholder' => 'Seleccione un tipo de institución']) !!}
+
 </div>
 
 <!-- Submit Field -->

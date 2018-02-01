@@ -20,7 +20,7 @@ class Alianza extends Model
     const UPDATED_AT = 'updated_at';
 
 
-    protected $dates = ['created_at','updated_at','deleted_at'];
+    protected $dates = ['deleted_at'];
 
 
     public $fillable = [
@@ -28,7 +28,7 @@ class Alianza extends Model
         'tipo_tramite_id',
         'duracion',
         'responsable_arl',
-        'estado',
+        'estado_id',
         'token',
         'fecha_inicio',
         'campus_id',
@@ -45,12 +45,10 @@ class Alianza extends Model
         'tipo_tramite_id' => 'integer',
         'duracion' => 'string',
         'responsable_arl' => 'boolean',
-        'estado' => 'boolean',
+        'estado_id' => 'integer',
         'token' => 'string',
         'fecha_inicio' => 'date',
         'campus_id' => 'integer',
-        'created_at' => 'date',
-        'updated_at' => 'date',
     ];
 
     /**

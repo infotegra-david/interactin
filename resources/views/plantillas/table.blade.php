@@ -2,8 +2,6 @@
     <thead>
         <th>Tipo Plantilla Id</th>
         <th>Descripcion</th>
-        <th>Content</th>
-        <th>Campus Id</th>
         <th colspan="3">Action</th>
     </thead>
     <tbody>
@@ -11,8 +9,6 @@
         <tr>
             <td>{!! $plantillas->tipo_plantilla_id !!}</td>
             <td>{!! $plantillas->descripcion !!}</td>
-            <td>{!! $plantillas->content !!}</td>
-            <td>{!! $plantillas->campus_id !!}</td>
             <td>
                 {!! Form::open(['route' => ['plantillas.destroy', $plantillas->id], 'method' => 'delete']) !!}
                 <div class='btn-group'>

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Database\Eloquent\Collection roleHasPermissions
  * @property integer tipo_plantilla_id
  * @property string descripcion
- * @property string content
+ * @property string contenido
  * @property integer campus_id
  */
 class Plantillas extends Model
@@ -34,7 +34,7 @@ class Plantillas extends Model
     public $fillable = [
         'tipo_plantilla_id',
         'descripcion',
-        'content',
+        'contenido',
         'campus_id'
     ];
 
@@ -47,7 +47,7 @@ class Plantillas extends Model
         'id' => 'integer',
         'tipo_plantilla_id' => 'integer',
         'descripcion' => 'string',
-        'content' => 'string',
+        'contenido' => 'string',
         'campus_id' => 'integer'
     ];
 

@@ -156,7 +156,7 @@
 
 									    	 ?>
 
-									    	@if( $editar_paso == false || $editar_paso >= $paso )
+									    	@if( $editar_paso === false || $editar_paso >= $paso )
 						                		@include('InterAlliance.fields_preregistro')
 						                	@else
 						                		@include('errors.404')
@@ -232,9 +232,9 @@
 									    	$route = ['interalliances.update', $alliance['alianzaId']];
 									    	$method = 'patch';
 									    	//para editar cada paso por separado
-									    	if( !isset($editar_paso) ){ $editar_paso = 0; }
+									    	if( !isset($editar_paso) ){ $editar_paso = false; }
 								    	 ?>
-								    	@if( $editar_paso !== 0 || $editar_paso >= $paso )
+								    	@if( $editar_paso === false || $editar_paso >= $paso )
 					                		@include('InterAlliance.fields_registro')
 					                	@else
 					                		@include('errors.404')

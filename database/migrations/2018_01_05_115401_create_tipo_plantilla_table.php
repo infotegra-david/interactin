@@ -16,6 +16,7 @@ class CreateTipoPlantillaTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('nombre', 100);
+			$table->integer('clasificacion_id')->unsigned()->index('fk_tipo_plantilla_clasificacion1_idx');
 			$table->timestamps();
 			$table->softDeletes();
 		});

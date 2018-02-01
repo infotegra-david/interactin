@@ -14,6 +14,7 @@ use DB;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\AdminDocs;
+use App\Models\Admin\Institucion;
 
 class InstitucionController extends AppBaseController
 {
@@ -27,7 +28,7 @@ class InstitucionController extends AppBaseController
     private $campusApp;
     private $campusAppFound;
     private $peticion;
-    private $viewWith;
+    private $viewWith = [];
 
     public function __construct(InstitucionRepository $institucionRepo, Request $request)
     {
@@ -49,23 +50,28 @@ class InstitucionController extends AppBaseController
                 }else{
                     $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
             }
 
             if( session('campusApp') != null && session('campusApp') != 0 ){
-                $campusAppId = session('campusApp');
-            }else{
-                return redirect(route('home'));
-            }
-            if ( Auth::user() !== NULL) {
-                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
-                if( !count($this->campusAppFound) ){
-                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                $campusAppId = session('campusApp') ?? 0;
 
-                    return redirect(route('home'));
-                }
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
             }
             
-            $this->viewWith = ['campusApp' => $this->campusApp];
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
         });
@@ -77,6 +83,7 @@ class InstitucionController extends AppBaseController
         }else{
             $this->peticion = "normal";
         }
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion]);
 
     }
 
@@ -88,11 +95,19 @@ class InstitucionController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->institucionRepository->pushCriteria(new RequestCriteria($request));
-        $institucions = $this->institucionRepository->all();
 
-        $this->viewWith = array_merge($this->viewWith,['institucions' => $institucions]);
 
+        $Institucion = \App\Models\Admin\Institucion::all()->toArray();
+        $TipoInstitucion = \App\Models\TipoInstitucion::whereIn('id',array_column($Institucion, 'tipo_institucion_id'))->get()->toArray();
+
+        foreach ($Institucion as $key1 => $insti) {
+            foreach ($TipoInstitucion as $key2 => $tipo) {
+                if ($insti['tipo_institucion_id'] == $tipo['id']) {
+                    $Institucion[$key1]['tipo_institucion'] = $tipo;
+                }
+            }
+        }
+        $this->viewWith = array_merge($this->viewWith,['instituciones' => $Institucion]);
         return view('admin.instituciones.index')
             ->with($this->viewWith);
     }
@@ -104,7 +119,9 @@ class InstitucionController extends AppBaseController
      */
     public function create()
     {
-        return view('admin.instituciones.create');
+        $tipo_institucion = \App\Models\TipoInstitucion::pluck('nombre','id');
+        $this->viewWith = array_merge($this->viewWith,['tipo_institucion' => $tipo_institucion]);
+        return view('admin.instituciones.create')->with($this->viewWith);
     }
 
     /**
@@ -156,16 +173,17 @@ class InstitucionController extends AppBaseController
      */
     public function edit($id)
     {
-        $institucion = $this->institucionRepository->findWithoutFail($id);
-
+        $institucion = Institucion::find($id);
         if (empty($institucion)) {
             Flash::error('Institucion not found');
 
             return redirect(route('admin.institutions.index'));
         }
 
-        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion]);
+        $tipo_institucion = \App\Models\TipoInstitucion::pluck('nombre','id');
 
+
+        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion, 'tipo_institucion' => $tipo_institucion]);
         return view('admin.instituciones.edit')->with($this->viewWith);
     }
 
@@ -248,13 +266,13 @@ class InstitucionController extends AppBaseController
      *
      * @return Response
      */
-    public function documents($institucion_id,$documento_id = '',Request $request)
+    public function documents_edit($institucion_id,$documento_id = '',Request $request)
     {
         $errors = 0;
         $errorsMsg = '';
         $okMsg = '';
         $this->user = Auth::user();
-        $user_actual = $this->user->id;
+        $user_actual = $this->user->id ?? 0;
         $viewWith = $this->viewWith;
         $showData = '';
         $keyWords = '';
@@ -265,6 +283,12 @@ class InstitucionController extends AppBaseController
             Flash::error('Institucion not found');
 
             return redirect(route('admin.institutions.index'));
+        }
+
+        if (empty($user_actual)) {
+            Flash::error('No esta logueado o se cerro la sesión');
+
+            return redirect(route('login'));
         }
         $institucionId = $institucion->id;
         $route_default = route('admin.institutions.documents',$institucionId);
@@ -323,10 +347,10 @@ class InstitucionController extends AppBaseController
                 $viewWith = array_merge($viewWith, $datosDocumento);
                 $ruta_guardar = ['admin.institutions.documents.store',$institucionId];
                 $editar = ['nombre' => true, 'tipo_documento' => true];
-                $clase_documento = \App\Models\ClaseDocumento::whereIn('nombre',['INSTITUCION'])->pluck('id')->toArray();
-                $tipo_documento = \App\Models\TipoDocumento::whereIn('clase_documento_id',$clase_documento)
+                $clasificacion = \App\Models\Clasificacion::whereIn('nombre',['INSTITUCION'])->pluck('id')->toArray();
+                $tipo_documento = \App\Models\TipoDocumento::whereIn('clasificacion_id',$clasificacion)
                     ->select('id','nombre')
-                    ->orderby('clase_documento_id','asc')
+                    ->orderby('clasificacion_id','asc')
                     ->orderby('nombre','asc')
                     ->pluck('nombre','id');
 
@@ -442,10 +466,10 @@ class InstitucionController extends AppBaseController
         $viewWith = array_merge($viewWith, ['documento' => ['id' => 0, 'nombre' => 'Nuevo documento', 'formato' => '*']]);
         $ruta_guardar = ['admin.institutions.documents.store',$institucionId];
         $editar = ['nombre' => true, 'tipo_documento' => true, 'archivo_input' => true];
-        $clase_documento = \App\Models\ClaseDocumento::whereIn('nombre',['INSTITUCION'])->pluck('id')->toArray();
-        $tipo_documento = \App\Models\TipoDocumento::whereIn('clase_documento_id',$clase_documento)
+        $clasificacion = \App\Models\Clasificacion::whereIn('nombre',['INSTITUCION'])->pluck('id')->toArray();
+        $tipo_documento = \App\Models\TipoDocumento::whereIn('clasificacion_id',$clasificacion)
             ->select('id','nombre')
-            ->orderby('clase_documento_id','asc')
+            ->orderby('clasificacion_id','asc')
             ->orderby('nombre','asc')
             ->pluck('nombre','id');
         

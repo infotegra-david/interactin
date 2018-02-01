@@ -71,7 +71,7 @@ class InterAllianceController extends AppBaseController
 
     public function __construct(AlianzaRepository $alianzaRepo, TipoPaso $tipoPasoModel, Institucion $institucionModel, Facultad $facultadModel, User $userModel, TipoAlianza $tipoAlianzaModel, TipoTramite $tipoTramiteModel, TipoInstitucion $tipoInstitucionModel, Country $countryModel, Request $request)
     {
-        $this->middleware(function ($request, $next) {
+        /*$this->middleware(function ($request, $next) {
             if (Auth::user()) {
                 $this->user = Auth::user();
                 if (isset($this->user->campus)) {
@@ -109,6 +109,49 @@ class InterAllianceController extends AppBaseController
                 }
             }
 
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+
+            return $next($request);
+        });*/
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+            }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
+            }
+            
             $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
@@ -445,12 +488,6 @@ class InterAllianceController extends AppBaseController
         foreach ($alianzas as $keyalianzas => $alianza) {
             $estadoAlianzaActual = array_search($alianzas[$keyalianzas]['estado_id'], array_column($estadosData, 'id'));
             $alianzas[$keyalianzas]['estado_nombre'] = $estadosData[$estadoAlianzaActual]['nombre'];
-            // created_at sin hora
-            if ( empty($alianzas[$keyalianzas]['fecha_inicio']) ) {
-                $alianzas[$keyalianzas]['fecha_inicio'] = '????-??-??';
-            }else{
-                $alianzas[$keyalianzas]['fecha_inicio'] = date('Y-m-d', strtotime($alianzas[$keyalianzas]['fecha_inicio']));    
-            }
 
             // $alianzas[$keyalianzas]['fecha_inicio'] = date('Y-m-d', strtotime($alianzas[$keyalianzas]['fecha_inicio']));
             $alianzas[$keyalianzas]['created_at'] = date('Y-m-d', strtotime($alianzas[$keyalianzas]['created_at']));
@@ -465,14 +502,14 @@ class InterAllianceController extends AppBaseController
             
             $alianzas[$keyalianzas]['fecha_final'] = '????-??-??';
             $alianzas[$keyalianzas]['tiempo_restante'] = '?';
-            //calcular las fechas y obtener el documento de las alianzas activas
-            if ($alianzas[$keyalianzas]['estado_id'] == $estadoAlianzaActiva[$keyEstadoAlianza]['id']) {
-                foreach ($documentosAlianzaData as $keydocumentosAlianzaData => $documentoAlianza) {
-                    if ($alianza['id'] == $documentoAlianza['alianza_id']) {
-                        $alianzas[$keyalianzas]['archivo'] = $documentoAlianza;
-                    }
 
-                }
+            // created_at sin hora
+            // calcular las fechas
+            if ( empty($alianzas[$keyalianzas]['fecha_inicio']) ) {
+                $alianzas[$keyalianzas]['fecha_inicio'] = '????-??-??';
+            }else{
+                $alianzas[$keyalianzas]['fecha_inicio'] = date('Y-m-d', strtotime($alianzas[$keyalianzas]['fecha_inicio']));    
+
 
                 // calcular fecha final: fecha_inicio + duracion 
                 $alianzas[$keyalianzas]['fecha_final'] = strtotime ( '+'.$duracion , strtotime ( $alianzas[$keyalianzas]['fecha_inicio'] ) );
@@ -483,7 +520,18 @@ class InterAllianceController extends AppBaseController
                 $date2 = new \DateTime($alianzas[$keyalianzas]['fecha_final']);
                 $diff = $date1->diff($date2);
                 
-                $alianzas[$keyalianzas]['tiempo_restante'] = $this->get_format($diff);
+                $alianzas[$keyalianzas]['tiempo_restante'] = $this->get_format($diff); 
+            }
+
+            // obtener el documento de las alianzas activas
+            if ($alianzas[$keyalianzas]['estado_id'] == $estadoAlianzaActiva[$keyEstadoAlianza]['id']) {
+                foreach ($documentosAlianzaData as $keydocumentosAlianzaData => $documentoAlianza) {
+                    if ($alianza['id'] == $documentoAlianza['alianza_id']) {
+                        $alianzas[$keyalianzas]['archivo'] = $documentoAlianza;
+                    }
+
+                }
+
             }
         }
         //calcular los datos de pasos y validaciones
@@ -708,8 +756,9 @@ class InterAllianceController extends AppBaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function map()
+    public function map(Request $request)
     {
+
         //$RouteName = Route::currentRouteName();
         //echo session('campusApp');
         $campusApp = $this->campusAppFound;
@@ -717,12 +766,41 @@ class InterAllianceController extends AppBaseController
         //print_r($this->paso_titulo);
         $institucionId = $campusApp->institucion->id;
 
+        $periodos = \App\Models\Periodo::select('id','nombre','fecha_desde','fecha_hasta')
+            ->where('vigente',1)
+            ->get()->toArray();
+
+        $periodo = [];
+
         $alianzas = DB::table('alianza')->join('alianza_institucion','alianza.id','alianza_institucion.alianza_id')
             ->where('alianza_institucion.institucion_id','<>',$institucionId)
             ->whereNull('alianza.deleted_at')
             ->select(DB::raw('count(*) As conteo'),'alianza.*','alianza_institucion.institucion_id')
-            ->groupBy('alianza_institucion.institucion_id')
-            ->get()->toArray();
+            ->groupBy('alianza_institucion.institucion_id');
+            
+        foreach ($periodos as $key => $value) {
+            $periodo[$value['id']] = $value['nombre'];
+
+            if (isset($request['filter']) && $request['filter'] == $value['id'] ) {
+                $fecha_desde = $value['fecha_desde'];
+                $fecha_hasta = $value['fecha_hasta'];
+                $alianzas = $alianzas->whereBetween('alianza.fecha_inicio', array($fecha_desde, $fecha_hasta));
+                //incorporar el campo fecha_fin en la tabla alianza
+                // $alianzas = $alianzas->where(function ($query) use ($fecha_desde,$fecha_hasta) {
+                //     $query->whereBetween('alianza.fecha_inicio', array($fecha_desde, $fecha_hasta))
+                //           ->orWhere(function ($query) use ($fecha_desde,$fecha_hasta) {
+                //               $query->where('alianza.fecha_fin', '>=', $fecha_desde);
+                //               $query->where('alianza.fecha_fin', '<=', $fecha_hasta);
+                //           });
+                // });
+                
+            }
+        }
+
+        // echo $alianzas->toSql();
+        // print_r( $alianzas->getBindings() );
+
+        $alianzas = $alianzas->get()->toArray();
 
         // print_r($alianzas);
         // echo '<br> -------------------------------- <br>';
@@ -768,7 +846,7 @@ class InterAllianceController extends AppBaseController
         // print_r($paisesAlianzas);
         // echo '<br> -------------------------------- <br>';
 
-        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'paisesAlianzas' => $paisesAlianzas]);
+        $this->viewWith = array_merge($this->viewWith,['peticion' => $this->peticion, 'paisesAlianzas' => $paisesAlianzas, 'periodo' => $periodo, 'periodo_filtrado' => $request['filter'] ?? '']);
 
         return view('InterAlliance.map')
             ->with($this->viewWith);
@@ -844,6 +922,7 @@ class InterAllianceController extends AppBaseController
             // return 1;
 
             $keyCoordExterno = $datosAlianza['keyCoordExterno'];
+
 
             //verifica y autentica al usuario externo
             if ( isset($datosAlianza['dataUsers'][$keyCoordExterno]['usuario_id'])  ) {
@@ -966,16 +1045,16 @@ class InterAllianceController extends AppBaseController
 
 
         
-        $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')->where([['tipo_documento.nombre','<>','PRE-FORMAS'],['clase_documento.nombre','INSTITUCION']])->select('tipo_documento.id')->pluck('id');
+        $tipo_documento_id = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')->where([['tipo_documento.nombre','<>','PRE-FORMAS'],['clasificacion.nombre','INSTITUCION']])->select('tipo_documento.id')->pluck('id');
         $IdDocumentosInstitucion =  \App\Models\Admin\DocumentosInstitucion::where('institucion_id',$institucionId)->whereIn('tipo_documento_id',$tipo_documento_id)->pluck('archivo_id')->toArray();
         $enviar_documentos =  \App\Models\Archivo::whereIn('id',$IdDocumentosInstitucion)->select('nombre','id','path')->get()->toArray();
 
 
         //variables vacias para que la vista sea compatible con la creacion y edicion 
-        $programa_origen = [];
-        $aplicaciones = [];
-        $departamento_institucion_destino = [];
-        $ciudad_institucion_destino = [];
+        $programa_origen = collect([]);
+        $aplicaciones = collect([]);
+        $departamento_institucion_destino = collect([]);
+        $ciudad_institucion_destino = collect([]);
 
         $alliance = $this->getList(['id' => $this->user->id, 'rol' => 'coordinador_origen']);
         if (count($alliance)) {
@@ -1274,6 +1353,7 @@ class InterAllianceController extends AppBaseController
                 $reglas = array_merge($reglas, [
                 'tipo_alianza' => 'required',
                 'aplicaciones' => 'required',
+                'fecha_inicio' => 'required|date',
                 'duracion_cant' => 'required|max:12',
                 'duracion_unid' => 'required',
                 'objetivo_alianza' => 'required|max:1000',
@@ -1559,6 +1639,7 @@ class InterAllianceController extends AppBaseController
             // se debe determinar que accion tomar en cada tipo de tramite
             $dataAlianza['tipo_tramite_id']= $input['tipo_tramite'];
             $dataAlianza['duracion']= $input['duracion_cant'] .' '. $input['duracion_unid'];
+            $dataAlianza['fecha_inicio']= $input['fecha_inicio'];
             $dataAlianza['responsable_arl']= $input['responsable_arl'];
             //$dataAlianza['estado']= 0; //inactivo
             $dataAlianza['token']= md5(hash("md2",(string)microtime())).hash("md2",(string)microtime());
@@ -2068,7 +2149,7 @@ class InterAllianceController extends AppBaseController
                 $keyCoordExterno = $datosContent['keyCoordExterno'];
                 $keyCoordInterno = $datosContent['keyCoordInterno'];
 
-                $msj_header_text = 'Respetado '.ucwords(strtolower( $dataUsers[$keyCoordExterno]['coordinador_nombres'] )).' le queremos informar que la institución '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['nombre'] )) .' de '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['ciudad']['pais_nombre'] )) .' '.' quiere realizar una alianza con su institución. <br><br> El coordinador '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_nombres'] )) .' '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_apellidos'] )) .' ha iniciado el proceso y ha diligenciado la información de las instituciones de origen y destino de la alianza la cual se presenta a continuación:';
+                $msj_header_text = 'Respetado/a '.ucwords(strtolower( $dataUsers[$keyCoordExterno]['coordinador_nombres'] ?? 'señor/a' )).' le queremos informar que la institución '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['nombre'] )) .' de '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['institucion']['ciudad']['pais_nombre'] )) .' '.' quiere realizar una alianza con su institución. <br><br> El coordinador '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_nombres'] )) .' '. ucwords(strtolower( $dataUsers[$keyCoordInterno]['coordinador_apellidos'] )) .' ha iniciado el proceso y ha diligenciado la información de las instituciones de origen y destino de la alianza la cual se presenta a continuación:';
 
                 $datosContent = '';
                 if ( $dataUsers[$keyCoordExterno]['usuario_activo'] == 0 ) {
@@ -3527,7 +3608,7 @@ class InterAllianceController extends AppBaseController
             $keyCoordExterno = $verificarDatosAlianza['keyCoordExterno'];
             
             //evita que el coordinador externo ingrese
-            if (strpos($this->tipoRuta, 'destination') === false && $this->peticion != 'local' && $keyCoordExterno !== false) {
+            if (strpos($this->tipoRuta, 'destination') === false && $this->peticion != 'local' && $keyCoordExterno !== false && $keyCoordExterno !== -1) {
 
                 $CoordinadorExterno = $verificarDatosAlianza['dataUsers'][$keyCoordExterno]['usuario_id'];
                 if ($this->user->id == $CoordinadorExterno) {
@@ -3605,6 +3686,13 @@ class InterAllianceController extends AppBaseController
                 
                 $keyCoordExterno = array_search($CoordinadorExterno, array_column($dataUsers, 'usuario_id'));
                 $keyCoordInterno = array_search($CoordinadorInterno, array_column($dataUsers, 'usuario_id'));
+
+                if ($keyCoordExterno === false ) {
+                    $keyCoordExterno = -1;
+                }
+                if ($keyCoordInterno === false ) {
+                    $keyCoordInterno = -1;
+                }
 
                 return ['dataUsers' => $dataUsers, 'keyCoordExterno' => $keyCoordExterno, 'keyCoordInterno' => $keyCoordInterno ];
             }
@@ -3740,6 +3828,13 @@ class InterAllianceController extends AppBaseController
         
         $keyCoordExterno = array_search($CoordinadorExterno, array_column($dataUsers, 'usuario_id'));
         $keyCoordInterno = array_search($CoordinadorInterno, array_column($dataUsers, 'usuario_id'));
+
+        if ($keyCoordExterno === false ) {
+            $keyCoordExterno = -1;
+        }
+        if ($keyCoordInterno === false ) {
+            $keyCoordInterno = -1;
+        }
         
 
         if ($destino == 'email' || $destino == 'show' || $destino == 'edit' || $destino == 'destination' ) {
@@ -3748,7 +3843,7 @@ class InterAllianceController extends AppBaseController
             $tipo_documento_id = \App\Models\TipoDocumento::where('nombre',['REPRESENTACIÓN LEGAL'])->pluck('id')->first();
 
             $buscarDocumentoRepresentante = DB::table('documentos_institucion')->where('tipo_documento_id',$tipo_documento_id)
-                ->where('institucion_id',$dataUsers[$keyCoordExterno]['institucion']['id'])
+                ->where('institucion_id',$dataUsers[$keyCoordExterno]['institucion']['id'] ?? 0)
                 ->select('id','archivo_id')->get()->toArray();
             $archivosDocumentoRepresentante = 0;
             if (count($buscarDocumentoRepresentante)) {
@@ -4036,6 +4131,14 @@ class InterAllianceController extends AppBaseController
         $keyCoordInterno = $datosAlianza['keyCoordInterno'];
         $keyCoordExterno = $datosAlianza['keyCoordExterno'];
 
+
+        if ($keyCoordExterno === false ) {
+            $keyCoordExterno = -1;
+        }
+        if ($keyCoordInterno === false ) {
+            $keyCoordInterno = -1;
+        }
+
         // if ($datosAlianza['editar'] === false) {
         //     Flash::error('No se puede editar la alianza');
 
@@ -4059,6 +4162,7 @@ class InterAllianceController extends AppBaseController
             $dataAlianza['aplicaciones'] = array_column($datosAlianza['dataAlianza']['aplicaciones'], 'aplicaciones_id'); 
             $dataAlianza['responsable_arl'] = $datosAlianza['dataAlianza']['responsable_arl'];
 
+            $dataAlianza['fecha_inicio'] = $datosAlianza['dataAlianza']['fecha_inicio'];
 
             $dataAlianza['duracion_cant'] = substr($datosAlianza['dataAlianza']['duracion'], 0, strpos($datosAlianza['dataAlianza']['duracion'], " "));
             $dataAlianza['duracion_unid'] = substr($datosAlianza['dataAlianza']['duracion'], strpos($datosAlianza['dataAlianza']['duracion'], " ") +1 );  
@@ -4086,7 +4190,7 @@ class InterAllianceController extends AppBaseController
             */
             
         }
-        if ($keyCoordExterno !== false) {
+        if ($keyCoordExterno !== false && $keyCoordExterno !== -1) {
             $dataAlianza['institucion_destino'] = $datosAlianza['dataUsers'][$keyCoordExterno]['institucion']['id'];
             $dataAlianza['coordinador_destino'] = $datosAlianza['dataUsers'][$keyCoordExterno]['usuario_id'];
 
@@ -4124,6 +4228,9 @@ class InterAllianceController extends AppBaseController
                     $dataAlianza['repre_pais_exped_documento'] = $datosAlianza['dataUsers'][$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['pais_id'];
                     $dataAlianza['repre_departamento_exped_documento'] = $datosAlianza['dataUsers'][$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['departamento_id'];
                     $dataAlianza['repre_ciudad_exped_documento'] = $datosAlianza['dataUsers'][$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['ciudad_id'];
+                    
+                    $dataAlianza['archivo_soporte_representante'] = $datosAlianza['archivosDocumentoRepresentante'][0]->toArray() ?? [];
+                    print_r($dataAlianza['archivo_soporte_representante']);
                 }
 
                 //verifica la existencia del representante legal y que este activo 
@@ -4164,24 +4271,26 @@ class InterAllianceController extends AppBaseController
             }
         }
 
+
+        $departamento_institucion_destino = collect([]);
+        $ciudad_institucion_destino = collect([]);
+        if (isset($dataAlianza['pais_institucion_destino'])) {
+            $departamento_institucion_destino = \App\Models\Admin\State::join('ciudad','departamento.id','=','ciudad.departamento_id')->where('departamento.pais_id',$dataAlianza['pais_institucion_destino'])->orderBy('departamento.nombre','asc')->pluck('departamento.nombre','departamento.id');
+        }
+
+        if (isset($dataAlianza['departamento_institucion_destino'])) {
+            $ciudad_institucion_destino = \App\Models\Admin\City::where('departamento_id',$dataAlianza['departamento_institucion_destino'])->orderBy('nombre','asc')->pluck('nombre','id');
+
+        }
+
         //verifica si la ruta es para edicion por parte del coordinador externo
         if ($this->tipoRuta == 'interalliances.destination.edit') {
             //if ($existeRepresentante == false ) {
                 //retornar el formulario desde el paso 4 al coordinador
-                $tipo_institucion_destino = $this->tipoInstitucion->pluck('nombre','id');
-                $pais_institucion_destino = $this->pais->orderBy('nombre','asc')->pluck('nombre','id');
 
-                $departamento_institucion_destino = '';
-                $ciudad_institucion_destino = '';
-                $repre_departamento_exped_documento = '';
-                $repre_ciudad_exped_documento = '';
-                if (isset($dataAlianza['pais_institucion_destino'])) {
-                    $departamento_institucion_destino = \App\Models\Admin\State::join('ciudad','departamento.id','=','ciudad.departamento_id')->where('departamento.pais_id',$dataAlianza['pais_institucion_destino'])->orderBy('departamento.nombre','asc')->pluck('departamento.nombre','departamento.id');
-                }
-                if (isset($dataAlianza['departamento_institucion_destino'])) {
-                    $ciudad_institucion_destino = \App\Models\Admin\City::where('departamento_id',$dataAlianza['departamento_institucion_destino'])->orderBy('nombre','asc')->pluck('nombre','id');
-
-                }
+                $repre_departamento_exped_documento = collect([]);
+                $repre_ciudad_exped_documento = collect([]);
+                
                 if (isset($dataAlianza['repre_pais_exped_documento'])) {
                     $repre_departamento_exped_documento = \App\Models\Admin\State::join('ciudad','departamento.id','=','ciudad.departamento_id')->where('departamento.pais_id',$dataAlianza['repre_pais_exped_documento'])->orderBy('departamento.nombre','asc')->pluck('departamento.nombre','departamento.id');
                 }
@@ -4194,10 +4303,10 @@ class InterAllianceController extends AppBaseController
                 //$repre_ciudad_exped_documento = '';
                 
                 
-                $clase_documento = \App\Models\ClaseDocumento::where('nombre','IDENTIDAD')->pluck('id');
-                $repre_tipo_documento = \App\Models\TipoDocumento::where('clase_documento_id',$clase_documento)->pluck('nombre','id');
+                $clasificacion = \App\Models\Clasificacion::where('nombre','IDENTIDAD')->pluck('id');
+                $repre_tipo_documento = \App\Models\TipoDocumento::where('clasificacion_id',$clasificacion)->pluck('nombre','id');
             //}
-            if ($keyCoordExterno !== false) {
+            if ($keyCoordExterno !== false && $keyCoordExterno !== -1) {
                 $coordinador_destino_todos = $this->coordinador_destino
                     ->join('user_campus', 'users.id', '=', 'user_campus.user_id')
                     ->join('campus', 'user_campus.campus_id', '=', 'campus.id')
@@ -4206,6 +4315,7 @@ class InterAllianceController extends AppBaseController
             }else{
                 $coordinador_destino = $this->coordinador_destino->select(DB::raw("'Otro' AS name, '999999' AS id"))->pluck('name','id');
             }
+
 
         }else{
             
@@ -4236,16 +4346,18 @@ class InterAllianceController extends AppBaseController
             //datos generales
             $viewWith = array_merge($viewWith, ['tipoRuta' => $this->tipoRuta, 'atoken' => $alianza->token,'alianzaId' => $alianzaId,'existeRepresentante' => $existeRepresentante, 'alliance' => $dataAlianza, 'coordinador_destino' => $coordinador_destino, 'paso_titulo' => $this->paso_titulo, 'nombre' => 'alianza', 'paso' => '4','peticion' => 'externa']);
 
+                $tipo_institucion_destino = $this->tipoInstitucion->pluck('nombre','id');
+                $pais_institucion_destino = $this->pais->orderBy('nombre','asc')->pluck('nombre','id');
             //if ($existeRepresentante == false) {
                 //datos para la institucion de destino
-                $viewWith = array_merge($viewWith, ['tipo_institucion_destino' => $tipo_institucion_destino, 'pais_institucion_destino' => $pais_institucion_destino, 'departamento_institucion_destino' => $departamento_institucion_destino, 'ciudad_institucion_destino' => $ciudad_institucion_destino]);
+                $viewWith = array_merge($viewWith, ['tipo_institucion_destino' => $tipo_institucion_destino, 'pais_institucion_destino' => $pais_institucion_destino]);
 
                 //datos para el representante
                 $viewWith = array_merge($viewWith, ['repre_pais_nacimiento' => $pais_institucion_destino,'repre_tipo_documento' => $repre_tipo_documento, 'repre_pais_exped_documento' => $pais_institucion_destino]);
 
-                if ($repre_departamento_exped_documento != '' && $repre_ciudad_exped_documento != '') {
+                // if ($repre_departamento_exped_documento != '' && $repre_ciudad_exped_documento != '') {
                     $viewWith = array_merge($viewWith, ['repre_departamento_exped_documento' => $repre_departamento_exped_documento, 'repre_ciudad_exped_documento' => $repre_ciudad_exped_documento]);
-                }
+                // }
             //}
             if (empty($existe_paso)) {
                 $viewWith = array_merge($viewWith, ['editar_paso' => false]);
@@ -4263,12 +4375,7 @@ class InterAllianceController extends AppBaseController
             $viewWith['programa_origen'] = \App\Models\Admin\Programa::whereIn('facultad_id', $dataAlianza['facultad_origen'])->pluck('nombre','id');
             $viewWith['aplicaciones'] = \App\Models\Aplicaciones::where('tipo_alianza_id', $dataAlianza['tipo_alianza'])->pluck('nombre','id');
 
-            if (isset($dataAlianza['pais_institucion_destino'])) {
-                $viewWith['departamento_institucion_destino'] = \App\Models\Admin\State::join('ciudad','departamento.id','=','ciudad.departamento_id')->where('departamento.pais_id', $dataAlianza['pais_institucion_destino'])->orderBy('departamento.nombre','asc')->pluck('departamento.nombre','departamento.id');
-            }
-            if (isset($dataAlianza['departamento_institucion_destino'])) {
-            $viewWith['ciudad_institucion_destino'] = \App\Models\Admin\City::where('departamento_id', $dataAlianza['departamento_institucion_destino'])->pluck('nombre','id');
-            }
+            
             if (isset($dataAlianza['institucion_destino']) ) {
                 $request['rol'] = 'coordinador_destino_solo';
                 $request['id'] = $dataAlianza['institucion_destino'];
@@ -4291,6 +4398,12 @@ class InterAllianceController extends AppBaseController
                 $vista = 'InterAlliance.edit';
             }
         }
+
+        //la diferencia entre el edit y el create es que las listas de departamento_institucion_destino y ciudad_institucion_destino van llenas
+        
+        //estos datos llegan desde el metodo origin entonces si se hace un merge no funciona
+        $viewWith['departamento_institucion_destino'] = $departamento_institucion_destino;
+        $viewWith['ciudad_institucion_destino'] = $ciudad_institucion_destino;
 
         $viewWith = array_merge($viewWith, ['peticion' => 'normal']);
         return view($vista)->with($viewWith);
@@ -4411,8 +4524,10 @@ class InterAllianceController extends AppBaseController
                 $coordinador_destino_todos = $this->coordinador_destino
                     ->join('user_campus', 'users.id', '=', 'user_campus.user_id')
                     ->join('campus', 'user_campus.campus_id', '=', 'campus.id')
-                    ->where('campus.institucion_id', $request['id'] )->role(['coordinador_externo','profesor'])->select(DB::raw('concat(users.name," (",users.email,")")'),'users.id');
-                $dataInstitucion[0]['coordinador_destino'] = $this->coordinador_destino->select(DB::raw("'Otro' AS name, '999999' AS id"))->union($coordinador_destino_todos)->pluck('name','id');
+                    ->where('campus.institucion_id', $request['id'] )->role(['coordinador_externo','profesor'])->select(DB::raw('concat(users.name," (",users.email,")") AS name, users.id'));
+
+                // $dataInstitucion[0]['coordinador_destino'] = $this->coordinador_destino->select(DB::raw("'Otro' AS name, '999999' AS id"))->union($coordinador_destino_todos)->pluck('name','id');
+                $dataInstitucion[0]['coordinador_destino'] = $coordinador_destino_todos->pluck('name','id');
 
                 $dataInstitucion = json_decode(json_encode($dataInstitucion),true);
 
@@ -4423,8 +4538,10 @@ class InterAllianceController extends AppBaseController
                 $coordinador_destino_todos = $this->coordinador_destino
                     ->join('user_campus', 'users.id', '=', 'user_campus.user_id')
                     ->join('campus', 'user_campus.campus_id', '=', 'campus.id')
-                    ->where('campus.institucion_id', $request['id'] )->role(['coordinador_externo','profesor'])->select(DB::raw('concat(users.name," (",users.email,")")'),'users.id');
-                $lista = $this->coordinador_destino->select(DB::raw("'Otro' AS name, '999999' AS id"))->union($coordinador_destino_todos)->pluck('name','id');
+                    ->where('campus.institucion_id', $request['id'] )->role(['coordinador_externo','profesor'])->select(DB::raw('concat(users.name," (",users.email,")") AS name, users.id'));
+                // $lista = $this->coordinador_destino->select(DB::raw("'Otro' AS name, '999999' AS id"))->union($coordinador_destino_todos)->pluck('name','id');
+                $lista = $coordinador_destino_todos->pluck('name','id');
+                $lista = $lista->prepend('Otro','999999');
                 break;
         }
         //print_r($lista);

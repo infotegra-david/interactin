@@ -56,7 +56,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($pasoInscripcion, ['route' => ['interchanges.validations_interchanges.update', $pasoInscripcion->id], 'method' => 'patch','files' => true]) !!}
+                   {!! Form::model($pasosInscripcion, ['route' => ['interchanges.validations_interchanges.update', $pasosInscripcion->id], 'method' => 'patch','files' => true]) !!}
 
                         @include('validation.interchanges.pasos_inscripcions.fields')
 

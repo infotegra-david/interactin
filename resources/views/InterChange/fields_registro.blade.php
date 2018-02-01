@@ -49,7 +49,7 @@
 					<span class="badge {{ ( isset($inscripcionId) ? 'badge-success' : '' ) }}">13</span>{{ $paso_titulo[13] }}<span class="chevron"></span>
 				</li>
 				@endif
-				@if( $editar_paso === false || $editar_paso === 14 || $pasoMaximo >= 14 )
+				@if( $editar_paso === 14 || $pasoMinimo >= 14 )
 				<li data-step="14" class="{{ ( isset($inscripcionId) ? 'complete' : '' ) }}">
 					<span class="badge {{ ( isset($inscripcionId) ? 'badge-success' : '' ) }}">14</span>{{ $paso_titulo[14] }}<span class="chevron"></span>
 				</li>
@@ -99,11 +99,11 @@
 
 
 
-	<!--div class="tab-content"-->
-	<div class="step-content" id="Registro_content" >
+		<!--div class="tab-content"-->
+		<div class="step-content" id="Registro_content" >
 			@if( $editar_paso === false || $editar_paso === 5 || ($pasoMinimo <= 5 && $pasoMaximo >= 5 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( ($editar_paso === false || $editar_paso === 5 || ($pasoMinimo <= 5 && $pasoMaximo >= 5 && $pasoMaximo <= 13) ) ? 'active' : '' ) }}"  data-step="5">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso5', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso5', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 5 </strong> - {{ $paso_titulo[5] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -190,7 +190,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_genero') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_genero', config('options.genero'), old('estudiante_genero') ?? '', ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+										{{ Form::select('estudiante_genero', __('messages.options.genero'), old('estudiante_genero'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -198,7 +198,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_nacionalidad') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_nacionalidad', $estudiante_nacionalidad, old('estudiante_nacionalidad'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Seleccione la nacionalidad', 'target' => '', 'url' => '']) }}
+										{{ Form::select('estudiante_nacionalidad', $estudiante_nacionalidad->prepend('Seleccione la nacionalidad',''), old('estudiante_nacionalidad'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -214,7 +214,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_exp_pasaporte') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-										{{ Form::text('estudiante_exp_pasaporte', old('estudiante_exp_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del pasaporte', 'title' => 'Ingrese la fecha de expedición del pasaporte', 'onfocus' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+										{{ Form::text('estudiante_exp_pasaporte', old('estudiante_exp_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del pasaporte', 'title' => 'Ingrese la fecha de expedición del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
 									</div>
 								</div>
 							</div>
@@ -222,7 +222,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_vence_pasaporte') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-										{{ Form::text('estudiante_vence_pasaporte', old('estudiante_vence_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de vencimiento del pasaporte', 'title' => 'Ingrese la fecha de vencimiento del pasaporte', 'onfocus' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+										{{ Form::text('estudiante_vence_pasaporte', old('estudiante_vence_pasaporte'), ['required' => 'required', 'class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de vencimiento del pasaporte', 'title' => 'Ingrese la fecha de vencimiento del pasaporte', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
 									</div>
 								</div>
 							</div>
@@ -249,7 +249,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_departamento_residencia') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_departamento_residencia', $estudiante_departamento_residencia, old('estudiante_departamento_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'estudiante_ciudad_residencia', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento de residencia']) }}
+										{{ Form::select('estudiante_departamento_residencia', $estudiante_departamento_residencia->prepend('Seleccione el departamento de residencia',''), old('estudiante_departamento_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'estudiante_ciudad_residencia', 'url' => route('admin.cities.listCities')]) }}
 									</div>
 								</div>
 							</div>
@@ -258,7 +258,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('estudiante_ciudad_residencia') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('estudiante_ciudad_residencia', $estudiante_ciudad_residencia, old('estudiante_ciudad_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la ciudad de residencia']) }}
+										{{ Form::select('estudiante_ciudad_residencia', $estudiante_ciudad_residencia->prepend('Seleccione la ciudad de residencia',''), old('estudiante_ciudad_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -287,7 +287,7 @@
 			@endif
 			@if( $editar_paso === false || $editar_paso === 6 || ($pasoMinimo <= 6 && $pasoMaximo >= 6 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 6 ? 'active' : '' ) }}"  data-step="6">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso6', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso6', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 6</strong> - {{ $paso_titulo[6] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -364,7 +364,7 @@
 			@endif
 			@if( $editar_paso === false || $editar_paso === 7 || ($pasoMinimo <= 7 && $pasoMaximo >= 7 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 7 ? 'active' : '' ) }}"  data-step="7">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso7', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso7', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 7</strong> - {{ $paso_titulo[7] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -425,7 +425,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_campus_destino') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_campus_destino', (['' => 'Seleccione el campus'] + $inscripcion_campus_destino), old('inscripcion_campus_destino'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'inscripcion_facultad_destino', 'url' => route('admin.faculties.listFaculties')]) }}
+										{{ Form::select('inscripcion_campus_destino', $inscripcion_campus_destino->prepend('Seleccione el campus',''), old('inscripcion_campus_destino'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'inscripcion_facultad_destino', 'url' => route('admin.faculties.listFaculties')]) }}
 										<span class="input-group-addon"  rel="popover" data-content="En este campo debe especificar cuál campus es al que se dirige con su movilidad." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -446,7 +446,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_facultad_destino') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_facultad_destino', (['' => 'Seleccione la facultad'] + $inscripcion_facultad_destino), old('inscripcion_facultad_destino'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'inscripcion_programa_destino', 'url' => route('admin.programs.listPrograms')]) }}
+										{{ Form::select('inscripcion_facultad_destino', $inscripcion_facultad_destino->prepend('Seleccione la facultad',''), old('inscripcion_facultad_destino'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'inscripcion_programa_destino', 'url' => route('admin.programs.listPrograms')]) }}
 										<span class="input-group-addon"  rel="popover" data-content="En este campo debe especificar cuál facultad es a la que se dirige con su movilidad." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -466,7 +466,7 @@
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('inscripcion_programa_destino') ? 'has-error' : '') }}" >
 										<span class="input-group-addon"><i class="fa fa-graduation-cap fa-md fa-fw"></i></span>
-										{{ Form::select('inscripcion_programa_destino', (['' => 'Seleccione el programa'] + $inscripcion_programa_destino), old('inscripcion_programa_destino'), ['required' => 'required', 'class' => 'form-control input-md ', 'target' => '', 'url' => '']) }}
+										{{ Form::select('inscripcion_programa_destino', $inscripcion_programa_destino->prepend('Seleccione el programa',''), old('inscripcion_programa_destino'), ['required' => 'required', 'class' => 'form-control input-md ', 'target' => '', 'url' => '']) }}
 										<span class="input-group-addon" rel="popover" data-content="Seleccione el programa al que se dirige con su movilidad." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -487,16 +487,15 @@
 							<div class="col-sm-12 col-md-12">
 								<div class="form-group">
 									<br>
-									<h4><strong>Asignaturas </strong> - Especifique las asignaturas a cursar en la institución de destino.</h4>
+									<h4><strong>Asignaturas </strong> - Especifique la equivalencia de las asignaturas a cursar en la institución de destino.</h4>
 									<br>
 								</div>
 							</div>
-la misma opcion que el anterior paso, editar una a una e ir guardando las asignaturas del origen y destino nuevas 
 							<div class="col-sm-12 col-md-12">
 								<div class="form form-group col-xs-12" id="jqgrid_form">
 
 							        <div class="panel table_jqGrid2 div-error @if ($errors->has('asignaturas')) has-error @endif">
-							            <table id="jqGrid2"></table>
+							            <table id="jqGrid2"></table> 
 							            <div id="jqGrid2Pager"></div>
 							        </div>
 							    </div>
@@ -507,7 +506,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 8 || ($pasoMinimo <= 8 && $pasoMaximo >= 8 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 8 ? 'active' : '' ) }}"  data-step="8">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso8', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso8', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 8</strong> - {{ $paso_titulo[8] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -576,7 +575,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('contacto_departamento_residencia') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('contacto_departamento_residencia', $contacto_departamento_residencia, old('contacto_departamento_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'contacto_ciudad_residencia', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento de residencia']) }}
+										{{ Form::select('contacto_departamento_residencia', $contacto_departamento_residencia->prepend('Seleccione el departamento de residencia',''), old('contacto_departamento_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => 'contacto_ciudad_residencia', 'url' => route('admin.cities.listCities')]) }}
 									</div>
 								</div>
 							</div>
@@ -585,7 +584,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('contacto_ciudad_residencia') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('contacto_ciudad_residencia', $contacto_ciudad_residencia, old('contacto_ciudad_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la ciudad de residencia']) }}
+										{{ Form::select('contacto_ciudad_residencia', $contacto_ciudad_residencia->prepend('Seleccione la ciudad de residencia',''), old('contacto_ciudad_residencia'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -614,7 +613,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 9 || ($pasoMinimo <= 9 && $pasoMaximo >= 9 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 9 ? 'active' : '' ) }}"  data-step="9">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso9', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso9', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 9</strong> - {{ $paso_titulo[9] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -634,7 +633,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('fuente_financia_nacional') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('fuente_financia_nacional', (['' => 'Seleccione la fuente de financiación nacional'] + $fuente_financia_nacional), old('fuente_financia_nacional'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+										{{ Form::select('fuente_financia_nacional', $fuente_financia_nacional->prepend('Seleccione la fuente de financiación nacional',''), old('fuente_financia_nacional'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -678,7 +677,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('fuente_financia_internacional') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-university fa-md fa-fw"></i></span>
-										{{ Form::select('fuente_financia_internacional', (['' => 'Seleccione la fuente de financiación internacional'] + $fuente_financia_internacional), old('fuente_financia_internacional'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
+										{{ Form::select('fuente_financia_internacional', $fuente_financia_internacional->prepend('Seleccione la fuente de financiación internacional',''), old('fuente_financia_internacional'), ['required' => 'required', 'class' => 'form-control input-md', 'target' => '', 'url' => '']) }}
 									</div>
 								</div>
 							</div>
@@ -704,7 +703,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 10 || ($pasoMinimo <= 10 && $pasoMaximo >= 10 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 10 ? 'active' : '' ) }}"  data-step="10">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso10', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso10', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 10</strong> - {{ $paso_titulo[10] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -766,7 +765,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 11 || ($pasoMinimo <= 11 && $pasoMaximo >= 11 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 11 ? 'active' : '' ) }}"  data-step="11">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso11', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso11', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 11</strong> - {{ $paso_titulo[11] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -794,7 +793,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 							</div>
 						</div>
 						<div class="row">
-						<!--documentos  -->
+						<!--documentos previamente cargados -->
 							<div class="col-sm-12 col-md-6">
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('existe_documentos_soporte') ? 'has-error' : '') }}">
@@ -829,7 +828,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 12 || ($pasoMinimo <= 12 && $pasoMaximo >= 12 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 12 ? 'active' : '' ) }}"  data-step="12">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso12', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso12', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 12</strong> - {{ $paso_titulo[12] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -884,7 +883,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 			@endif
 			@if( $editar_paso === false || $editar_paso === 13 || ($pasoMinimo <= 13 && $pasoMaximo >= 13 && $pasoMaximo <= 13) )
 				<div class="step-pane {{ ( $editar_paso == 13 ? 'active' : '' ) }}"  data-step="13">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso13', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso13', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 13</strong> - {{ $paso_titulo[13] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 						<br>
@@ -945,9 +944,9 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 				</div>
 			@endif
 			
-			@if( $editar_paso === false || $editar_paso === 14 || $pasoMaximo >= 14  )
+			@if( $editar_paso === 14 || $pasoMinimo >= 14  )
 				<div class="step-pane {{ ( $editar_paso == 14 ? 'active' : '' ) }}"  data-step="14">
-					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso14', 'novalidate', 'class' => 'Registro_form'.(!in_array($editar_paso,[true,false]) ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
+					{!! Form::model($interchange, ['route' => $route, 'method' => $method, 'id' => 'Registro_paso14', 'novalidate', 'class' => 'Registro_form'.($editar_paso > 0 ? '_solo' : '').' interchange', 'results' => 'Registro_results']) !!}
 						<br>
 						<h3><strong>Paso 14</strong> - {{ $paso_titulo[14] }}<span class="{{ !isset($inscripcionId) ? 'hide' : '' }} span-proceso-id">- Inscripción #<b>{{ $inscripcionId ?? '' }}</b></span></h3>
 
@@ -1016,7 +1015,8 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 							<!--<li class="Previous first disabled">
 							<a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
 							</li>-->
-							@if( $editar_paso === false || $editar_paso === true )
+							<?php var_dump($editar_paso); ?>
+							@if( $editar_paso === false )
 								<li class="Previous">
 									<a href="javascript:void(0);" id="btnBack" class="btn btn-lg btn-default"><i class="fa fa-arrow-left"></i> Atras </a>
 								</li>
@@ -1045,7 +1045,7 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 </div>
 		
 <?php
-
+	//para la lista de idiomas (paso 6)
     // $campus = $campus->toArray();
     $idiomas = json_encode($idiomas);
     $idiomas = '{"0":"Seleccione un idioma",'. substr($idiomas, 1);
@@ -1053,7 +1053,43 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
     $niveles = json_encode($niveles);
     $niveles = '{"0":"Seleccione un nivel",'. substr($niveles, 1);
 
+    //para la lista de asignaturas (paso 7)
+
+    $programa_origen_id = $interchange['inscripcion_programa_origen'];
     
+    // print_r($programas_origen);
+
+    if (count($programas_origen)) {
+	    $programas_origen_json = json_encode($programas_origen);
+	    $programas_origen_json = '{"0":"Seleccione un programa de origen",'. substr($programas_origen_json, 1);
+    }else{
+    	$programas_origen_json = '{"0":"Registre primero un programa de origen"}';
+    }
+
+    $programa_destino_id = $interchange['inscripcion_programa_destino'];
+
+
+    if (count($programas_destino)) {
+	    $programas_destino_json = json_encode($programas_destino);
+	    $programas_destino_json = '{"0":"Seleccione un programa de destino",'. substr($programas_destino_json, 1);
+    }else{
+    	$programas_destino_json = '{"0":"Seleccione primero un programa de destino arriba"}';
+    }
+    
+    if (count($asignaturas_origen)) {
+	    $asignaturas_origen_json = json_encode($asignaturas_origen);
+	    $asignaturas_origen_json = '{"0":"Seleccione una asignatura de origen",'. substr($asignaturas_origen_json, 1);
+    }else{
+    	$asignaturas_origen_json = '{"0":"Seleccione primero un programa de origen"}';
+    }
+
+	if (count($asignaturas_destino)) {
+	    $asignaturas_destino_json = json_encode($asignaturas_destino);
+	    $asignaturas_destino_json = '{"0":"Seleccione una asignatura de destino",'. substr($asignaturas_destino_json, 1);
+    }else{
+    	$asignaturas_destino_json = '{"0":"Seleccione primero una asignatura de origen"}';
+	}
+
     // $route = $route_split.'.storeupdate';
     // $routeLists = $route_split;
 
@@ -1117,6 +1153,13 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
         //     },
         //     @ endforeach
         // ];
+
+        function validate_rules(value, colname, length){
+            
+			return [true,''];
+        }
+
+    @if( $editar_paso === false || $editar_paso === 6 || ($pasoMinimo <= 6 && $pasoMaximo >= 6 && $pasoMaximo <= 13) )
 
     //INICIO TABLA PARA ASIGNACION DE IDIOMAS
     //INICIO TABLA PARA ASIGNACION DE IDIOMAS
@@ -1216,14 +1259,6 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
 
         });
 
-        function refresh_jqGrid(){
-            $('#jqGrid1').jqGrid('setGridParam',{datatype:'json'}).trigger('reloadGrid');
-        }
-
-
-        jQuery("#refresh_jqGrid1").click(function(){
-            refresh_jqGrid();
-        });
 
         $('#jqGrid1').jqGrid('navGrid','#jqGrid1Pager',
             // the buttons to appear on the toolbar of the grid
@@ -1315,15 +1350,6 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
         );
 
 
-        jQuery("#refresh_jqGrid1").click(function(){
-            refresh_jqGrid();
-        });
-
-
-        function validate_rules(value, colname, length){
-            
-			return [true,''];
-        }
 
 
         function createCertificadoElement(value, editOptions) {
@@ -1361,6 +1387,410 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
                 return $(elem).find("input:radio:checked").val();
             }
         }
+
+    //FIN TABLA PARA ASIGNACION DE IDIOMAS
+    //FIN TABLA PARA ASIGNACION DE IDIOMAS
+    //FIN TABLA PARA ASIGNACION DE IDIOMAS
+    //FIN TABLA PARA ASIGNACION DE IDIOMAS
+
+    @endif
+
+
+    //INICIO TABLA PARA ASIGNACION DE ASIGNATURAS
+    //INICIO TABLA PARA ASIGNACION DE ASIGNATURAS
+    //INICIO TABLA PARA ASIGNACION DE ASIGNATURAS
+    //INICIO TABLA PARA ASIGNACION DE ASIGNATURAS
+
+    @if( $editar_paso === false || $editar_paso === 7 || ($pasoMinimo <= 7 && $pasoMaximo >= 7 && $pasoMaximo <= 13) )
+
+        $("#jqGrid2").jqGrid({
+            // data : jqgrid_data,
+            url: '{{ $routeListAsignaturas }}',
+            mtype: "POST",
+            editurl: '{{ $routeEditAsignaturas }}',
+            datatype: "json",
+            caption : "",
+            autowidth : true,
+            loadonce : true,
+            // onSelectRow: editRow, // the javascript function to call on row click. will ues to to put the row in edit mode
+            viewrecords: true,
+
+            height: 250,
+            rowNum: 20,
+            rownumbers: false, // show row numbers
+            // multiselect : true,
+            rownumWidth: 35, // the width of the row numbers columns
+            pager: "#jqGrid2Pager",
+            // multiselect: true,
+            page: 1,
+            loadComplete: function () {
+                cambiarEstilosJqgrid();
+            },
+
+            //LO NOMBRES DE LAS COLUMNAS SON USADOS POR UNA FUNCION EXTERNA PARA REALIZAR VALIDACIONES
+            colModel: [
+                { label: 'ID', name: 'id', index:'id', key: true, width: 75, hidden:true, editable: true, editrules: { edithidden: false } },
+                {
+                    label: 'Programa origen',
+                    name: 'programa_origen_id',
+                    // hidden: {{ (count($asignaturas_origen) ? 'true' : 'false') }},
+                    // editable: {{ (count($asignaturas_origen) ? 'false' : 'true') }},
+                    editable: true,
+                    edittype:'select',
+                    editoptions: {
+                        value: {!! $programas_origen_json !!},
+                        dataInit: function (elem) {
+                             $(elem).attr('target','asignatura_origen_id');
+                             $(elem).attr('url','{{ route('admin.subjects.listSubjects') }}');
+                             $(elem).attr('extra_value_field','nro_creditos_origen');
+                        },
+                        defaultValue: '{{ $programa_origen_id }}',
+                    },
+                    editrules: {
+                        number: true,
+                        minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },/*
+                {
+                    label: 'Otro programa',
+                    name: 'programa_origen_id_otro',
+                    hidden: true,
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                            // $(elem).attr("readonly", "readonly"); 
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        edithidden:true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },*/
+                {
+                    label: 'Asignatura de origen',
+                    name: 'asignatura_origen_id',
+                    editable: true,
+                    edittype:'select',
+                    editoptions: {
+                        value: {!! $asignaturas_origen_json !!},
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                             $(elem).attr('readonly_field','nro_creditos_origen');
+                             $(elem).attr('set_value_field','nro_creditos_origen');
+                        },
+                    },
+                    editrules: {
+                        number: true,
+                        minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+                {
+                    label: 'Otra asignatura',
+                    name: 'asignatura_origen_id_otro',
+                    hidden: true,
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        edithidden:true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+                {
+                    label: 'Nro de creditos',
+                    name: 'nro_creditos_origen',
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                            $(elem).attr("readonly", "readonly"); 
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+                {
+                    label: 'Programa destino',
+                    name: 'programa_destino_id',
+                    // hidden: {{ (count($asignaturas_destino) ? 'true' : 'false') }},
+                    // editable: {{ (count($asignaturas_destino) ? 'false' : 'true') }},
+                    editable: true,
+                    edittype:'select',
+                    editoptions: {
+                        value: {!! $programas_destino_json !!},
+                        dataInit: function (elem) {
+                             $(elem).attr('target','asignatura_destino_id');
+                             $(elem).attr('url','{{ route('admin.subjects.listSubjects') }}');
+                             $(elem).attr('extra_value_field','nro_creditos_destino');
+                        },
+                        defaultValue: '{{ $programa_destino_id }}',
+                    },
+                    editrules: {
+                        number: true,
+                        minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },/*
+                {
+                    label: 'Otro programa',
+                    name: 'programa_destino_id_otro',
+                    hidden: true,
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        edithidden:true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },*/
+                {
+                    label: 'Asignatura de destino',
+                    name: 'asignatura_destino_id',
+                    editable: true,
+                    edittype:'select',
+                    editoptions: {
+                        value: {!! $asignaturas_destino_json !!},
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                             $(elem).attr('readonly_field','nro_creditos_destino');
+                             $(elem).attr('set_value_field','nro_creditos_destino');
+                        },
+                    },
+                    editrules: {
+                        number: true,
+                        minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+                {
+                    label: 'Otra asignatura',
+                    name: 'asignatura_destino_id_otro',
+                    hidden: true,
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                             // $(elem).attr('class','hide');
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        edithidden:true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+                {
+                    label: 'Nro de creditos',
+                    name: 'nro_creditos_destino',
+                    editable: true,
+                    editoptions: {
+                        dataInit: function (elem) {
+                            $(elem).attr("readonly", "readonly"); 
+                        },
+                    },
+                    editrules: {
+                        // number: true,
+                        // minValue: 1,
+                        required: true,
+                        custom:true,
+                        custom_func:validate_rules
+                    }
+                },
+            ],
+
+        });
+
+        $('#jqGrid2').jqGrid('navGrid','#jqGrid2Pager',
+            // the buttons to appear on the toolbar of the grid
+                { edit: true, add: true, del: true, search: true, refresh: true, view: false, position: "left", cloneToTop: false },
+                // options for the Edit Dialog
+                {
+                    editCaption: "Editar asignatura",
+                    recreateForm: true,
+                    closeAfterEdit: true,
+                    afterSubmit : function( data, postdata, oper) {
+                        var response = data.responseJSON;
+                        if (response != undefined && response.hasOwnProperty("error")) {
+                            if(response.error.length) {
+                                return [false,response.error ];
+                            }
+                        }
+                        // if(response.status == 200){ 
+                        //       alert(response);
+                        // } else {
+                        //       return [false,'error message'];
+                        // }
+                        refresh_jqGrid();
+                        
+                        return [true,"",""];
+                    },
+                    errorTextFormat: function (data) {
+                        if( data.responseJSON != undefined ){
+                            row = '';
+                            $.each(data.responseJSON, function( index, value ) {
+                                row = row + value + "<br>";
+                            });
+                            return row
+                        }else{
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+                    afterShowForm: function (formid) {
+                        // $('#FrmGrid_jqGrid1 [name="campus_id"]').change();
+
+                        //oculta los campos que son usados para registrar un nuevo registro de cada tipo en el caso que se escoja la opcion 'Otro'
+                        // $('#FrmGrid_jqGrid2 [name="programa_origen_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','programa_origen_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="asignatura_origen_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','asignatura_origen_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','programa_destino_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="asignatura_destino_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','asignatura_destino_id_otro');
+
+                        //va a clonar el select con el nombre 'inscripcion_programa_destino' de la seccion superior del formulario para que en el caso que seleccionen otro programa se carguen los datos correspondientes a las asignaturas
+                        var formId = $('.table_jqGrid2').parents('form').attr('id');
+
+                        var cloneSelect = $('#' +formId+ ' select[name="inscripcion_programa_destino"] option').clone();
+                        var clonePlaceholder = $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="0"]').clone();
+                        // var cloneOtro999999 = $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="999999"]').clone();
+						
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').empty();
+                        //copia las opciones clonadas
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prepend(cloneSelect);
+                        //elimina las opciones que no se necesitan
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value=""]').remove();
+                        // $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="999999"]').remove();
+                        //agrega las opciones que faltan (placeholder y 'Otro')
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prepend(clonePlaceholder);
+                        // $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').append(cloneOtro999999);
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prop("selectedIndex", 0);
+
+
+                        
+                        // Here I want to center the form
+                    }
+                },
+                // options for the Add Dialog
+                {
+                    addCaption: "Agregar asignatura",
+                    recreateForm: true,
+                    closeAfterAdd: true,
+                    afterSubmit : function( data, postdata, oper) {
+                        var response = data.responseJSON;
+                        if (response.hasOwnProperty("error")) {
+                            if(response.error.length) {
+                                return [false,response.error ];
+                            }
+                        }
+                        // if(response.status == 200){ 
+                        //       alert(response);
+                        // } else {
+                        //       return [false,'error message'];
+                        // }
+                        refresh_jqGrid();
+
+                        return [true,"",""];
+                    },
+                    errorTextFormat: function (data) {
+                        if( data.responseJSON != undefined ){
+                            row = '';
+                            $.each(data.responseJSON, function( index, value ) {
+                                row = row + value + "<br>";
+                            });
+                            return row
+                        }else{
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+                    afterShowForm: function (formid) {
+                        // $('#FrmGrid_jqGrid1 [name="campus_id"]').change();
+                        // $('#FrmGrid_jqGrid2 [name="programa_origen_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','programa_origen_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="asignatura_origen_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','asignatura_origen_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','programa_destino_id_otro');
+                        $('#FrmGrid_jqGrid2 [name="asignatura_destino_id_otro"]').parents('.FormData').addClass('hide').attr('contenido','asignatura_destino_id_otro');
+
+
+                        //va a clonar el select con el nombre 'inscripcion_programa_destino' de la seccion superior del formulario para que en el caso que seleccionen otro programa se carguen los datos correspondientes a las asignaturas
+                        var formId = $('.table_jqGrid2').parents('form').attr('id');
+
+                        var cloneSelect = $('#' +formId+ ' select[name="inscripcion_programa_destino"] option').clone();
+                        var clonePlaceholder = $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="0"]').clone();
+                        // var cloneOtro999999 = $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="999999"]').clone();
+						
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').empty();
+                        //copia las opciones clonadas
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prepend(cloneSelect);
+                        //elimina las opciones que no se necesitan
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value=""]').remove();
+                        // $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').find('option[value="999999"]').remove();
+                        //agrega las opciones que faltan (placeholder y 'Otro')
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prepend(clonePlaceholder);
+                        // $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').append(cloneOtro999999);
+                        $('#FrmGrid_jqGrid2 [name="programa_destino_id"]').prop("selectedIndex", 0);
+
+                        // Here I want to center the form
+                    }
+                },
+                // options for the Delete Dailog
+                {
+                    errorTextFormat: function (data) {
+                        if( data.responseJSON != undefined ){
+                            row = '';
+                            $.each(data.responseJSON, function( index, value ) {
+                                row = row + value + "<br>";
+                            });
+                            return row
+                        }else{
+                            return 'Error: ' + data.responseText
+                        }
+                    }
+                }
+        );
+
+    @endif
+
+//FIN TABLA PARA ASIGNACION DE ASIGNATURAS
+//FIN TABLA PARA ASIGNACION DE ASIGNATURAS
+//FIN TABLA PARA ASIGNACION DE ASIGNATURAS
+//FIN TABLA PARA ASIGNACION DE ASIGNATURAS
+
+
+        function refresh_jqGrid(){
+            $('#jqGrid1, #jqGrid2').jqGrid('setGridParam',{datatype:'json'}).trigger('reloadGrid');
+        }
+
+
+        jQuery("#refresh_jqGrid1, #refresh_jqGrid2").click(function(){
+            refresh_jqGrid();
+        });
 
 
         function cambiarEstilosJqgrid(){
@@ -1413,11 +1843,6 @@ la misma opcion que el anterior paso, editar una a una e ir guardando las asigna
             $("#jqGrid2").jqGrid( 'setGridWidth', $(".table_jqGrid2").width() );
         })
 
-
-    //FIN TABLA PARA ASIGNACION DE IDIOMAS
-    //FIN TABLA PARA ASIGNACION DE IDIOMAS
-    //FIN TABLA PARA ASIGNACION DE IDIOMAS
-    //FIN TABLA PARA ASIGNACION DE IDIOMAS
 
 
     });

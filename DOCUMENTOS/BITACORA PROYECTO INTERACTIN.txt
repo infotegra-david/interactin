@@ -1,3 +1,15 @@
+uma pacma cragma specma: 'toxicity'
+no likes no music: 
+
+
+despues del 20 llamar a la alcaldia de keneddy 448 14 00 Ext. 8100 (no hay personal, estan en contratacion)
+ir al parque cayetano cañizares perguntar a ver si saben
+
+
+
+Dña Norma 
+calle 17 b 115 - 15 casa morada
+
 patricia suarez
 ejecutiva de florida bitsmarck
 codigo llamada 584
@@ -81,13 +93,212 @@ interactin
 		- https://laravel.io/forum/03-06-2015-how-to-setup-laravel-5-in-shared-hosting
 
 	- instalar laravel 
-		composer create-project --prefer-dist laravel/laravel interactin "5.4.*"
+		composer create-project --prefer-dist laravel/laravel interactin "5.5.*"
 
-	- migrar todas las carpetas excepto la de vendor
-	- migrar el archivo composer.json
-	- quitar / comentar temporalmente las lineas de llamados a librerias externas del archivo config/app.php 
-	- ejecutar el comando 'composer update'
-	- colocar de nuevo las lineas de llamados a librerias externas del archivo config/app.php 
+	- instalar los paquetes externos, comandos:
+
+		composer require spatie/laravel-permission
+
+			- config/app.php -> providers
+				Spatie\Permission\PermissionServiceProvider::class,
+
+			- opcional, publicar las migraciones
+				php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+
+				php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="config"
+
+		composer require barryvdh/laravel-dompdf
+			https://github.com/barryvdh/laravel-dompdf
+			- config/app.php -> providers
+				Barryvdh\DomPDF\ServiceProvider::class,
+			- config/app.php -> aliases
+				'PDF' => Barryvdh\DomPDF\Facade::class,
+
+		composer require laracasts/flash
+			https://github.com/laracasts/flash
+			- config/app.php -> providers
+				Laracasts\Flash\FlashServiceProvider::class,
+
+			- opcional, If you need to modify the flash message partials, you can run: (omitir)
+				php artisan vendor:publish --provider="Laracasts\Flash\FlashServiceProvider"
+
+		composer require "laravelcollective/html":"^5.5.0"
+			https://laravelcollective.com/docs/5.4/html
+			- config/app.php -> providers
+				Collective\Html\HtmlServiceProvider::class,
+			- config/app.php -> aliases
+				'Form' => Collective\Html\FormFacade::class,
+      			'Html' => Collective\Html\HtmlFacade::class,
+
+      	composer require --dev "xethron/migrations-generator"
+      		https://github.com/Xethron/migrations-generator
+
+      		- config/app.php -> providers
+      			Way\Generators\GeneratorsServiceProvider::class,
+				Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
+
+		composer require spatie/array-to-xml
+			https://github.com/spatie/array-to-xml
+				convertir array en xml
+
+		composer require "orchestra/parser=~3.0"
+			https://github.com/orchestral/parser
+				convertir xml en array
+			- config/app.php -> providers
+				Orchestra\Parser\XmlServiceProvider::class,
+			- config/app.php -> aliases
+				'XmlParser' => Orchestra\Parser\Xml\Facade::class,
+		/*
+		//cambio por el nuevo metodo de visor de logs
+		composer require rap2hpoutre/laravel-log-viewe
+			https://github.com/rap2hpoutre/laravel-log-viewer
+			- config/app.php -> providers
+				Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+			- opcional, publicar las vistas
+				php artisan vendor:publish \
+		*/
+
+	- nuevo metodo de visor de logs
+		https://github.com/ARCANEDEV/LogViewer/blob/master/_docs/1.Installation-and-Setup.md
+		- config/app.php
+			'log' => env('APP_LOG', 'daily'),
+		- comando
+			composer require arcanedev/log-viewer
+		- config/app.php -> providers
+			Arcanedev\LogViewer\LogViewerServiceProvider::class,
+		- comando para publicar los archivos
+			php artisan log-viewer:publish
+
+			- verificar los archivos
+				php artisan log-viewer:check
+
+
+
+
+	- agregar las rutas de los demas paquetes al archivo composer.json
+		- crear sembradores de la base de datos inverso
+			https://github.com/orangehill/iseed
+
+			"orangehill/iseed": "dev-master",
+
+			- config/app.php -> providers
+				/*para generar los seeders*/
+        		Orangehill\Iseed\IseedServiceProvider::class
+
+		- generador de scaffolds
+			http://labs.infyom.com/laravelgenerator/docs/5.5/installation
+
+			- default packages
+				"infyomlabs/laravel-generator": "5.5.x-dev",
+			    "laravelcollective/html": "^5.5.0",
+			    "infyomlabs/adminlte-templates": "5.5.x-dev"
+			- for swagger annotations
+			    "infyomlabs/swagger-generator": "dev-master",
+    			"jlapp/swaggervel": "dev-master"
+    		- generate form table
+    			"doctrine/dbal": "~2.3"
+
+	    	- ejecutar el comando 
+	    		composer update
+
+    		- config/app.php -> providers
+    			// Collective\Html\HtmlServiceProvider::class,
+				// Laracasts\Flash\FlashServiceProvider::class,
+				Prettus\Repository\Providers\RepositoryServiceProvider::class,
+				\InfyOm\Generator\InfyOmGeneratorServiceProvider::class,
+				\InfyOm\AdminLTETemplates\AdminLTETemplatesServiceProvider::class, 
+
+    		- config/app.php -> aliases
+				'Form'      => Collective\Html\FormFacade::class,
+				'Html'      => Collective\Html\HtmlFacade::class,
+				'Flash'     => Laracasts\Flash\Flash::class,
+
+			- Publish Vendor
+				php artisan vendor:publish
+
+			- Update API Routes
+				Open app\Providers\RouteServiceProvider.php and update mapApiRoutes method as following:
+
+				Route::prefix('api')
+				    ->middleware('api')
+				    ->as('api.')
+				    ->namespace($this->namespace."\\API")
+				    ->group(base_path('routes/api.php'));    
+
+			- Publish generator stuff:
+
+				php artisan infyom:publish
+
+
+    	- finalmente ejecutar el comando 
+    		composer update
+
+    - ejecutar el comando:
+    	php artisan make:auth
+
+	- migrar los grupos de carpetas, preferiblemente usando beyond compare
+		- \app\Console\Commands\AuthPermissionCommand.php
+		- \app\Console\Kernel.php
+		- \app\Email\
+		- comparar las diferencias
+			- \app\Exceptions\Handler.php
+				- hay varias diferencias pero posiblemente en la version 5.5 las trabajan en otro lado ()
+			- \app\Http\Kernel.php 
+			- \app\Http\Middleware\VerifyCsrfToken.php
+			- \config\app.php
+			- \config\mail.php
+			- /database/migrations/ 
+
+				use Illuminate\Support\Facades\Schema;
+				...
+				$table->timestamp('created_at')->nullable();
+				...
+
+				public function down()
+			    {
+			        Schema::dropIfExists('');
+			    }
+		- \app\Http\Controllers\
+		- \app\Http\Middleware\RoleMiddleware.php
+		- \app\Http\Requests\
+		- \app\Http\Traits\
+		- \app\Models\
+		- \app\Providers\
+		- \app\Repositories\
+		- \app\Authorizable.php
+		- \app\User.php
+		- \config\permission.php
+		- \config\options.php
+		- \database\migrations\foreign_keys\
+		- \database\seeds\
+		- \DOCUMENTOS\
+		- \public\ (carpetas solamente)
+			- \public\ajax
+			- \public\avatars
+			- \public\css (verificar contenido de app.css para omitir otras librerias)
+			- \public\data
+			- \public\docs
+			- \public\fonts
+			- \public\html
+			- \public\img
+			- \public\js (verificar contenido de app.js para omitir otras librerias)
+			- \public\particles_js (verificar pertinencia)
+			- \public\particles_js2 (verificar pertinencia)
+			- \public\public_old (verificar pertinencia)
+			- \public\sound
+		- \resources\lang\es\
+		- \resources\views\
+		- \routes\web.php
+		- \storage\app\public\
+
+
+
+
+	- esto aparentemente no se hace
+		- migrar el archivo composer.json
+		- quitar / comentar temporalmente las lineas de llamados a librerias externas del archivo config/app.php 
+		- ejecutar el comando 'composer update'
+		- colocar de nuevo las lineas de llamados a librerias externas del archivo config/app.php 
 	- darle permisos al usuario www-data a las carpetas correspondientes
 		sudo chgrp -R www-data storage bootstrap/cache
 	- configurar el archivo .env
@@ -134,7 +345,7 @@ interactin
 
 	php artisan iseed alianza,alianza_facultad,......
 
-	php artisan iseed alianza,alianza_aplicaciones,alianza_facultad,alianza_institucion,alianza_modalidades,alianza_programa,alianza_user,aplicaciones,archivo,asignatura,calificacion,campus,ciudad,clase_documento,datos_personales,departamento,documentos_alianza,documentos_iniciativa,documentos_inscripcion,documentos_institucion,documentos_oportunidad,equivalente,estado,evaluacion,facultad,financiacion,formato,fuente_financiacion,idiomas,iniciativa,iniciativa_actor,inscripcion,inscripcion_asignatura,institucion,mail,mail_archivo,matricula,migrations,modalidades,model_has_permissions,model_has_roles,multimedia,nivel,oportunidad,oportunidad_actor,oportunidad_modalidades,pagina,pais,pasos_alianza,pasos_alianza_mail,pasos_iniciativa,pasos_iniciativa_mail,pasos_inscripcion,pasos_inscripcion_mail,password_resets,periodo,permissions,persona_contacto,postulacion,programa,rol_iniciativa,role_has_permissions,roles,seccion,tipo_actor,tipo_alianza,tipo_archivo,tipo_documento,tipo_facultad,tipo_idioma,tipo_institucion,tipo_paso,tipo_tramite,user_campus,user_tipo_paso,user_tipo_paso_mail,users
+	php artisan iseed alianza,alianza_aplicaciones,alianza_facultad,alianza_institucion,alianza_modalidades,alianza_programa,alianza_user,aplicaciones,archivo,asignatura,calificacion,campus,ciudad,clasificacion,datos_personales,departamento,documentos_alianza,documentos_iniciativa,documentos_inscripcion,documentos_institucion,documentos_oportunidad,equivalente,estado,evaluacion,facultad,financiacion,formato,fuente_financiacion,idiomas,iniciativa,iniciativa_actor,inscripcion,inscripcion_asignatura,institucion,mail,mail_archivo,matricula,migrations,modalidades,model_has_permissions,model_has_roles,multimedia,nivel,oportunidad,oportunidad_actor,oportunidad_modalidades,pagina,pais,pasos_alianza,pasos_alianza_mail,pasos_iniciativa,pasos_iniciativa_mail,pasos_inscripcion,pasos_inscripcion_mail,password_resets,periodo,permissions,persona_contacto,postulacion,programa,rol_iniciativa,role_has_permissions,roles,seccion,tipo_actor,tipo_alianza,tipo_archivo,tipo_documento,tipo_facultad,tipo_idioma,tipo_institucion,tipo_paso,tipo_tramite,user_campus,user_tipo_paso,user_tipo_paso_mail,users
 
 	ELIMINAR EL SEMBRADOR PARA LAS TABLAS 
 		migrations
@@ -253,6 +464,17 @@ interactin
 
 	sudo systemctl restart apache2
 
+- subir cambios a git
+
+	- abrir un bash en la carpeta del proyecto
+	- ejecutar los siguientes comandos
+		git status
+		git add .
+		git commit -m "Mensaje del commit"
+		git push origin master
+
+
+
 - generar pdf
 
 	https://github.com/barryvdh/laravel-dompdf
@@ -265,6 +487,12 @@ interactin
 	## remove permissions
 	
 	php artisan auth:permission Comment --remove
+
+- anter de iniciar la aplicacion Precompile Assets
+	
+	php artisan optimize
+	php artisan config:cache
+	php artisan route:cache
 
 - restablecer el auto_increment de las tablas
 	- toca crear un procedimiento almacenado
@@ -372,7 +600,7 @@ tablas
 	calificacion
 	campus
 	ciudad
-	clase_documento
+	clasificacion
 	datos_personales
 	departamento
 	documentos_alianza
@@ -694,6 +922,7 @@ CORRECCIONES
 		- (solucionado) indicar en el paso 3 Guardar/Enviar Pre-registro que se tiene que oprimir el boton para ver los datos registrados y luego enviarlos
 
 		- crear el administrador del contenido de los emails
+			composer require spatie/array-to-xml
 		- (solucionado) quitar el boton de ir a interactin en la previsualizacion de email
 
 		- (solucionado) colocar un titulo de indicacion que es la previsualizacion
@@ -903,13 +1132,47 @@ CORRECCIONES
 
 	- resultado de la reunion 6 con Ing. Jaime
 		- interchange
-			- las reglas como de los limites para el campo estudiante_promedio en interout no deberian estar setiadas, debe haber como administrarlas
+			- (solucionado) las reglas como de los limites para el campo estudiante_promedio en interout no deberian estar setiadas, debe haber como administrarlas
 			- en el paso 3 el periodo debe cargar las modalidades que esten activas en ese periodo
 			- en los pasos de enviar los datos cargar inmediatamente el destino o colocar una division con un mensaje de que lo va a redirigir
 			- revizar porque no esta registrando el paso 8 de datos de contacto
 			- revizar porque sale error en el servidor al cargar archivos (parece que no le carga el nombre)
 			- revizar porque no muestra las imagenes en el pdf
 
+		- interadmin -> instituciones -> documentos
+			- agregar la opcion de otros en los tipos de documentos
+
+		- internacionalizacion
+			https://laravel.com/docs/5.5/localization
+
+		- crear el administrador del contenido de los emails
+			- se va a usar xml para guardar las secciones de las plantillas
+				array a xml: https://github.com/spatie/array-to-xml
+				xml a array: https://github.com/orchestral/parser
+
+			- plantillas de emails
+				- estan asociadas por lo menos al campus principal de la institucion
+				- estan clasificadas por los procesos que las usan (INICIATIVA, INSCRIPCION, INSTITUCION, OPORTUNIDAD, MULTIMEDIA, ALIANZA, IDENTIDAD, USUARIO)
+				- los procesos envian emails 
+					- en diferentes pasos (pre-registro y registro, validacion, documentos, finalizacion)
+					- por diferentes situaciones (pre-registro y registro, aceptacion, aprobacion, rechazo, finalizacion) 
+					- a diferentes tipos de destinatarios (coordinador_externo,coordinador_interno,validador, estudiante)
+
+					
+		- (solucionado) arreglar el problema con los selects y la duplicacion de los placeholder y 999999 
+		- (solucionado) arreglar error con el validador 1 en la subscripcion de una alianza: 'no es su turno de validacion'
+		- (solucionado) arreglar el error de que el coordinador externo pueda subscribir una alianza
+		- (solucionado) arreglar la carga de los archivos
+		- (solucionado) arreglar la vista de datos para los validadores
+		- (solucionado) areglar el cambio de campus y de idioma
+		- areglar el problema del paso 8 en interin
+
+		- quitar los enlaces y botones que no se van a usar
+		- darle funcionalidad a los enlaces y botones que si se van a usar
+		- realizar el tutorial de open ldap
+		- configurar los roles con el menu y los accesos
+
+		- verificar: las tablas iniciativa, oportunidad y modalidad apuntan a lo mismo? , reducir a oportunidad
 
 
 
@@ -923,6 +1186,52 @@ CORRECCIONES
 
 
 
+
+
+
+
+
+
+	- revizar las siguientes paginas
+		- Sublime Text 3 Setup - Most Important Packages
+			https://www.youtube.com/watch?v=oHmPrjSzmwU
+		- Laravel Collections
+			https://laravel.com/docs/5.5/collections
+		- Laravel Localization
+			https://laravel.com/docs/5.5/localization
+		- What's New in Laravel 5.5: 
+			https://laracasts.com/series/whats-new-in-laravel-5-5
+		- Desarrollo de clases y métodos con pruebas automatizadas
+			https://styde.net/desarrollo-de-clases-y-metodos-con-pruebas-automatizadas/
+		- (revizar enlaces del documento) Por qué Laravel NO es un framework MVC y tú deberías olvidarte de MVC
+			https://styde.net/porque-laravel-no-es-mvc-y-tu-deberias-olvidarte-de-mvc/
+		- Técnicas para Aumentar la Velocidad de Carga Web
+			http://deteresa.com/velocidad-carga/
+		- 
+			
+
+
+
+	- laravel 5.5, que hay nuevo?
+		- manejador de errores Whoops, mas completo y detallado
+		- request
+			se puede llamar como un metodo: request() 
+				Ejemplo:
+					$this->validate(request(),[
+						'title' => 'required',
+						'body' => 'required'
+					]);
+
+					\App\Post::forceCreate(request(['title','body']));
+
+		- usar tinker para realizar consultas a la base de datos a traves de la linea de comandos: php artisan tinker
+
+			>>> App\Models\Admin\Role::all();
+
+
+
+	- modelo CMMI
+		https://msdn.microsoft.com/es-es/library/ee461556.aspx
 
 
 
@@ -1172,7 +1481,7 @@ $campusApp = $this->campusAppFound;
 		#2, Si quieres simplemente ofuscar, http://javascriptobfuscator.com/ te lo deja horripilante. Si también quieres minimizar el .js, prueba http://dean.edwards.name/packer/ . 
 
 	- generar los crud a partir de las tablas en la BD
-		php artisan infyom:scaffold $MODEL_NAME --fromTable --tableName=$TABLE_NAME
+		php artisan infyom:scaffold $MODEL_NAME [--prefix=Admin] --fromTable --tableName=$TABLE_NAME [--skip=migration,model,controllers,api_controller,scaffold_controller,scaffold_requests,routes,api_routes,scaffold_routes,views,tests,menu,dump-autoload]
 
 	- eliminar los crud creados
 		php artisan infyom:rollback $MODEL_NAME --prefix=Admin $COMMAND_TYPE ( $COMMAND_TYPE = [api, scaffold, api_scaffold] )

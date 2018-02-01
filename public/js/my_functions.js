@@ -27,7 +27,7 @@
 		}
 		
 		//console.log(texto);
-		if ( formClass == 'PreRegistro_form' || formClass == 'PreRegistro_form_solo' || formClass == 'Registro_form' || formClass == 'Registro_form_solo' ) {
+		if ( formClass == 'PreRegistro_form' || formClass == 'PreRegistro_form_solo' || formClass == 'Registro_form' || formClass == 'Registro_form_solo' || formClass == 'FormGrid' ) {
 			//mostrar el resto del formulario al seleccionar el tipo de tramite
 			if ( thisName == 'tipo_tramite' && valor != '' ) {
 				$('#'+ formId +' div.paso1').removeClass('hide');
@@ -46,25 +46,42 @@
 			if ( $(thisElement).attr('multiple') != undefined ) {
 				exists999999 = jQuery.inArray( "999999", valor );
 			};
+
+			//cambiar el contenido de un campo adicional al escojer un select con un atributo llamado set_value_field
+			if ( $(thisElement).attr('set_value_field') !== undefined ) {
+				var get_field_name = $(thisElement).attr('set_value_field');
+				var value_field = $(thisElement).find(':selected').attr(get_field_name);
+				$('#'+ formId +' [name="'+ get_field_name +'"]').val(value_field);
+			};
 			
 			//console.log(thisName);
 			//console.log(valor);
 			//mostrar campo de otro 
 			if ( valor == '999999' || exists999999 >= 0 ) {
 				$(thisElement).attr('otro', thisName +'_otro');
-				$('#'+ formId +' div[contenido="'+ thisName +'_otro"]').removeClass('hide');
+				$('#'+ formId +' [contenido="'+ thisName +'_otro"]').removeClass('hide');
 				$('#'+ formId +' [name="'+ thisName +'_otro"]').focus();
+
+				var readonly_field = $(thisElement).attr('readonly_field');
+				if (readonly_field != '') {
+					$('#'+ formId +' [name="'+ readonly_field +'"]').removeAttr('readonly');
+				}
 				//ocultar los programas
 				/*
 				if ( thisName == 'facultad_origen' ) {
-					$('#'+ formId +' div[contenido="programa_origen"]').addClass('hide');
+					$('#'+ formId +' [contenido="programa_origen"]').addClass('hide');
 				}*/
 			}else if ( $(thisElement).attr('otro') != undefined ) {
-				$('#'+ formId +' div[contenido="'+ thisName +'_otro"]').addClass('hide');
+				$('#'+ formId +' [contenido="'+ thisName +'_otro"]').addClass('hide');
+
+				var readonly_field = $(thisElement).attr('readonly_field');
+				if (readonly_field != '') {
+					$('#'+ formId +' [name="'+ readonly_field +'"]').attr('readonly','readonly');
+				}
 				//mostrar los programas
 				/*
 				if ( thisName == 'facultad_origen' ) {
-					$('#'+ formId +' div[contenido="programa_origen"]').removeClass('hide');
+					$('#'+ formId +' [contenido="programa_origen"]').removeClass('hide');
 				}*/
 			};
 
@@ -128,43 +145,52 @@
 		var urlDestino = origen.attr('url');
 		// var origenParent =  origen.parents('form').attr('id');
 		var placeholder = {};
+		var otroVal = {};
 		var cloneDefaultOptions = {};
 		//si hay mas de un target hara otras operaciones
 		destinoName = destinoName.split(",");
 		if (destinoName.length == 1) {
 			placeholder = $('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').find('option[value=""]').text();
+			otroVal = $('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').find('option[value="999999"]').text();
+			if (placeholder == '') {
+				placeholder = $('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').find('option[value="0"]').text();
+			}
 		}else{
 			jQuery.each(destinoName, function(index, item) {
 				var sizeTargetSelect = $('#' +origenParent+ ' select[name="'+item+'"]').size();
 				if (sizeTargetSelect > 0 ) {
 					placeholder[item] = $('#'+ origenParent +' select[name="'+ item +'"]').find('option[value=""]').text();
+					otroVal[item] = $('#'+ origenParent +' select[name="'+ item +'"]').find('option[value="999999"]').text();
+					if (placeholder[item] == '') {
+						placeholder[item] = $('#'+ origenParent +' select[name="'+ item +'"]').find('option[value="0"]').text();
+					}
 				}
 			});
 		}
 
 
 		
-		if(!origenVal || origenVal == '' || origenVal == '999999'){
+		if(!origenVal || origenVal == '' || origenVal == '0' || origenVal == '999999'){
 			if (destinoName.length == 1) {
-				var cloneDefault = $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').find('option[value="999999"]');
-				cloneDefault = cloneDefault.clone();
-				var sizecloneDefault = cloneDefault.size();
-console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
+				// var cloneDefault = $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').find('option[value="999999"]');
+				// cloneDefault = cloneDefault.clone();
+				// var sizecloneDefault = cloneDefault.size();
+// console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 				$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').empty();
-				if (sizecloneDefault > 0) {
-					// $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append('<option value="">' + placeholder + '</option>');
-					$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append(cloneDefault);
+				// if (sizecloneDefault > 0) {
+				// 	// $('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append('<option value="">' + placeholder + '</option>');
+				// 	$('#' +origenParent+ ' select[name="'+destinoName[0]+'"]').append(cloneDefault);
 					
-				}
+				// }
 			}else{
 				//si es un array de destinos entonces son inputs
 				jQuery.each(destinoName, function(index, item) {
 					var sizeTargetInput = $('#' +origenParent+ ' input[name="'+item+'"]').size();
 					var sizeTargetSelect = $('#' +origenParent+ ' select[name="'+item+'"]').size();
 
-					var cloneDefault = $('#' +origenParent+ ' select[name="'+item+'"]:not(.no_vaciar)').find('option[value="999999"]');
-					cloneDefault = cloneDefault.clone();
-					var sizecloneDefault = cloneDefault.size();
+					// var cloneDefault = $('#' +origenParent+ ' select[name="'+item+'"]:not(.no_vaciar)').find('option[value="999999"]');
+					// cloneDefault = cloneDefault.clone();
+					// var sizecloneDefault = cloneDefault.size();
 
 					
 					if (sizeTargetInput > 0 ) {
@@ -172,9 +198,9 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 					}else if (sizeTargetSelect > 0 ) {
 						$('#' +origenParent+ ' select[name="'+item+'"]:not(.no_vaciar)').empty();
 						//inserta la opcion 'otra' en donde existia
-						if (sizecloneDefault > 0) {
-							$('#' +origenParent+ ' select[name="'+item+'"]').append(cloneDefault);
-						}
+						// if (sizecloneDefault > 0) {
+						// 	$('#' +origenParent+ ' select[name="'+item+'"]').append(cloneDefault);
+						// }
 					}
 
 				});
@@ -182,10 +208,11 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 			if (placeholder != '') {
 				if (destinoName.length == 1) {
 					$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').prepend('<option value="">' + placeholder + '</option>');
+					$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').prop("selectedIndex", 0);
 				}else{
 					jQuery.each(placeholder, function(index, item) {
 						$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').prepend('<option value="">' + item + '</option>');
-						$('#' +origenParent+ ' select[name="'+index+'"]').val('');
+						$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').prop("selectedIndex", 0);
 					});
 				}
 			}
@@ -249,76 +276,97 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 			};
 			
 			*/
-
 			
+			try {
 			//alert(response);
-			//se insertan los elementos recibidos con formato de option dentro del select
-			$.each(response, function(i,item) {
-				if (destinoName.length == 1) {
-					$('#'+ origenParent +' select[name="'+ destinoName +'"]').append("<option value=\""+ i +"\">" + item + "</option>");
-				}else{
-					//si es un array de destinos entonces son inputs
-					$usuario_activo = 1;
-					jQuery.each(item, function(index, itemVal) {
-						//console.log(index+'--'+itemVal);
-						var sizeTargetInput = $('#' +origenParent+ ' input[name="'+index+'"]').size();
-						var sizeTargetSelect = $('#' +origenParent+ ' select[name="'+index+'"]').size();
-						var sizeTargetSelectNoVaciar = $('#' +origenParent+ ' select[name="'+index+'"].no_vaciar').size();
-						
-						if ( index == 'usuario_activo' && itemVal == 0 ) {
-							$usuario_activo = 0;
-						}else if ( index == 'usuario_activo' && itemVal == 1 ) {
-							$usuario_activo = 1;
-						}
-						if ( $usuario_activo == 0 ) {
-							if (sizeTargetInput > 0 ) {
-								$('#' +origenParent+ ' input[name="'+index+'"]').attr('disabled','disabled');
-							}else if (sizeTargetSelect > 0 ) {
-								$('#' +origenParent+ ' select[name="'+index+'"]').attr('disabled','disabled');
-							}
-						}else if ( $usuario_activo == 1 ) {
-							if (sizeTargetInput > 0 ) {
-								$('#' +origenParent+ ' input[name="'+index+'"]').removeAttr('disabled');
-							}else if (sizeTargetSelect > 0 ) {
-								$('#' +origenParent+ ' select[name="'+index+'"]').removeAttr('disabled');
-							}
-						}
-						if (sizeTargetInput > 0 ) {
-							$('#' +origenParent+ ' input[name="'+index+'"]').val(itemVal);
-						}else if (sizeTargetSelect > 0 ) {
-							if (index+'_seleccion' in item) {
-								if (sizeTargetSelectNoVaciar <= 0 ) {
-									jQuery.each(itemVal, function(indexItem, itemValue) {
-										$('#'+ origenParent +' select[name="'+ index +'"]').append("<option value=\""+ indexItem +"\">" + itemValue + "</option>");
-									});
-								}
-								$('#' +origenParent+ ' select[name="'+index+'"]').val(item[index+'_seleccion']);
-							}else {
-								if (jQuery.isPlainObject(item[index])) {
-									jQuery.each(itemVal, function(indexItem, itemValue) {
-										$('#'+ origenParent +' select[name="'+ index +'"]').append("<option value=\""+ indexItem +"\">" + itemValue + "</option>");
-									});
-								}else{
-									$('#' +origenParent+ ' select[name="'+index+'"]').val(item[index]);
-								}
-							}
-						}
-						
-					});
+				//se insertan los elementos recibidos con formato de option dentro del select
+				$.each(response, function(i,item) {
+					if (destinoName.length == 1 && origen.attr('extra_value_field') === undefined) {
+						$('#'+ origenParent +' select[name="'+ destinoName +'"]').append("<option value=\""+ i +"\">" + item + "</option>");
+					}else{
+						if (origen.attr('extra_value_field') !== undefined) {
+							var j = 0;
+							var valuesItem = {};
+							var extra_value_field = origen.attr('extra_value_field');
+							jQuery.each(item, function(index, itemVal) {
+								//es un array con tres datos: el id, el nombre y el dato extra
+								valuesItem[j] = itemVal;
+								j++;
+							});
+							$('#'+ origenParent +' select[name="'+ destinoName +'"]').append("<option value=\""+ valuesItem[0] +"\" "+ extra_value_field +"=\""+ valuesItem[2] +"\">" + valuesItem[1] + "</option>");
 
-					//$('#'+ origenParent +' input[name="'+ destinoName[] +'"]').append("<option value=\""+ i +"\">" + item + "</option>");
+						}else{
+							$usuario_activo = 1;
+							jQuery.each(item, function(index, itemVal) {
+								// console.log(index+'--'+itemVal);
+								var extra_value_field = origen.attr('extra_value_field');
+								//si es un array de destinos entonces son inputs
+								var sizeTargetInput = $('#' +origenParent+ ' input[name="'+index+'"]').size();
+								var sizeTargetSelect = $('#' +origenParent+ ' select[name="'+index+'"]').size();
+								var sizeTargetSelectNoVaciar = $('#' +origenParent+ ' select[name="'+index+'"].no_vaciar').size();
+								
+								if ( index == 'usuario_activo' && itemVal == 0 ) {
+									$usuario_activo = 0;
+								}else if ( index == 'usuario_activo' && itemVal == 1 ) {
+									$usuario_activo = 1;
+								}
+								if ( $usuario_activo == 0 ) {
+									if (sizeTargetInput > 0 ) {
+										$('#' +origenParent+ ' input[name="'+index+'"]').attr('disabled','disabled');
+									}else if (sizeTargetSelect > 0 ) {
+										$('#' +origenParent+ ' select[name="'+index+'"]').attr('disabled','disabled');
+									}
+								}else if ( $usuario_activo == 1 ) {
+									if (sizeTargetInput > 0 ) {
+										$('#' +origenParent+ ' input[name="'+index+'"]').removeAttr('disabled');
+									}else if (sizeTargetSelect > 0 ) {
+										$('#' +origenParent+ ' select[name="'+index+'"]').removeAttr('disabled');
+									}
+								}
+								if (sizeTargetInput > 0 ) {
+									$('#' +origenParent+ ' input[name="'+index+'"]').val(itemVal);
+								}else if (sizeTargetSelect > 0 ) {
+									if (index+'_seleccion' in item) {
+										if (sizeTargetSelectNoVaciar <= 0 ) {
+											jQuery.each(itemVal, function(indexItem, itemValue) {
+												$('#'+ origenParent +' select[name="'+ index +'"]').append("<option value=\""+ indexItem +"\">" + itemValue + "</option>");
+											});
+										}
+										$('#' +origenParent+ ' select[name="'+index+'"]').val(item[index+'_seleccion']);
+									}else {
+										if (jQuery.isPlainObject(item[index])) {
+											jQuery.each(itemVal, function(indexItem, itemValue) {
+												$('#'+ origenParent +' select[name="'+ index +'"]').append("<option value=\""+ indexItem +"\">" + itemValue + "</option>");
+											});
+										}else{
+											$('#' +origenParent+ ' select[name="'+index+'"]').val(item[index]);
+										}
+									}
+								}
+								
+							
+							});
+						}
+
+						//$('#'+ origenParent +' input[name="'+ destinoName[] +'"]').append("<option value=\""+ i +"\">" + item + "</option>");
+						
+					}
+					/*
+					if (multiple) {
+						var htmlList = '<li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="'+ i +'"> '+ item +'</label></a></li>';
+						$('#'+ origenParent +' select[name="'+ destinoName +'"]').parent().find('.multiselect-container').append(htmlList);
+					};
+					*/
 					
-				}
-				/*
-				if (multiple) {
-					var htmlList = '<li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="'+ i +'"> '+ item +'</label></a></li>';
-					$('#'+ origenParent +' select[name="'+ destinoName +'"]').parent().find('.multiselect-container').append(htmlList);
-				};
-				*/
-				
-			});
+				});
+
+		    } catch(err) {
+		       // It is text, do you text handling here
+		       console.log('Ocurrio un error:'+err);
+		    }
 			//$('#'+ origenParent +' select[name="'+ destinoName +'"]').multiselect({});
 		});
+
 		if (placeholder != '') {
 			var optionStart = '<option value="">';
 			var optionEnd = '</option>';
@@ -328,15 +376,32 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 					optionStart = '<option  hidden="hidden" value="">';
 				};
 				$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').prepend(optionStart + placeholder + optionEnd);
+				$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').prop("selectedIndex", 0);
 			}else{
 				jQuery.each(placeholder, function(index, item) {
 					if ( $('#'+ origenParent +' select[name="'+ index +'"]').attr('multiple') != undefined ) {
 						optionStart = '<option  hidden="hidden" value="">';
 					};
 					$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').prepend(optionStart + item + optionEnd);
+					$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').prop("selectedIndex", 0);
 				});
 			}
 		}
+
+		if (otroVal != '') {
+			if (destinoName.length == 1) {
+				$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').append('<option value="999999">' + otroVal + '</option>');
+				$('#'+ origenParent +' select[name="'+ destinoName[0] +'"]').prop("selectedIndex", 0);
+			}else{
+				jQuery.each(otroVal, function(index, item) {
+					if (item != '') {
+						$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').append('<option value="999999">' + item + '</option>');
+						$('#'+ origenParent +' select[name="'+ index +'"]:not(.no_vaciar)').prop("selectedIndex", 0);
+					}
+				});
+			}
+		}
+
 	};
 
 
@@ -408,7 +473,7 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 		if( formEnviar(form,divData,results,'creación','no',sinArchivos) ){
 			$( document ).one('ajaxStop', function() {
 				if( $(results).attr('return') == 'correcto' ){
-					var time = 2000;
+					var time = 500;
 					if( $(form).hasClass('Form_submit_ajax') == false ){
 						if ( $( results ).find('.dato_adicional#noNext').size() == 0 ) {
 							$(menu + ' .actions .btn-next').click();
@@ -452,9 +517,9 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 					if ( $( results ).find('#redirect_url').size() > 0 ) {
 
 						var redirect_url = $( results ).find('#redirect_url').val();
-						// setTimeout(function(){
+						setTimeout(function(){
 							window.location.href = redirect_url;
-						// }, time);
+						}, time);
 					}
 
 				};
@@ -912,3 +977,20 @@ console.log('entro por aqui, sizecloneDefault:' + sizecloneDefault);
 	});
 
 	
+	/*los select con el id select_filter al cambiar recarga la pagina*/
+
+    $(document).on('change','select#select_filter',function(){
+        $urlRoute = $(this).attr('url');
+        $urlRoute = $urlRoute + '?filter=' + $(this).val();
+        window.location.href = $urlRoute;
+    });
+
+
+	$('input#date').each(function(){
+    	$( this ).datepicker();
+    	$( this ).datepicker("option", "dateFormat", "yy-mm-dd");
+    	$( this ).datepicker("setDate", $( this ).attr('value') );
+
+	});
+    	// $( 'input#date' ).datepicker();
+    	// $( 'input#date' ).datepicker("option", "dateFormat", "yy-mm-dd");

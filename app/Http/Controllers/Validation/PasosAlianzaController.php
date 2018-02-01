@@ -42,11 +42,11 @@ class PasosAlianzaController extends AppBaseController
     private $campusAppFound;
     private $tipoPaso;
     private $peticion;
-    private $viewWith;
+    private $viewWith = [];
 
     public function __construct(PasosAlianzaRepository $pasosAlianzaRepo, PasosAlianza $pasosAlianzaModel, TipoPaso $tipoPasoModel, Request $request)
     {
-        $this->middleware(function ($request, $next) {
+        /*$this->middleware(function ($request, $next) {
 
             if (Auth::user()) {
                 $this->user = Auth::user();
@@ -82,6 +82,49 @@ class PasosAlianzaController extends AppBaseController
             }
 
             $this->viewWith = ['campusApp' => $this->campusApp];
+
+            return $next($request);
+        });*/
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+            }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
+            }
+            
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
         });
@@ -232,7 +275,7 @@ class PasosAlianzaController extends AppBaseController
         }
 
 
-        if ( $paso_id !='' ) {
+        if ( !empty($paso_id) ) {
 
             $pasosAlianza = $pasosAlianza->where('pasos_alianza.id', $paso_id)
                         ->select('pasos_alianza.*','estado.nombre As estado_nombre',DB::raw("concat(replace(substr(tipo_paso.nombre,instr(tipo_paso.nombre,'paso')+4,2),'_',''),' - ',tipo_paso.titulo) AS tipo_paso_titulo"),'users.name AS user_name','users.email AS user_email','roles.name AS role_name','user_tipo_paso.titulo');
@@ -275,7 +318,7 @@ class PasosAlianzaController extends AppBaseController
 
 
             if ( empty($pasosAlianza) ) {
-                Flash::error('No se ha encontrado el registro del paso.');
+                Flash::error('No se han encontrado registros.');
                 return redirect(route('interalliances.validations_interalliances.show',[$alianza_id]));
             }
             
@@ -296,22 +339,22 @@ class PasosAlianzaController extends AppBaseController
                 if ($ultimoValidador->id == $user_actual->id) {
                     $GenerarDocumento = true;
                     
-                    $institucionId = $this->user->campus->first()->institucion->id;
+                    $institucionId = $this->campusAppFound->institucion->id; 
 
                     $tipo_documento_nombre = 'PRE-FORMAS';
 
-                    $clase_documento_nombre = 'ALIANZA';
-                    $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                        ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+                    $clasificacion_nombre = 'ALIANZA';
+                    $tipo_documento_id = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                        ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                         ->pluck('tipo_documento.id')->first();
-                    $IdDocumentosAlianza =  \App\Models\DocumentosAlianza::join('tipo_documento','documentos_alianza.tipo_documento_id','tipo_documento.id')
+                    $IdDocumentosAlianza = \App\Models\DocumentosAlianza::join('tipo_documento','documentos_alianza.tipo_documento_id','tipo_documento.id')
                                 ->where('documentos_alianza.alianza_id',$alianzaId)
                                 ->where('documentos_alianza.tipo_documento_id',$tipo_documento_id)
                                 ->pluck('documentos_alianza.archivo_id')->toArray();
 
-                    $clase_documento_nombre = 'INSTITUCION';
-                    $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                        ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+                    $clasificacion_nombre = 'INSTITUCION';
+                    $tipo_documento_id = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                        ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                         ->pluck('tipo_documento.id')->first();
 
                     
@@ -319,6 +362,7 @@ class PasosAlianzaController extends AppBaseController
                                 ->where('documentos_institucion.institucion_id',$institucionId)
                                 ->where('documentos_institucion.tipo_documento_id',$tipo_documento_id)
                                 ->pluck('documentos_institucion.archivo_id')->toArray();
+
 
                     $pre_formas_alianza =  \App\Models\Archivo::whereIn('id',$IdDocumentosAlianza)->select(DB::raw('concat("GUARDADO - ",nombre) AS nombre'),'id','path')->get()->toArray();
                     $pre_formas_institucion =  \App\Models\Archivo::whereIn('id',$IdDocumentosInstitucion)->select('nombre','id','path')->get()->toArray();
@@ -416,7 +460,7 @@ class PasosAlianzaController extends AppBaseController
                     ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
                     ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                     ->whereIn('user_tipo_paso.tipo_paso_id',array_column($tipos_pasos, 'id') )
-                    ->where('model_has_roles.role_id',$roleValidador )
+                    ->where([['model_has_roles.role_id',$roleValidador],['user_tipo_paso.campus_id',$this->campusAppFound->id ?? 0]] )
                     ->orderBy('user_tipo_paso.orden','desc')
                     ->first();
         //compara si el ultimo validador es es actual para mostrarle la opcion
@@ -453,6 +497,7 @@ class PasosAlianzaController extends AppBaseController
         $thisStoreUpdate = $this->storeUpdate($storeUpdateData,'','local');
         
         if (!is_string($thisStoreUpdate) && !is_array($thisStoreUpdate)) {
+
             return $thisStoreUpdate;
         }
         $viewWith = $this->viewWith;
@@ -463,9 +508,9 @@ class PasosAlianzaController extends AppBaseController
             $archivo_id = $request['pre_forma'];
             
             $tipo_documento_nombre = 'PRE-FORMAS';
-            $clase_documento_nombre = 'ALIANZA';
-            $tipo_documento = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                    ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+            $clasificacion_nombre = 'ALIANZA';
+            $tipo_documento = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                    ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                     ->select('tipo_documento.id')->first();
 
             if (session('campusApp') != null) {
@@ -860,7 +905,8 @@ class PasosAlianzaController extends AppBaseController
 
         //verifica si puede editar o crear un registro 
         $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id);
-        if ($validarEditar == false) {
+
+        if ($validarEditar['puedeEditar'] == false) {
             Flash::error('No es su turno, aún no puede agregar o editar validaciones en esta alianza.');
 
             return 'error_editar';
@@ -950,7 +996,9 @@ class PasosAlianzaController extends AppBaseController
 
         //verifica si puede editar o crear un registro 
         $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id,$paso_id);
-        if ($validarEditar == false) {
+        
+        if ($validarEditar['puedeEditar'] == false) {
+            
             if ($validarEditar['dondeSalio'] == 'PASOS_INCOMPLETOS') {
 
                 Flash::error('No puede agregar o editar validaciones en esta alianza, no se han registrados los datos de todos los pasos.');
@@ -1113,7 +1161,7 @@ class PasosAlianzaController extends AppBaseController
         }
         $paso_id = $input['tipo_paso_id'];
         $validarEditar = $this->validarEditar('editar',$user_actual->id,$alianza_id,$paso_id);
-        if ($validarEditar == false) {
+        if ($validarEditar['puedeEditar'] == false) {
             Flash::error('No es su turno, aún no se puede registrar la validación.');
 
             return redirect(route('interalliances.validations_interalliances.show',$input['alianza_id']));
@@ -1126,8 +1174,9 @@ class PasosAlianzaController extends AppBaseController
             $hasAllRoles = $user_actual->hasAllRoles('generar_documento');
             if ( $hasAllRoles ) {
                 $validarEditar = $this->validarEditar('generar_documento',$user_actual->id);
+    
                 //compara si el ultimo validador es es actual para mostrarle la opcion
-                if ($validarEditar == false) {
+                if ($validarEditar['puedeEditar'] == false) {
                     Flash::error('No tiene permitido realizar este tipo de validación.');
 
                     return redirect(route('interalliances.index'));
@@ -1308,6 +1357,7 @@ class PasosAlianzaController extends AppBaseController
     public function validarEditar($tipo,$user_id,$alianza_id = '',$paso_id = 0)
     {   
         
+        $retorno = [];
         $puedeEditar = false;
         $dondeSalio = 'VACIO';
 
@@ -1324,12 +1374,16 @@ class PasosAlianzaController extends AppBaseController
                         ->where('model_has_roles.role_id',$roleValidador )
                         ->orderBy('user_tipo_paso.orden','desc')
                         ->first();
+            
+            
             //compara si el ultimo validador es es actual para mostrarle la opcion
             if ($ultimoValidador->id != $user_id) {
-                $retorno = false;
+                
+                $puedeEditar = false;
                 $dondeSalio = 'GENERAR_DOCUMENTO';
             }else{
-                $retorno = true;
+                
+                $puedeEditar = true;
                 $dondeSalio = 'GENERAR_DOCUMENTO';
             }
         }elseif($tipo == 'editar'){
@@ -1359,7 +1413,7 @@ class PasosAlianzaController extends AppBaseController
                         ->get()->toArray();
                     // ->whereIn('estado.id',array_column($estadosValidador, 'id') )
 
-
+// print_r($registrosPasos );
             $hayValidaciones = 0;
             $keyAnterior = null;
             foreach ($registrosPasos as $key => $value) {
@@ -1399,6 +1453,10 @@ class PasosAlianzaController extends AppBaseController
                                 // SI EL PASO ANTERIOR ES DE UN COORD. EXTERNO
                                 $puedeEditar = true;
                                 $dondeSalio = 'ANTERIOR_ACEPTADO';
+                            }elseif ($keyAnterior !== null && $registrosPasos[$keyAnterior]['email_estado'] == 1) {
+                                // SI EL PASO ANTERIOR ES DE UN USUARIO
+                                $puedeEditar = true;
+                                $dondeSalio = 'ANTERIOR_EMAIL_ESTADO';
                             }else{
                                 $puedeEditar = false;
                             }
@@ -1418,8 +1476,28 @@ class PasosAlianzaController extends AppBaseController
                     $hayValidaciones = 0;
                 }
                 $keyAnterior = $key;
+// echo "puedeEditar foreach:";                
+// var_dump($puedeEditar);
             }
 
+            if ($paso_id != 0) {
+                $tipo_paso_id = $paso_id;
+            }else{
+                $paso = 6;
+                $tipo_paso_id = $this->tipoPaso->where('nombre','paso'.$paso.'_interalliance')->pluck('id')->first();
+            }
+
+            $roleValidador = Role::where('name','validador')->pluck('id');
+            $validadoresPaso = \App\Models\Validation\UserPaso::select('users.id AS user_id')
+                        ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
+                        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->where('user_tipo_paso.tipo_paso_id',$tipo_paso_id)
+                        ->where('model_has_roles.role_id',$roleValidador )
+                        ->orderBy('user_tipo_paso.orden','asc');
+            
+            $validadoresPaso = $validadoresPaso->get()->toArray();
+
+            /*
 
             if ($hayValidaciones == 0) {
                 //se espera que no cambie el tipo de paso de la alianza
@@ -1438,26 +1516,11 @@ class PasosAlianzaController extends AppBaseController
                     $puedeEditar = false;
                 }
             }
+            */
 
 
 
 
-            if ($paso_id != 0) {
-                $tipo_paso_id = $paso_id;
-            }else{
-                $paso = 6;
-                $tipo_paso_id = $this->tipoPaso->where('nombre','paso'.$paso.'_interalliance')->pluck('id')->first();
-            }
-
-            $roleValidador = Role::where('name','validador')->pluck('id');
-            $validadoresPaso = \App\Models\Validation\UserPaso::select('users.id AS user_id')
-                        ->join('users', 'user_tipo_paso.user_id', '=', 'users.id')
-                        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                        ->where('user_tipo_paso.tipo_paso_id',$tipo_paso_id)
-                        ->where('model_has_roles.role_id',$roleValidador )
-                        ->orderBy('user_tipo_paso.orden','asc');
-            
-            $validadoresPaso = $validadoresPaso->get()->toArray();
 
             if ($hayValidaciones == 0) {
                 //se espera que no cambie el tipo de paso de la inscripcion
@@ -1497,7 +1560,8 @@ class PasosAlianzaController extends AppBaseController
             if ($paso_id != 0) {
                 $pasoRecibido = $paso_id;
                 $pasos_validacion = array_filter($tipos_pasos_array, function($var) use ($pasoRecibido) {
-                    return ($var['id'] < $pasoRecibido);
+                    // se omite la validacion de los registros de los pasos 4 y 5 porque puede darse que se omita la modificacion de la informacion de esos pasos por parte del validador y le de directamente en aceptar
+                    return ( $var['id'] < $pasoRecibido && !in_array($var['id'], [4,5]) );
                 });
 
                 //obtiene el registro de los pasos registrados por el usuario (estudiante o coordinador)
@@ -1509,6 +1573,8 @@ class PasosAlianzaController extends AppBaseController
                     ->toArray();
 
                 $tipos_pasos_registrados = array_column($pasos_registrados, 'tipo_paso_id');
+
+                // print_r($tipos_pasos_registrados);
 
                 // si no se han registrado todos los pasos anteriores devuelve un mensaje de error
                 foreach ($pasos_validacion as $key => $value) {
@@ -1541,9 +1607,12 @@ class PasosAlianzaController extends AppBaseController
         // echo $registrosPasos[$keyAnterior]['estado_nombre'];
         // echo $dondeSalio;
 
-            $retorno = $puedeEditar;
+            
 
         }
+
+        $retorno['puedeEditar'] = $puedeEditar;
+        $retorno['dondeSalio'] = $dondeSalio;
 
         return $retorno;
 

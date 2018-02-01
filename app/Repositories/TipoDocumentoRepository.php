@@ -12,7 +12,7 @@ class TipoDocumentoRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'nombre',
-        'clase_documento_id'
+        'clasificacion_id'
     ];
 
     /**
@@ -34,8 +34,8 @@ class TipoDocumentoRepository extends BaseRepository
     public function listDocumentType($institucion_id) 
     {
         //agregar el campo 'Otro' para que agreguen una nueva unidad (tipo_documento)
-        $clase_documento = \App\Models\ClaseDocumento::whereIn('nombre',['INSTITUCION','ALIANZA'])->pluck('id');
-        $tipo_documento = $this->tipo_documento->whereIn('clase_documento_id',$clase_documento)->select('nombre','id')->pluck('nombre','id');
+        $clasificacion = \App\Models\Clasificacion::whereIn('nombre',['INSTITUCION','ALIANZA'])->pluck('id');
+        $tipo_documento = $this->tipo_documento->whereIn('clasificacion_id',$clasificacion)->select('nombre','id')->pluck('nombre','id');
         
         //$tipo_documento = $this->tipo_documento->select(DB::raw("'Otro' AS nombre, '999999' AS id"))->union($tipo_documento_todos)->pluck('nombre','id');
         

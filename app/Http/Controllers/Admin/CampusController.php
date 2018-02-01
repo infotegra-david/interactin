@@ -21,7 +21,7 @@ class CampusController extends AppBaseController
     private $campusApp;
     private $campusAppFound;
     private $campus = array();
-    private $viewWith;
+    private $viewWith = [];
 
     public function __construct(CampusRepository $campusRepo)
     {
@@ -43,23 +43,28 @@ class CampusController extends AppBaseController
                 }else{
                     $this->campusApp = [0 => 'No pertenece a alguna institución.'];
                 }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
             }
 
             if( session('campusApp') != null && session('campusApp') != 0 ){
-                $campusAppId = session('campusApp');
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
             }else{
-                return redirect(route('home'));
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
             }
-            if ( Auth::user() !== NULL) {
-                $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
-                if( !count($this->campusAppFound) ){
-                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
-
-                    return redirect(route('home'));
-                }
-            }
-
-            $this->viewWith = ['campusApp' => $this->campusApp];
+            
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
         });
@@ -76,13 +81,31 @@ class CampusController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->campusRepository->pushCriteria(new RequestCriteria($request));
+        $Campuses = \App\Models\Admin\Campus::all()->toArray();
+        $Institucion = \App\Models\Admin\Institucion::whereIn('id',array_column($Campuses, 'institucion_id'))->get()->toArray();
+        $Ciudad = \App\Models\Admin\City::whereIn('id',array_column($Campuses, 'ciudad_id'))->get()->toArray();
+        foreach ($Campuses as $key1 => $Campus) {
+            foreach ($Institucion as $key2 => $nombre) {
+                if ($Campus['institucion_id'] == $nombre['id']) {
+                    $Campuses[$key1]['institucion'] = $nombre;
+                }
+            }
+            foreach ($Ciudad as $key2 => $nombreC) {
+                if ($Campus['ciudad_id'] == $nombreC['id']) {
+                    $Campuses[$key1]['ciudad'] = $nombreC;
+                }
+            }
+        }
+        $this->viewWith = array_merge($this->viewWith,['campuses' => $Campuses]);
+        return view('admin.campus.index')
+            ->with($this->viewWith);
+      /*  $this->campusRepository->pushCriteria(new RequestCriteria($request));
         $campuses = $this->campusRepository->all();
 
         $this->viewWith = array_merge($this->viewWith,['campuses' => $campuses]);
 
         return view('admin.campus.index')
-            ->with($this->viewWith);
+            ->with($this->viewWith); */
     }
 
     /**
@@ -92,6 +115,9 @@ class CampusController extends AppBaseController
      */
     public function create()
     {
+        $ciudad = \App\Models\Admin\City::pluck('nombre','id');
+        $institucion = \App\Models\Admin\Institucion::pluck('nombre','id');
+        $this->viewWith = array_merge($this->viewWith,['institucion' => $institucion, 'ciudad' => $ciudad]);
         return view('admin.campus.create')
             ->with($this->viewWith);
     }
@@ -106,9 +132,10 @@ class CampusController extends AppBaseController
     public function store(CreateCampusRequest $request)
     {
         $input = $request->all();
-
-        $campus = $this->campusRepository->create($input);
-
+        if(isset($input['principal'])){
+            \App\Models\Admin\Campus::where('institucion_id', $input['institucion_id'])->update(array('principal' => 0));
+        }
+        $campus = $this->campusRepository->create($input);     
         Flash::success('Campus saved successfully.');
 
         return redirect(route('admin.campus.index'));
@@ -130,8 +157,10 @@ class CampusController extends AppBaseController
 
             return redirect(route('admin.campus.index'));
         }
-
-        $this->viewWith = array_merge($this->viewWith,['campus' => $campus]);
+        $ciudad = \App\Models\Admin\City::find($campus['ciudad_id']);
+        $institucion = \App\Models\Admin\Institucion::find($campus['institucion_id']);
+        $this->viewWith = array_merge($this->viewWith,['campus' => $campus, 'institucion' => $institucion, 'ciudad' => $ciudad]);
+        // $this->viewWith = array_merge($this->viewWith,['campus' => $campus]);
 
         return view('admin.campus.show')->with($this->viewWith);
     }
@@ -152,9 +181,9 @@ class CampusController extends AppBaseController
 
             return redirect(route('admin.campus.index'));
         }
-
-        $this->viewWith = array_merge($this->viewWith,['campus' => $campus]);
-
+        $ciudad = \App\Models\Admin\City::pluck('nombre','id');
+        $institucion = \App\Models\Admin\Institucion::pluck('nombre','id');
+        $this->viewWith = array_merge($this->viewWith,['campus' => $campus, 'institucion' => $institucion, 'ciudad' => $ciudad]);
         return view('admin.campus.edit')->with($this->viewWith);
     }
 
@@ -175,9 +204,11 @@ class CampusController extends AppBaseController
 
             return redirect(route('admin.campus.index'));
         }
-
-        $campus = $this->campusRepository->update($request->all(), $id);
-
+        $input = $request->all();
+        if(isset($input['principal'])){
+            \App\Models\Admin\Campus::where('institucion_id', $input['institucion_id'])->update(array('principal' => 0));
+        }
+        $campus = $this->campusRepository->update($input, $id);
         Flash::success('Campus updated successfully.');
 
         return redirect(route('admin.campus.index'));

@@ -43,7 +43,7 @@
         <div class="col-md-7 page-action text-right">
             @if ($ruta == 'admin')
                 @can('add_users')
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm"> <i class="glyphicon glyphicon-plus-sign"></i> Create</a>
+                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm"> <i class="glyphicon glyphicon-plus-sign"></i> Agregar nuevo</a>
                 @endcan
             @endif
         </div>

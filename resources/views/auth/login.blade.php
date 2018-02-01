@@ -55,6 +55,7 @@
                 <header>
                     Ingreso
                 </header>
+                @include('flash::message')
                 <fieldset>
                     @if (!$errors->has('password') && !$errors->has('password'))
                         @include('flash::message')

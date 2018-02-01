@@ -29,7 +29,7 @@
 	YOU CAN SET CONFIGURATION VARIABLES HERE BEFORE IT GOES TO NAV, RIBBON, ETC.
 	E.G. $page_title = "Custom Title" */
 
-	$pagetitle = "Mapa de InterAlliance";
+	$pagetitle = __('messages.interalliance.map.title.pagetitle');
 
 	/* ---------------- END PHP Custom Scripts ------------- */
 
@@ -57,7 +57,8 @@
 
 		<div class="row">
 			<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-			  <h1><em></em> InterAlliance &gt; Mapa</h1>
+
+			  <h1><em></em> InterAlliance &gt; {{ __('messages.interalliance.map.title.module') }}</h1>
 
 			</div>
 			<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8"> </div>
@@ -90,27 +91,10 @@
 
 						<header>
 							<span class="widget-icon"> <i class="fa fa-map-marker"></i> </span>
-							<h2>Mapa InterAlliance</h2>
+							<h2>{{ __('messages.interalliance.map.title.module') }} InterAlliance</h2>
 							&nbsp;&nbsp;&nbsp;
 							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									Periodo
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li>
-										<a href="javascript:void(0);">2017 - 1</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);">2016 - 2</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);">2016 - 1</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);">Total</a>
-									</li>
-								</ul>
+								{{ Form::select('periodo', [null => __('messages.interalliance.map.form.controls.periodo.placeholder')] + $periodo + ['*' => 'Total'], $periodo_filtrado ?? old('periodo'), ['class' => 'button-icon dropdown-toggle btn btn-default form-control input-md', 'id' => 'select_filter', 'target' => '', 'url' => route('interalliances.map')]) }}
 							</div>
 						</header>
 
@@ -140,10 +124,10 @@
 									<thead>
 										<tr>
 											<th></th>
-											<th>País</th>
-											<th>Alianzas</th>
-											<th class="text-align-center">Actividad</th>
-											<th class="text-align-center">Demographic</th>
+											<th>{{ __('messages.interalliance.map.form.country') }}</th>
+											<th>{{ __('messages.interalliance.map.form.alliance') }}</th>
+											<th class="text-align-center">{{ __('messages.interalliance.map.form.activity') }}</th>
+											<th class="text-align-center">{{ __('messages.interalliance.map.form.demographic') }}</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -214,7 +198,6 @@
 	{{ Html::style('/js/plugin/vectormap/jquery-jvectormap-2.0.3.css') }}
 	{{ Html::script('/js/plugin/vectormap/jquery-jvectormap-2.0.3.min.js') }}
 	{{ Html::script('/js/plugin/vectormap/jquery-jvectormap-world-mill-en.js') }}
-
 		<!-- SPARKLINES -->
 	{{ Html::script('js/plugin/sparkline/jquery.sparkline.min.js') }}
 	{{ Html::script('js/smartwidgets/jarvis.widget.min.js') }}
@@ -226,6 +209,22 @@
 		$(document).ready(function() {
 
 
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
+
+			/*los select con el id select_filter al cambiar recarga la pagina*/
+
+		    $(document).on('change','select#select_filter',function(){
+		        $urlRoute = $(this).attr('url');
+		        $urlRoute = $urlRoute + '?filter=' + $(this).val();
+		        window.location.href = $urlRoute;
+		    });
+
+
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
+			/*SI SE CARGA EL SCRIPT my_funcions.js ELIMINAR ESTA FUNCION*/
 			
 			/*
 			 * VECTOR MAP

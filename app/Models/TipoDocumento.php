@@ -26,7 +26,7 @@ class TipoDocumento extends Model
     public $fillable = [
         'nombre',
         'descripcion',
-        'clase_documento_id'
+        'clasificacion_id'
     ];
 
     /**
@@ -38,7 +38,7 @@ class TipoDocumento extends Model
         'id' => 'integer',
         'nombre' => 'string',
         'descripcion' => 'string',
-        'clase_documento_id' => 'integer'
+        'clasificacion_id' => 'integer'
     ];
 
     /**
@@ -53,9 +53,9 @@ class TipoDocumento extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function claseDocumento()
+    public function Clasificacion()
     {
-        return $this->belongsTo(\App\Models\ClaseDocumento::class);
+        return $this->belongsTo(\App\Models\Clasificacion::class);
     }
 
     /**

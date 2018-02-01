@@ -76,7 +76,7 @@
 									<div class="input-group {{ ($errors->has('tipo_institucion_destino') ? 'has-error' : '') }}" >
 									
 										<span class="input-group-addon"><i class="fa fa-sitemap fa-md fa-fw"></i></span>
-										{{ Form::select('tipo_institucion_destino', $tipo_institucion_destino->prepend('Seleccione el tipo de institucion', ''), old('tipo_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de institucion' ]) }}
+										{{ Form::select('tipo_institucion_destino', $tipo_institucion_destino->prepend('Seleccione el tipo de institucion',''), old('tipo_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '' ]) }}
 										<span class="input-group-addon" rel="popover-hover" data-content="Caracterice la naturaleza de la institución contraparte de acuerdo a su constitución jurídica." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -131,7 +131,7 @@
 									<div class="input-group {{ ($errors->has('pais_institucion_destino') ? 'has-error' : '') }}" >
 									
 										<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-										{{ Form::select('pais_institucion_destino', $pais_institucion_destino->prepend('Seleccione el país', ''), null, ['class' => 'form-control input-md', 'target' => 'departamento_institucion_destino', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país' ]) }}
+										{{ Form::select('pais_institucion_destino', $pais_institucion_destino->prepend('Seleccione el país',''), null, ['class' => 'form-control input-md', 'target' => 'departamento_institucion_destino', 'url' => route('admin.cities.listStates')]) }}
 										<span class="input-group-addon" rel="popover-hover" data-content="Precise el país y la ciudad de establecimiento de la institución contraparte." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -142,7 +142,7 @@
 									<div class="input-group {{ ($errors->has('departamento_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('departamento_institucion_destino', $departamento_institucion_destino, old('departamento_institucion_destino'), ['class' => 'form-control input-md', 'target' => 'ciudad_institucion_destino', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento/estado' ]) }}
+										{{ Form::select('departamento_institucion_destino', $departamento_institucion_destino->prepend('Seleccione el departamento/estado',''), old('departamento_institucion_destino'), ['class' => 'form-control input-md', 'target' => 'ciudad_institucion_destino', 'url' => route('admin.cities.listCities')]) }}
 									
 									</div>
 								</div>
@@ -153,7 +153,7 @@
 									<div class="input-group {{ ($errors->has('ciudad_institucion_destino') ? 'has-error' : '') }}">
 									
 										<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-										{{ Form::select('ciudad_institucion_destino', $ciudad_institucion_destino, old('ciudad_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la ciudad' ]) }}
+										{{ Form::select('ciudad_institucion_destino', $ciudad_institucion_destino->prepend('Seleccione la ciudad',''), old('ciudad_institucion_destino'), ['class' => 'form-control input-md', 'target' => '', 'url' => '' ]) }}
 									
 									</div>
 								</div>
@@ -172,7 +172,7 @@
 										<span class="input-group-addon"><i class="fa fa-user-circle fa-md fa-fw"></i></span>
 										{{ Form::hidden('coordinador_destino', $alliance['coordinador_destino']) }}
 
-										{{-- Form::select('coordinador_destino', $coordinador_destino->prepend('Seleccione al coordinador', ''), old('coordinador_destino'), ['class' => 'form-control input-md', 'placeholder' => 'Seleccione al coordinador', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) --}}
+										{{-- Form::select('coordinador_destino', $coordinador_destino->prepend('Seleccione al coordinador',''), old('coordinador_destino'), ['class' => 'form-control input-md', 'target' => 'nombre_coordinador_destino,cargo_coordinador_destino,telefono_coordinador_destino,email_coordinador_destino', 'url' => route('interalliances.list')]) --}}
 										<span class="input-group-addon" rel="popover-hover" data-content="Esta información corresponde al par académico o la persona designada para realizar seguimiento a la suscripción y ejecución de la alianza en la institución contraparte." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 									</div>
 								</div>
@@ -293,7 +293,7 @@
 										<div class="input-group {{ ($errors->has('repre_pais_nacimiento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-												{{ Form::select('repre_pais_nacimiento', $repre_pais_nacimiento->prepend('Seleccione el país de nacimiento del Representante', ''), null, ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el país de nacimiento del Representante', 'title' => 'Seleccione el país de nacimiento del Representante'  ]) }}
+												{{ Form::select('repre_pais_nacimiento', $repre_pais_nacimiento->prepend('Seleccione el país de nacimiento del Representante',''), null, ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'title' => 'Seleccione el país de nacimiento del Representante'  ]) }}
 										
 										</div>
 									</div>
@@ -306,7 +306,7 @@
 										<div class="input-group {{ ($errors->has('repre_tipo_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-id-card fa-md fa-fw"></i></span>
-												{{ Form::select('repre_tipo_documento', $repre_tipo_documento->prepend('Seleccione el tipo de documento del Representante', ''), old('repre_tipo_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione el tipo de documento del Representante', 'title' => 'Seleccione el tipo de documento del Representante' ]) }}
+												{{ Form::select('repre_tipo_documento', $repre_tipo_documento->prepend('Seleccione el tipo de documento del Representante',''), old('repre_tipo_documento'), ['class' => 'form-control input-md', 'url' => '', 'placeholder' => '', 'title' => 'Seleccione el tipo de documento del Representante' ]) }}
 										
 										</div>
 									</div>
@@ -326,7 +326,7 @@
 										<div class="input-group {{ ($errors->has('repre_fecha_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-calendar fa-md fa-fw"></i></span>
-												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocus' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
+												{{ Form::text('repre_fecha_exped_documento', old('repre_fecha_exped_documento'), ['class' => 'form-control input-md', 'placeholder' => 'Ingrese la fecha de expedición del documento del Representante', 'title' => 'Ingrese la fecha de expedición del documento del Representante', 'onfocusssss' => '(this.type="date")', 'onblurrrrrr' => '(this.type="text")', 'id' => 'date' ]) }}
 												<span class="input-group-addon" rel="tooltip" data-original-title="Ingrese la fecha de expedición del documento del Representante." data-placement="top"><i class="fa fa-commenting fa-md fa-fw"></i></span>
 										
 										</div>
@@ -339,7 +339,7 @@
 										<div class="input-group {{ ($errors->has('repre_pais_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag fa-md fa-fw"></i></span>
-												{{ Form::select('repre_pais_exped_documento', $repre_pais_exped_documento->prepend('Seleccione el país de expedición del documento', ''), old('repre_pais_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_departamento_exped_documento', 'url' => route('admin.cities.listStates'), 'placeholder' => 'Seleccione el país de expedición del documento', 'title' => 'Seleccione el país de expedición del documento'  ]) }}
+												{{ Form::select('repre_pais_exped_documento', $repre_pais_exped_documento->prepend('Seleccione el país de expedición del documento',''), old('repre_pais_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_departamento_exped_documento', 'url' => route('admin.cities.listStates'), 'title' => 'Seleccione el país de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -350,7 +350,7 @@
 										<div class="input-group {{ ($errors->has('repre_departamento_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-												{{ Form::select('repre_departamento_exped_documento', ( $repre_departamento_exped_documento ?? array() ), old('repre_departamento_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_ciudad_exped_documento', 'url' => route('admin.cities.listCities'), 'placeholder' => 'Seleccione el departamento/estado de expedición del documento', 'title' => 'Seleccione el departamento/estado de expedición del documento'  ]) }}
+												{{ Form::select('repre_departamento_exped_documento', $repre_departamento_exped_documento->prepend('Seleccione el departamento/estado de expedición del documento',''), old('repre_departamento_exped_documento'), ['class' => 'form-control input-md', 'target' => 'repre_ciudad_exped_documento', 'url' => route('admin.cities.listCities'), 'title' => 'Seleccione el departamento/estado de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -361,7 +361,7 @@
 										<div class="input-group {{ ($errors->has('repre_ciudad_exped_documento') ? 'has-error' : '') }}">
 										
 												<span class="input-group-addon"><i class="fa fa-flag-o fa-md fa-fw"></i></span>
-												{{ Form::select('repre_ciudad_exped_documento', ( $repre_ciudad_exped_documento ?? array() ), old('repre_ciudad_exped_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'placeholder' => 'Seleccione la cudad de expedición del documento', 'title' => 'Seleccione la cudad de expedición del documento'  ]) }}
+												{{ Form::select('repre_ciudad_exped_documento', $repre_ciudad_exped_documento->prepend('Seleccione la cudad de expedición del documento',''), old('repre_ciudad_exped_documento'), ['class' => 'form-control input-md', 'target' => '', 'url' => '', 'title' => 'Seleccione la cudad de expedición del documento'  ]) }}
 										
 										</div>
 									</div>
@@ -374,8 +374,28 @@
 
 						<h3>Adjunte el documento de soporte de representación legal externo</h3>
 
-						<div class="row checkbox_show" id="aceptar_alianza">
-							<div class="col-sm-12">
+						<div class="row">
+						<!--documentos previamente cargados -->
+							<div class="col-sm-12 col-md-6">
+								<div class="form-group">
+									<div class="input-group {{ ($errors->has('existe_documentos_soporte') ? 'has-error' : '') }}">
+										<span class="input-group-addon"><i class="fa fa-file-archive-o fa-md fa-fw"></i></span>
+										<span class="form-control input-md" title="Archivo cargado previamente">
+											@if(isset($alliance['archivo_soporte_representante']['nombre']))
+												{{ $alliance['archivo_soporte_representante']['nombre'] }}
+												<a class="btn btn-xs btn-default pull-right" target="_blank" href="{{ \Storage::url($alliance['archivo_soporte_representante']['path']) }}">Ver</a>
+											@else
+												No se ha cargado previamente el archivo
+											@endif
+										</span>
+									</div>
+								</div>
+							</div>
+
+						</div>
+	
+						<div class="row " id="aceptar_alianza">
+							<div class="col-sm-12 col-md-6">
 								<div class="form-group">
 									<div class="input-group {{ ($errors->has('archivo_input') ? 'has-error' : '') }}">
 										<span class="input-group-addon"><i class="fa fa-file-pdf-o fa-md fa-fw"></i></span>

@@ -187,64 +187,18 @@
 
 						{{ csrf_field() }}
 
-						<script type="text/javascript">
-							
-							$(document).ready(function(){
-								$('select[name="campusAppSelect"]').change(function(){
-									var results = $(this).attr('results');
-									var route = $(this).attr('url');
-									var inputData = {campusAppSelect: $(this).val()};
-									var token = $('#campusAppSelect').find('input[name="_token"]').val();
-									//se envia la peticion mediante el metodo DELETE con el id del genero
-									$.ajax({
-										url: route,
-										type: 'POST',
-										headers: {'X-CSRF-TOKEN': token},
-										data: inputData,
-										success: function(msj){
-											
-											$.smallBox({
-											  title: "El campus se cambio correctamente!",
-											  content: "Hace un momento...",
-											  color: '#5f895f',
-											  iconSmall: "fa fa-check bounce animated"
-											});
-											$( document ).one('ajaxStop', function() {
-							                	$('#container-loading').addClass("show");
-							                });
-											location.reload();
 
-										},
-								        error: function(msj){
-								        	var row = '';
-											
-								            row = msj.responseText;
-								            
-								            //console.log(msj.responseJSON);
-								            if( msj.responseJSON != undefined ){
-								            	row = '';
-								            	$.each(msj.responseJSON, function( index, value ) {
-								               		row = row + value + "<br>";
-								            	});
-									        }
+					</div>
+					<div class="header-search" id="idiomaAppSelect">
+						@php
+							$idiomaAppSelect = App::getLocale();
+						@endphp
+						<!--span class="input-group-addon"><i class="fa fa-university fa-lg fa-fw"></i></span-->
+						{{ Form::select('idiomaAppSelect', __('messages.options.lang'), (old('idiomaAppSelect') ?? $idiomaAppSelect), ['class' => '', 'rel' => 'tooltip', 'data-original-title' => __('messages.general.header.idiomaAppSelect.placeholder'), 'data-placement' => 'bottom', 'results' => '', 'url' => route('idiomaAppSelect')]) }}
 
-								            $.smallBox({
-											  title: "Error! El campus no pudo ser cambiado",
-											  content: row,
-											  color: '#8b0000',
-											  iconSmall: "fa fa-times bounce animated"
-											});
-								        }
-									}).fail(function(jqXHR, textStatus, errorThrown) {
-								        //de este modo se redirecciona a la pagina correspondiente
-								        if (jqXHR.getResponseHeader('Location') != null){ 
-								            window.Location= jqXHR.getResponseHeader('Location');
-								        };
-								    });
-								});
-							});
+						{{ csrf_field() }}
 
-						</script>
+
 					</div>
 					<!-- end projects dropdown -->
 
@@ -433,7 +387,7 @@
 				</div>
 				<!-- END SHORTCUT AREA -->
 
-
+			{{ Html::script('js/header.js') }}
 
 		<?php
 			}

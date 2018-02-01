@@ -452,12 +452,6 @@
                 $(this).parents('tr').find('input').val('').keyup(); 
             });
 
-            $('select#select_filter').change(function(){
-                $urlRoute = $(this).attr('url');
-                $urlRoute = $urlRoute + '?filter=' + $(this).val();
-                window.location.href = $urlRoute;
-            });
-
 
 
         })

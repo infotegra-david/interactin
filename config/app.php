@@ -197,7 +197,10 @@ return [
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
 
         /*para generar los seeders*/
-        Orangehill\Iseed\IseedServiceProvider::class
+        Orangehill\Iseed\IseedServiceProvider::class,
+
+        /*para convertir xml en un array*/
+        Orchestra\Parser\XmlServiceProvider::class
     ],
 
     /*
@@ -252,6 +255,8 @@ return [
         'Flash'     => Laracasts\Flash\Flash::class,
 
         'PDF' => Barryvdh\DomPDF\Facade::class,
+
+        'XmlParser' => Orchestra\Parser\Xml\Facade::class,
 
     ],
 

@@ -37,7 +37,8 @@
     //you can add your custom css in $page_css array.
     $your_style = 'bootstrap-select.min.css,your_style.css';
     //$your_style = 'bootstrap-select.min.css';
-    $your_script = 'js/my_functions.js';
+    // $your_script = 'js/my_functions.js';
+    $your_script = '';
 
     //include left panel (navigation)
     //follow the tree in inc/config.ui.php

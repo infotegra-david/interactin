@@ -85,6 +85,25 @@ class AsignaturaController extends AppBaseController
     }
 
     /**
+     * Display the specified Asignatura.
+     *
+     * @param  int $id
+     *
+     * @return Response
+     */
+    public function listSubjects(Request $request)
+    {
+        if (isset($request['id'])) {
+            $asignatura = \App\Models\Admin\Asignatura::where('programa_id',$request['id'])
+                ->orderBy('nombre','asc')
+                ->select('id','nombre','nro_creditos')
+                ->get()->toArray();
+
+            return $asignatura;
+        }
+    }
+
+    /**
      * Show the form for editing the specified Asignatura.
      *
      * @param  int $id

@@ -73,8 +73,8 @@
 </li>
 
 
-<li class="{{ Request::is('claseDocumentos*') ? 'active' : '' }}">
-    <a href="{!! route('claseDocumentos.index') !!}"><i class="fa fa-edit"></i><span>ClaseDocumentos</span></a>
+<li class="{{ Request::is('clasificacion*') ? 'active' : '' }}">
+    <a href="{!! route('clasificacion.index') !!}"><i class="fa fa-edit"></i><span>Clasificaciones</span></a>
 </li>
 
 <li class="{{ Request::is('tipoDocumentos*') ? 'active' : '' }}">
@@ -199,5 +199,13 @@
 
 <li class="{{ Request::is('tipoPasos*') ? 'active' : '' }}">
     <a href="{!! route('tipoPasos.index') !!}"><i class="fa fa-edit"></i><span>TipoPasos</span></a>
+</li>
+
+<li class="{{ Request::is('equivalentes*') ? 'active' : '' }}">
+    <a href="{!! route('admin.equivalentes.index') !!}"><i class="fa fa-edit"></i><span>Equivalentes</span></a>
+</li>
+
+<li class="{{ Request::is('tipoPlantillas*') ? 'active' : '' }}">
+    <a href="{!! route('tipoPlantillas.index') !!}"><i class="fa fa-edit"></i><span>TipoPlantillas</span></a>
 </li>
 

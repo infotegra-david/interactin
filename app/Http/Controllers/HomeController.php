@@ -10,7 +10,7 @@ class HomeController extends Controller
     private $user;
     private $campusApp;
     private $campusAppFound;
-    private $viewWith;
+    private $viewWith = [];
     /**
      * Create a new controller instance.
      *
@@ -19,8 +19,7 @@ class HomeController extends Controller
     public function __construct()
     {
 
-        $this->middleware(function ($request, $next) {
-
+        /*$this->middleware(function ($request, $next) {
             if (Auth::user()) {
                 $this->user = Auth::user();
                 if (isset($this->user->campus)) {
@@ -47,14 +46,57 @@ class HomeController extends Controller
             }
             if ( Auth::user() !== NULL) {
                 $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
-                // if( !count($this->campusAppFound) ){
-                //     Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                if( !count($this->campusAppFound) ){
+                    Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
 
-                //     return redirect(route('home'));
+                    // return redirect(route('home'));
+                }
+            }
+
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+
+            return $next($request);
+        });*/
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+            }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
                 // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
             }
             
-            $this->viewWith = ['campusApp' => $this->campusApp];
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
         });

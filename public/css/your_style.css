@@ -1289,6 +1289,15 @@ select[multiple].input-lg option{
     }
 
 
+root > subject, root > content {
+    display: table;
+}
+root > subject:before {
+    content: 'Asunto: ';
+}
+root > content:before {
+    content: 'Contenido: ';
+}
 
 /*estilos para jqGrid*/
 .ui-jqgrid .ui-pg-table.full {

@@ -125,6 +125,172 @@ $page_nav = array();
 		);
 	}
 
+//submenu InterAlliance
+	$InterAllianceSub = array();
+	//comprobar los permisos para cada formulario
+	if(isset($listPermissions['view_interalliances'])){
+		$InterAllianceSub["InterAllianceMap"] = array(
+			        "title" => "InterAllianceMap",
+			        "icon" => "fa-map-marker",
+			        "url" => route('interalliances.map')
+				);
+		//los dos formularios comparten el mismo permisos
+		$InterAllianceSub["Alliances"] = array(
+			        "title" => "Alianzas",
+			        "icon" => "fa-list-ul",
+					"url" => route('interalliances.index'),
+				);
+		
+		if( session('mis_alianzas') != null ){
+			$InterAllianceSub["Alliances"] = array_merge($InterAllianceSub["Alliances"], [
+			"label_htm" => '<span class="badge bg-color-greenLight pull-right inbox-badge">'.session('mis_alianzas').'</span>'
+			]);
+		}
+	}
+	
+	if(isset($listPermissions['add_interalliances']) && ( $isProfesor !== false || $isCoordinador_interno !== false ) ){
+		$InterAllianceSub["SubscribeAlliance"] = array(
+					"title" => "Subscribir alianza",
+					"icon" => "fa-handshake-o",
+					"url" => route('interalliances.origin')
+				);
+	}
+
+	if(isset($listPermissions['view_assignments_interalliances'])){
+		//los formularios comparten el mismo permiso
+
+		$InterAllianceSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => route('interalliances.assignments_interalliances.index')
+				);
+	}
+
+
+	$InterAllianceEmailsSub = array();
+	// submenu para administrar las plantillas y los registros de los emails
+	if(isset($listPermissions['view_plantillas_emails_interalliances'])){
+		//los formularios comparten el mismo permiso
+		$InterAllianceEmailsSub["Plantillas"] = array(
+			        "title" => "Plantillas",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interalliances.plantillas_emails_interalliances.index')
+				);
+	}
+
+	if(isset($listPermissions['view_registros_emails_interalliances'])){
+		//los formularios comparten el mismo permiso
+		$InterAllianceEmailsSub["Registros"] = array(
+			        "title" => "Registros",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interalliances.registros_emails_interalliances.index')
+				);
+	}
+
+	if(count($InterAllianceEmailsSub)){
+		//los formularios comparten el mismo permiso
+		$InterAllianceSub["Emails"] = array(
+			        "title" => "Emails",
+			        "icon" => "fa-envelope",
+			        "sub" => $InterAllianceEmailsSub
+				);
+	}
+
+
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterAllianceSub) ) {
+
+		$InterAlliance = array(
+			"InterAlliance" => array(
+				"title" => "InterAlliance",
+				"icon" => "fa-handshake-o txt-color-white",
+				"raiz" => route('interalliances.index'),
+				"sub" => $InterAllianceSub
+			)
+		);
+
+		$page_nav = array_merge($page_nav, $InterAlliance);
+	}
+
+
+//submenu InterActions
+	$InterActionsSub = array();
+	//comprobar los permisos para cada formulario
+	if(isset($listPermissions['view_interactions'])){
+		$InterActionsSub["InterActionsMap"] = array(
+			        "title" => "InterActionsMap",
+			        "icon" => "fa-flag",
+			        "url" => url("/html/interactions-map.php")
+				);
+		//los dos formularios comparten el mismo permisos
+		$InterActionsSub["Opportunities"] = array(
+					"title" => "Oportunidades",
+					"icon" => "fa-child",
+					"url" => url("/html/opportunities.php")
+				);
+	}
+	if(isset($listPermissions['add_interactions'])){
+		$InterActionsSub["InterIniciative"] = array(
+			        "title" => "Enviar inicativa",
+			        "icon" => "fa-lightbulb-o",
+			        "url" => url("/html/initiative.php")
+				);
+	}
+	if(isset($listPermissions['view_assignments_interactions'])){
+		//los formularios comparten el mismo permiso
+
+		$InterActionsSub["Assignments"] = array(
+			        "title" => "Assignments",
+			        "icon" => "fa-user-plus",
+			        "url" => route('interactions.assignments_interactions.index')
+				);
+	}
+
+
+	$InterActionsEmailsSub = array();
+	// submenu para administrar las plantillas y los registros de los emails
+	if(isset($listPermissions['view_plantillas_emails_interactions'])){
+		//los formularios comparten el mismo permiso
+		$InterActionsEmailsSub["Plantillas"] = array(
+			        "title" => "Plantillas",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interactions.plantillas_emails_interactions.index')
+				);
+	}
+
+	if(isset($listPermissions['view_registros_emails_interactions'])){
+		//los formularios comparten el mismo permiso
+		$InterActionsEmailsSub["Registros"] = array(
+			        "title" => "Registros",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interactions.registros_emails_interactions.index')
+				);
+	}
+
+	if(count($InterActionsEmailsSub)){
+		//los formularios comparten el mismo permiso
+		$InterActionsSub["Emails"] = array(
+			        "title" => "Emails",
+			        "icon" => "fa-envelope",
+			        "sub" => $InterActionsEmailsSub
+				);
+	}
+
+	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
+	if ( count($InterActionsSub) ) {
+
+		$InterActions = array(
+			"InterActions" => array(
+				"title" => "InterActions",
+				"icon" => "fa-globe txt-color-white",
+				"sub" => $InterActionsSub
+			)
+		);
+
+		$page_nav = array_merge($page_nav, $InterActions);
+	}
+
+
 //submenu InterChange
 	$InterChangeSub = array();
 	$InterOutSub = array();
@@ -198,12 +364,33 @@ $page_nav = array();
 				);
 	}
 
-	if(isset($listPermissions['view_emails_interchanges'])){
+
+	$InterChangeEmailsSub = array();
+	// submenu para administrar las plantillas y los registros de los emails
+	if(isset($listPermissions['view_plantillas_emails_interchanges'])){
+		//los formularios comparten el mismo permiso
+		$InterChangeEmailsSub["Plantillas"] = array(
+			        "title" => "Plantillas",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interchanges.plantillas_emails_interchanges.index')
+				);
+	}
+
+	if(isset($listPermissions['view_registros_emails_interchanges'])){
+		//los formularios comparten el mismo permiso
+		$InterChangeEmailsSub["Registros"] = array(
+			        "title" => "Registros",
+			        "icon" => "fa-envelope-o",
+			        "url" => route('interchanges.registros_emails_interchanges.index')
+				);
+	}
+
+	if(count($InterChangeEmailsSub)){
 		//los formularios comparten el mismo permiso
 		$InterChangeSub["Emails"] = array(
 			        "title" => "Emails",
-			        "icon" => "fa-envelope-o",
-			        "url" => route('interchanges.emails_interchanges.index')
+			        "icon" => "fa-envelope",
+			        "sub" => $InterChangeEmailsSub
 				);
 	}
 
@@ -221,128 +408,6 @@ $page_nav = array();
 		$page_nav = array_merge($page_nav, $InterChange);
 	}
 
-
-//submenu InterAlliance
-	$InterAllianceSub = array();
-	//comprobar los permisos para cada formulario
-	if(isset($listPermissions['view_interalliances'])){
-		$InterAllianceSub["InterAllianceMap"] = array(
-			        "title" => "InterAllianceMap",
-			        "icon" => "fa-map-marker",
-			        "url" => route('interalliances.map')
-				);
-		//los dos formularios comparten el mismo permisos
-		$InterAllianceSub["Alliances"] = array(
-			        "title" => "Alianzas",
-			        "icon" => "fa-list-ul",
-					"url" => route('interalliances.index'),
-				);
-		
-		if( session('mis_alianzas') != null ){
-			$InterAllianceSub["Alliances"] = array_merge($InterAllianceSub["Alliances"], [
-			"label_htm" => '<span class="badge bg-color-greenLight pull-right inbox-badge">'.session('mis_alianzas').'</span>'
-			]);
-		}
-	}
-	
-	if(isset($listPermissions['add_interalliances']) && ( $isProfesor !== false || $isCoordinador_interno !== false ) ){
-		$InterAllianceSub["SubscribeAlliance"] = array(
-					"title" => "Subscribir alianza",
-					"icon" => "fa-handshake-o",
-					"url" => route('interalliances.origin')
-				);
-	}
-
-	if(isset($listPermissions['view_assignments_interalliances'])){
-		//los formularios comparten el mismo permiso
-
-		$InterAllianceSub["Assignments"] = array(
-			        "title" => "Assignments",
-			        "icon" => "fa-user-plus",
-			        "url" => route('interalliances.assignments_interalliances.index')
-				);
-	}
-
-	if(isset($listPermissions['view_emails_interalliances'])){
-		//los formularios comparten el mismo permiso
-
-		$InterAllianceSub["Emails"] = array(
-			        "title" => "Emails",
-			        "icon" => "fa-envelope-o",
-			        "url" => route('interalliances.emails_interalliances.index')
-				);
-	}
-
-	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
-	if ( count($InterAllianceSub) ) {
-
-		$InterAlliance = array(
-			"InterAlliance" => array(
-				"title" => "InterAlliance",
-				"icon" => "fa-handshake-o txt-color-white",
-				"raiz" => route('interalliances.index'),
-				"sub" => $InterAllianceSub
-			)
-		);
-
-		$page_nav = array_merge($page_nav, $InterAlliance);
-	}
-
-//submenu InterActions
-	$InterActionsSub = array();
-	//comprobar los permisos para cada formulario
-	if(isset($listPermissions['view_interactions'])){
-		$InterActionsSub["InterActionsMap"] = array(
-			        "title" => "InterActionsMap",
-			        "icon" => "fa-flag",
-			        "url" => url("/html/interactions-map.php")
-				);
-		//los dos formularios comparten el mismo permisos
-		$InterActionsSub["Opportunities"] = array(
-					"title" => "Oportunidades",
-					"icon" => "fa-child",
-					"url" => url("/html/opportunities.php")
-				);
-	}
-	if(isset($listPermissions['add_interactions'])){
-		$InterActionsSub["InterIniciative"] = array(
-			        "title" => "Enviar inicativa",
-			        "icon" => "fa-lightbulb-o",
-			        "url" => url("/html/initiative.php")
-				);
-	}
-	if(isset($listPermissions['view_assignments_interactions'])){
-		//los formularios comparten el mismo permiso
-
-		$InterActionsSub["Assignments"] = array(
-			        "title" => "Assignments",
-			        "icon" => "fa-user-plus",
-			        "url" => route('interactions.assignments_interactions.index')
-				);
-	}
-	if(isset($listPermissions['view_emails_interactions'])){
-		//los formularios comparten el mismo permiso
-
-		$InterActionsSub["Emails"] = array(
-			        "title" => "Emails",
-			        "icon" => "fa-envelope-o",
-			        "url" => route('interactions.emails_interactions.index')
-				);
-	}
-
-	// agregar la opcion de menu en el caso de que tenga permiso para algun formulario
-	if ( count($InterActionsSub) ) {
-
-		$InterActions = array(
-			"InterActions" => array(
-				"title" => "InterActions",
-				"icon" => "fa-globe txt-color-white",
-				"sub" => $InterActionsSub
-			)
-		);
-
-		$page_nav = array_merge($page_nav, $InterActions);
-	}
 
 //submenu InterIndicators
 	$InterIndicatorsSub = array();

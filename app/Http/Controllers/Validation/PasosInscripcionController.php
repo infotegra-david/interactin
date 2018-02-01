@@ -41,7 +41,7 @@ class PasosInscripcionController extends AppBaseController
 
     public function __construct(PasosInscripcionRepository $pasosInscripcionRepo, PasosInscripcion $pasosInscripcionModel, TipoPaso $tipoPasoModel, Request $request)
     {
-        $this->middleware(function ($request, $next) {
+        /*$this->middleware(function ($request, $next) {
 
             if (Auth::user()) {
                 $this->user = Auth::user();
@@ -76,6 +76,49 @@ class PasosInscripcionController extends AppBaseController
                 }
             }
 
+            $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
+
+            return $next($request);
+        });*/
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()) {
+                $this->user = Auth::user();
+                if (isset($this->user->campus)) {
+                    $this->campusApp = $this->user->campus;
+                    if (session('campusApp') == null) {
+                        session(['campusApp' => ($this->campusApp->first()->id ?? 0 ) ]);
+                        session(['campusAppNombre' => ($this->campusApp->first()->nombre ?? 'No pertenece a alguna institución.' )]);
+                        session(['institucionAppNombre' => ($this->campusApp->first()->institucion->nombre ?? 'Sin institución.' )]);
+                    }
+                    if (count($this->campusApp)) {
+                        $this->campusApp = $this->campusApp->pluck('nombre','id');
+                    }else{
+                        $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                    }
+                }else{
+                    $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+                }
+            }else{
+                $this->campusApp = [0 => 'No pertenece a alguna institución.'];
+            }
+
+            if( session('campusApp') != null && session('campusApp') != 0 ){
+                $campusAppId = session('campusApp') ?? 0;
+
+                // if ( Auth::user() !== NULL) {
+                    $this->campusAppFound = \App\Models\Admin\Campus::find($campusAppId);
+                    if( !count($this->campusAppFound) ){
+                        Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+
+                        return redirect(route('home'));
+                    }
+                // }
+            }else{
+                Flash::error('No se encuentra el campus, seleccione el campus que va a usar.');
+                // $campusAppId = session('campusApp');
+                // return redirect(route('home'));
+            }
+            
             $this->viewWith = array_merge($this->viewWith,['campusApp' => $this->campusApp]);
 
             return $next($request);
@@ -201,10 +244,10 @@ class PasosInscripcionController extends AppBaseController
         }
 
         //si el estado de la inscripcion es activa no permitira editar el registro
-        $editar = false;
+        $editar_validacion = false;
         $estadoActiva = $estados = \App\Models\Estado::where('id',$inscripcion->estado_id)->select('id','nombre')->first();
         if ($estadoActiva->nombre != 'ACTIVA') {
-            $editar = true;
+            $editar_validacion = true;
         }
 
         if ( $paso_id !='' ) {
@@ -228,7 +271,7 @@ class PasosInscripcionController extends AppBaseController
             $viewWith = array_merge($viewWith,app('App\Http\Controllers\InterChangeController')->show($inscripcion_id, 'local'));
             
             //asegura que en los datos de la inscripcion no aparezca el boton de editar
-            $viewWith = array_merge($viewWith, ['editar_paso' => false]);
+            $viewWith = array_merge($viewWith, ['editar' => false]);
             
             //si la inscripcion no esta activa trae los datos para crear un registro de validacion
             if ( $viewWith['dataInscripcion']['estado_nombre'] != 'ACTIVA' ) {
@@ -238,7 +281,7 @@ class PasosInscripcionController extends AppBaseController
                 if ( is_array($viewWithCreate) ) {
                     $viewWith = array_merge($viewWith, $viewWithCreate);
                 }elseif($viewWithCreate === 'error_editar'){
-                    $editar = false;
+                    $editar_validacion = false;
                 }
             }
 
@@ -278,18 +321,18 @@ class PasosInscripcionController extends AppBaseController
 
                     $tipo_documento_nombre = 'PRE-FORMAS';
 
-                    $clase_documento_nombre = 'INSCRIPCION';
-                    $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                        ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+                    $clasificacion_nombre = 'INSCRIPCION';
+                    $tipo_documento_id = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                        ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                         ->pluck('tipo_documento.id')->first();
                     $IdDocumentosInscripcion =  \App\Models\DocumentosInscripcion::join('tipo_documento','documentos_inscripcion.tipo_documento_id','tipo_documento.id')
                                 ->where('documentos_inscripcion.inscripcion_id',$inscripcionId)
                                 ->where('documentos_inscripcion.tipo_documento_id',$tipo_documento_id)
                                 ->pluck('documentos_inscripcion.archivo_id')->toArray();
 
-                    $clase_documento_nombre = 'INSTITUCION';
-                    $tipo_documento_id = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                        ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+                    $clasificacion_nombre = 'INSTITUCION';
+                    $tipo_documento_id = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                        ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                         ->pluck('tipo_documento.id')->first();
 
                     
@@ -314,7 +357,7 @@ class PasosInscripcionController extends AppBaseController
                 
         }
 
-        $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'inscripcionId' => $inscripcionId, 'user_actual' => $user_actual->id, 'editar' => $editar]);
+        $viewWith = array_merge($viewWith, ['peticion' => $this->peticion, 'inscripcionId' => $inscripcionId, 'user_actual' => $user_actual->id, 'editar_validacion' => $editar_validacion]);
         //print_r($viewWith);
         if ( $peticion == 'local' ) {
             return $viewWith;
@@ -451,9 +494,9 @@ class PasosInscripcionController extends AppBaseController
             $archivo_id = $request['pre_forma'];
             
             $tipo_documento_nombre = 'PRE-FORMAS';
-            $clase_documento_nombre = 'INSCRIPCION';
-            $tipo_documento = \App\Models\TipoDocumento::join('clase_documento','tipo_documento.clase_documento_id','clase_documento.id')
-                    ->where([['clase_documento.nombre',$clase_documento_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
+            $clasificacion_nombre = 'INSCRIPCION';
+            $tipo_documento = \App\Models\TipoDocumento::join('clasificacion','tipo_documento.clasificacion_id','clasificacion.id')
+                    ->where([['clasificacion.nombre',$clasificacion_nombre],['tipo_documento.nombre',$tipo_documento_nombre]])
                     ->select('tipo_documento.id')->first();
 
             if (session('campusApp') != null) {
@@ -733,15 +776,15 @@ class PasosInscripcionController extends AppBaseController
             $inscripcion_id = $inscripcion->id;
         }
 
-        $pasoInscripcion = $this->pasosInscripcionRepository->findWithoutFail($paso_id);
+        $pasosInscripcion = $this->pasosInscripcionRepository->findWithoutFail($paso_id);
 
-        if (empty($pasoInscripcion)) {
+        if (empty($pasosInscripcion)) {
             Flash::error('No se encontro el paso de la inscripcion');
 
             return redirect(route('interchanges.validations_interchanges.show',[$inscripcion_id]));
         }
 
-        if ($pasoInscripcion->user_id != $this->user->id) {
+        if ($pasosInscripcion->user_id != $this->user->id) {
             Flash::error('No puede editar esta validación');
 
             return redirect(route('interchanges.validations_interchanges.show',[$inscripcion_id]));
@@ -822,14 +865,14 @@ class PasosInscripcionController extends AppBaseController
     public function editCreateData($inscripcion,$paso_id ='')
     {
         $viewWith = $this->viewWith;
-        $pasoInscripcion = 0;
+        $pasosInscripcion = 0;
         $user_actual = $this->user;
         $inscripcion_id = $inscripcion->id;
 
         if ($paso_id !='') {
-            $pasoInscripcion = $this->pasosInscripcionRepository->findWithoutFail($paso_id);
+            $pasosInscripcion = $this->pasosInscripcionRepository->findWithoutFail($paso_id);
 
-            if (empty($pasoInscripcion)) {
+            if (empty($pasosInscripcion)) {
                 Flash::error('No se encontro el paso de la inscripcion');
 
                 return redirect(route('interchanges.validations_interchanges.show',[$inscripcion_id]));
@@ -989,10 +1032,10 @@ class PasosInscripcionController extends AppBaseController
             $usersValidadores[$value['id']] = $value['name'];
         }
         $paso_inscripcion_id = 0;
-        if (!empty($pasoInscripcion)) {
-            $paso_inscripcion_id = $pasoInscripcion->id;
+        if (!empty($pasosInscripcion)) {
+            $paso_inscripcion_id = $pasosInscripcion->id;
         }
-        $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'paso_inscripcion_id' => $paso_inscripcion_id, 'pasoInscripcion' => $pasoInscripcion, 'inscripcion_id' => $inscripcion_id, 'tipo_paso_id' => $tipos_pasos, 'estado_id' => $estados, 'idAciva' => $idAciva, 'user_id' => $usersValidadores]);
+        $viewWith = array_merge($viewWith, ['campusApp' => $this->campusApp, 'paso_inscripcion_id' => $paso_inscripcion_id, 'pasosInscripcion' => $pasosInscripcion, 'inscripcion_id' => $inscripcion_id, 'tipo_paso_id' => $tipos_pasos, 'estado_id' => $estados, 'idAciva' => $idAciva, 'user_id' => $usersValidadores]);
 
         return $viewWith;
     }

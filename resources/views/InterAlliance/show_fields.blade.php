@@ -169,6 +169,18 @@
                 <div class=" full">
                     <!-- Duracion Field -->
                     <div class=" full">
+                        {!! Form::label('fecha_inicio', 'Fecha de inicio:', ['class' => 'text-bold']) !!}
+                        <span> {!! $dataAlianza['fecha_inicio'] !!}</span>
+                    </div>
+                </div>
+            </div>
+        </div>  
+
+        <div class="col-sm-12">
+            <div class="">
+                <div class=" full">
+                    <!-- Duracion Field -->
+                    <div class=" full">
                         {!! Form::label('duracion', 'Duracion:', ['class' => 'text-bold']) !!}
                         <span> {!! $dataAlianza['duracion'] !!}</span>
                     </div>
@@ -283,9 +295,11 @@
     </div>
     <!--    --------------------------------------  -->
     <!--    --------------------------------------  -->
+    <!--    --------------------------------------  -->
+    <!--    --------------------------------------  -->
 
-    @foreach($dataUsers as $key => $dataUser)
-        @if ($dataUser['usuario_id'] == $CoordinadorExterno)
+    <!-- @ foreach($ dataUsers as $ key => $ dataUser) -->
+        <!-- @ if ($ dataUser['usuario_id'] == $ CoordinadorExterno) -->
         <div class="col-md-12 col-lg-6">
             <div class="col-sm-12">
                 <hr>
@@ -301,7 +315,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('tipo_institucion_nombre', 'Tipo de institución:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['tipo_institucion_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['tipo_institucion_nombre'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -312,7 +326,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['nombre'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -323,7 +337,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('campus_direccion', 'Dirección campus principal:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['campus_direccion'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['campus_direccion'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -334,7 +348,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('campus_telefono', 'Teléfono campus principal:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['campus_telefono'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['campus_telefono'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -345,7 +359,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('campus_codigo_postal', 'Código postal campus principal:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['campus_codigo_postal'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['campus_codigo_postal'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -356,7 +370,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('pais_nombre', 'País:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['ciudad']['pais_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['ciudad']['pais_nombre'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -367,7 +381,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('departamento_nombre', 'Departamento/Estado:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['ciudad']['departamento_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['ciudad']['departamento_nombre'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -378,7 +392,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('ciudad_nombre', 'Ciudad:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['ciudad']['ciudad_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['ciudad']['ciudad_nombre'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -396,7 +410,7 @@
                             <!-- Objetivo Field -->
                             <div class=" full">
                                 {!! Form::label('nombre', 'Nombre:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['coordinador_nombres'] !!} {!! $dataUser['coordinador_apellidos'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['coordinador_nombres'] ?? '' !!} {!! $dataUsers[$keyCoordExterno]['coordinador_apellidos'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -407,7 +421,7 @@
                             <!-- Objetivo Field -->
                             <div class=" full">
                                 {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['coordinador_cargo'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['coordinador_cargo'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -418,7 +432,7 @@
                             <!-- Objetivo Field -->
                             <div class=" full">
                                 {!! Form::label('telefono', 'Telefono:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['coordinador_telefono'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['coordinador_telefono'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -429,7 +443,7 @@
                             <!-- Objetivo Field -->
                             <div class=" full">
                                 {!! Form::label('email', 'E-mail:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['coordinador_email'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['coordinador_email'] ?? '' !!}</span>
                             </div>
                         </div>
                     </div>
@@ -479,23 +493,23 @@
 
             @php 
             //si no existen datos del representante entonces dejarlos vacios pero aun asi mostrarlos
-            if( !isset($dataUser['institucion']['representante']) ){
-                $dataUser['institucion']['representante']['usuario_activo'] = false;
-                $dataUser['institucion']['representante']['repre_nombre'] = '';
-                $dataUser['institucion']['representante']['cargo'] = '';
-                $dataUser['institucion']['representante']['telefono'] = '';
-                $dataUser['institucion']['representante']['repre_email'] = '';
-                $dataUser['institucion']['representante']['pais_nombre'] = '';
-                $dataUser['institucion']['representante']['tipo_documento_nombre'] = '';
-                $dataUser['institucion']['representante']['numero_documento'] = '';
-                $dataUser['institucion']['representante']['fecha_expedicion'] = '';
-                $dataUser['institucion']['representante']['lugar_expedicion']['pais_nombre'] = '';
-                $dataUser['institucion']['representante']['lugar_expedicion']['departamento_nombre'] = '';
-                $dataUser['institucion']['representante']['lugar_expedicion']['ciudad_nombre'] = '';
+            if( !isset($dataUsers[$keyCoordExterno]['institucion']['representante']) ){
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['usuario_activo'] = false;
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['repre_nombre'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['cargo'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['telefono'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['repre_email'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['pais_nombre'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['tipo_documento_nombre'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['numero_documento'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['fecha_expedicion'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['pais_nombre'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['departamento_nombre'] = '';
+                $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['ciudad_nombre'] = '';
             }
             @endphp
 
-          @if( isset($dataUser['institucion']['representante']) )
+          @if( isset($dataUsers[$keyCoordExterno]['institucion']['representante']) )
             
                 <div class="col-sm-12">
                     <hr>
@@ -511,7 +525,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('repre_nombre', 'Nombre del representante:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['repre_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['repre_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -522,7 +536,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('cargo', 'Cargo:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['cargo'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['cargo'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -533,7 +547,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('telefono', 'Teléfono:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['telefono'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['telefono'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -544,7 +558,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('repre_email', 'E-mail:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['repre_email'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['repre_email'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -555,7 +569,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('pais_nombre', 'País de nacimiento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['pais_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['pais_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -566,7 +580,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('tipo_documento_nombre', 'Tipo de documento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['tipo_documento_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['tipo_documento_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -577,7 +591,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('numero_documento', 'Número de documento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['numero_documento'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['numero_documento'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -588,7 +602,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('fecha_expedicion', 'Fecha de expedición:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['fecha_expedicion'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['fecha_expedicion'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -599,7 +613,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('pais_nombre', 'País de expedición del documento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['pais_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['pais_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -610,7 +624,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('departamento_nombre', 'Departamento/Estado de expedición del documento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['departamento_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['departamento_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -621,7 +635,7 @@
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
                                 {!! Form::label('ciudad_nombre', 'Ciudad de expedición del documento:', ['class' => 'text-bold']) !!}
-                                <span> {!! $dataUser['institucion']['representante']['lugar_expedicion']['ciudad_nombre'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['institucion']['representante']['lugar_expedicion']['ciudad_nombre'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -668,7 +682,7 @@
             @endif
             <!-- </div> -->
           @endif 
-          @if( isset($dataUser['observacion']) )
+          @if( isset($dataUsers[$keyCoordExterno]['observacion']) )
             
             <!-- <div class="col-sm-12"> -->
                 <div class="col-sm-12">
@@ -680,7 +694,7 @@
                         <div class=" full">
                             <!-- Tipo Tramite Id Field -->
                             <div class=" full">
-                                <span> {!! $dataUser['observacion']['nombre'].': '.$dataUser['observacion']['observacion'] !!}</span>
+                                <span> {!! $dataUsers[$keyCoordExterno]['observacion']['nombre'].': '.$dataUsers[$keyCoordExterno]['observacion']['observacion'] !!}</span>
                             </div>
                         </div>
                     </div>
@@ -695,7 +709,7 @@
                     
                     {{ Form::hidden('paso', '6') }}
                     {{ Form::hidden('alianzaId', $dataAlianza['id']) }}
-                    {{ Form::hidden('existeRepresentante', ( $dataUser['institucion']['representante']['usuario_activo'] !== false ? 1 :  0 ) ) }}
+                    {{ Form::hidden('existeRepresentante', ( $dataUsers[$keyCoordExterno]['institucion']['representante']['usuario_activo'] !== false ? 1 :  0 ) ) }}
                     {{ Form::hidden('tipoRuta', $tipoRuta) }}
 
                     <div class="col-sm-12">
@@ -750,8 +764,8 @@
                 {!! Form::close() !!}
             </div>
           @endif
-        @endif
-    @endforeach
+        <!-- @ endif -->
+    <!-- @ endforeach -->
     <!-- <p>&nbsp;</p> -->
 </div>
 
